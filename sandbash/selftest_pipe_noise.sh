@@ -9,9 +9,13 @@ fi
 opt="$(cat $1)"
 noiseopt="$(cat $2)"
 
-OUTPUT_file="tmp.output.bin"
-OUTPUT_filewav="tmp.output.raw"
-OUTPUT_filewav2="tmp.output2.raw"
+OUTPUTDIR="test"
+if [ ! -d "$OUTPUTDIR" ]; then
+    mkdir "$OUTPUTDIR"
+fi
+OUTPUT_file="$OUTPUTDIR/tmp.output.bin"
+OUTPUT_filewav="$OUTPUTDIR/tmp.output.raw"
+OUTPUT_filewav2="$OUTPUTDIR/tmp.output2.raw"
 
 cat $3 | build/enc $opt | tee $OUTPUT_filewav | build/noise $noiseopt | tee $OUTPUT_filewav2 | build/dec $opt > $OUTPUT_file
 

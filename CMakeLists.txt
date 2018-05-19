@@ -3,7 +3,7 @@ project(gretchen)
 include(CheckLibraryExists)
 include(FindPackageHandleStandardArgs)
 
-
+# compile static libs
 add_subdirectory(libs/gretchen)
 include_directories(libs/gretchen/include)
 
@@ -11,19 +11,17 @@ add_subdirectory(libs/backendaudio)
 include_directories(libs/backendaudio/include)
 
 
-
+# sandbox binaries
 add_executable(enc sandbox/enc.c)
 add_executable(dec sandbox/dec.c)
 target_link_libraries(enc gretchen)
 target_link_libraries(dec gretchen)
-
 
 # the noise.c needs this math linker flag...
 # https://stackoverflow.com/questions/16006145/ld-undefined-reference-to-symbol-log2glibc-2-2-5#16006618
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
 add_executable(noise sandbox/noise.c) 
 target_link_libraries(noise backaudio gretchen) 
-
 
 add_executable(rec sandbox/rec.c) 
 add_executable(play sandbox/play.c) 

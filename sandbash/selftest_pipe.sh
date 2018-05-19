@@ -8,8 +8,12 @@ fi
 
 opt="$(cat $1)"
 
-OUTPUT_file="tmp.output.bin"
-OUTPUT_filewav="tmp.output.raw"
+OUTPUTDIR="test"
+if [ ! -d "$OUTPUTDIR" ]; then
+    mkdir "$OUTPUTDIR"
+fi
+OUTPUT_file="$OUTPUTDIR/tmp.output.bin"
+OUTPUT_filewav="$OUTPUTDIR/tmp.output.raw"
 
 # if input is a file handle stuff differently
 if [ ! -f $2 ]; then
