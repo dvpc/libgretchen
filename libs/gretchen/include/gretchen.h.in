@@ -1,0 +1,3 @@
+#define gretchen_VERSION_MAJOR @gretchen_VERSION_MAJOR@
+#define gretchen_VERSION_MINOR @gretchen_VERSION_MINOR@
+

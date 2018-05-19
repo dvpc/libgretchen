@@ -1,0 +1,12 @@
+--frmtype modem
+--frmlen 800
+--frmcrc crc8
+--frmifec v29p78
+--frmofec v29p78
+--frmmod qam128
+--modshape rfarcsech
+--modsampsym 14
+--modsymdelay 4
+--modexcbandw 0.35
+--modfreq 15200
+--modgain 0.35

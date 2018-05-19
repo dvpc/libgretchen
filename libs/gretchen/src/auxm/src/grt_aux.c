@@ -1,0 +1,442 @@
+#include "internal/grt_aux.h"
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// signal catcher
+
+static sigcatcher_t* sigc;
+
+void grt_sigcatch_handler(int s) {
+    (void) s;
+    if (sigc)
+        sigc->grt_sigcatch_should_terminate=1;
+}
+
+void grt_sigcatch_Init() {
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = grt_sigcatch_handler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGTERM, &sigIntHandler, NULL);
+    
+    if (sigc==NULL)
+        sigc = malloc(sizeof(sigcatcher_t));
+    if (sigc)
+        sigc->grt_sigcatch_should_terminate=0;
+}
+
+int grt_sigcatch_ShouldTerminate() {
+    if (sigc)
+        return sigc->grt_sigcatch_should_terminate==1;
+    else
+        return 0;
+}
+
+void grt_sigcatch_Set(int i) {
+    if (sigc)
+        sigc->grt_sigcatch_should_terminate=i;
+}
+
+void grt_sigcatch_Destroy() {
+    free(sigc);
+    sigc=NULL;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// binary file and related methods
+
+// http://www.cse.yorku.ca/~oz/hash.html
+unsigned long hash_djb2(unsigned char *str)
+{ 
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash;
+}
+
+//https://stackoverflow.com/questions/2029103/correct-way-to-read-a-text-file-into-a-buffer-in-c#2029227
+char* read_binary_file(char* filename, long* size, int* error)
+{
+    *size = -1;
+    *error = 0;
+    char* source = NULL;
+    FILE *fp = fopen(filename, "rb");
+    if (fp==NULL) {
+        *error = -1;
+    } else {
+        // go to end of file
+        if (fseek(fp, 0L, SEEK_END)==0) {
+            *size = ftell(fp);
+            if (*size==-1) {
+                *error = ferror(fp);
+            }
+            // allocate
+            source = malloc(sizeof(char) * *size+1);
+            // go to start
+            if (fseek(fp, 0L, SEEK_SET)!=0) {
+                *error = ferror(fp);
+            }
+            // read the entire file
+            size_t nlen = fread(source, sizeof(char), *size, fp);  
+            if (ferror(fp)!=0) {
+                *error = ferror(fp);
+            } else {
+                source[nlen++] = '\0';
+            }
+        } 
+        fclose(fp);
+    }
+    return source;
+}
+
+void read_binary_file_size(char* filename, long* size, int* error)
+{
+    *size = -1;
+    *error = 0;
+    FILE *fp = fopen(filename, "rb");
+    if (fp==NULL) {
+        *error = -1;
+    } else {
+        if (fseek(fp, 0L, SEEK_END)==0) {
+            *size = ftell(fp);
+            if (*size==-1) {
+                *error = ferror(fp);
+            }
+        }
+    }
+    fclose(fp);
+}
+
+// https://stackoverflow.com/questions/17598572/read-write-to-binary-files-in-c#17598785
+void write_binary_file(char* filename, char* source, int* error)
+{
+    *error = 0;
+    FILE *wf = fopen(filename, "wb");
+    if (wf==NULL) {
+        *error = -1;
+        return ;
+    }
+    fwrite(source, sizeof(char), strlen(source)+1, wf);
+    if (ferror(wf)!=0)
+        *error = ferror(wf);
+    fclose(wf);
+}
+
+void write_raw_file(char* filename, float* source, size_t len, int* error)
+{
+    *error = 0;
+    FILE *wf = fopen(filename, "wb");
+    if (wf==NULL) {
+        *error = -1;
+        return ;
+    }
+    fwrite(source, sizeof(float), len, wf);
+    if (ferror(wf)!=0)
+        *error = ferror(wf);
+    fclose(wf);
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// envelope methods
+
+envelope_t* envelope_create(char* name, char* source)
+{
+    envelope_t *env = malloc(sizeof(envelope_t));
+    char* name2 = malloc(sizeof(char)*strlen(name)+1);
+    char* source2 = malloc(sizeof(char)*strlen(source)+1);
+    strcpy(name2, name);
+    strcpy(source2, source);
+    env->name = name2;
+    env->source = source2;
+    return env;
+}
+
+void envelope_destroy(envelope_t* env)
+{
+    if (env) {
+        free(env->name);
+        free(env->source);
+        free(env);
+    }
+}
+
+void envelope_pack(envelope_t* envelope, char** arg)
+{
+    size_t env_pack_size = strlen(envelope->name) + 
+            strlen(envelope->source) + 2;
+    *arg = malloc(sizeof(char)*env_pack_size);
+    strcpy(*arg, "\0");
+    snprintf(*arg, 
+             env_pack_size,
+             ENVELOPE_FORMAT, 
+             envelope->name,
+             envelope->source);
+}
+
+// https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+void envelope_unpack(char* envelope, envelope_t** arg)
+{
+    const char delim[1] = ENVELOPE_FORMAT_DELIMITER;
+    *arg = malloc(sizeof(envelope_t));
+    char* n = strtok(envelope, delim);
+    char* s = strtok(NULL, delim);
+    char* name;
+    char* source;
+    if (s==NULL) {
+        name = malloc(sizeof(char)*5);    
+        source = malloc(sizeof(char)*strlen(n)+1);
+        strcpy(name, "none\0");
+        strcpy(source, n);
+    } else {
+        name = malloc(sizeof(char)*strlen(n)+1);
+        source = malloc(sizeof(char)*strlen(s)+1);
+        strcpy(name, n);
+        strcpy(source, s);
+    }
+    (*arg)->name = name;
+    (*arg)->source = source;
+}
+
+void envelope_print(envelope_t*env) 
+{
+    printf("envelope filename: %s\nsize: %zu\np: %p \n", 
+            env->name, 
+            strlen(env->source), 
+            env->source);
+}
+
+void envelope_writeout(envelope_t* env, char* path, int* error)
+{
+    char *name = malloc(sizeof(char)*(strlen(path)+strlen(env->name))+2);
+    strcpy(name, path);
+    // FIXME this filesystemdelimiterstuff is hardly platform independent
+    // solve or factor out
+    /*strcat(name, "_");*/
+    // i could require that path ends with '/' or (see above) legel delim
+    strcat(name, env->name);
+    write_binary_file(name, env->source, &*error);
+    /*printf("File written: %s error:%i\n", name, *error);*/
+    free(name);
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// rx frame handling methods, chunks, transmits
+
+transmit_t* transmit_create(unsigned long hash, unsigned int max)
+{
+    transmit_t* transm = malloc(sizeof(transmit_t));
+    transm->hash = hash;
+    transm->max = max;
+    transm->chunks = malloc(sizeof(chunk_t)*max);
+    for (unsigned int k=0; k<max; k++) {
+        transm->chunks[k].num = k;
+        transm->chunks[k].data = NULL;
+        transm->chunks[k].len = 0;
+    }
+    return transm;
+}
+
+void transmit_destroy(transmit_t* transm)
+{
+    if (transm) {
+        for (unsigned int k=0; k<transm->max; k++) {
+            if (transm->chunks[k].data)
+                free(transm->chunks[k].data);
+        }
+        free(transm->chunks);
+        free(transm);
+    }
+}
+
+void transmit_add(transmit_t* transm, unsigned int num, char* buffer, size_t buffer_len)
+{
+    if (num < 0 || num >= transm->max)
+        return;
+    if (!transm->chunks[num].data) {
+        transm->chunks[num].data = malloc(sizeof(char)*buffer_len+1);
+        memcpy(transm->chunks[num].data, buffer, buffer_len); 
+        transm->chunks[num].len = buffer_len;
+    }    
+}
+
+bool transmit_is_complete(transmit_t* transm)
+{
+    bool retv = true;
+    for (unsigned int k=0; k<transm->max; k++) {
+        if (!transm->chunks[k].data) {
+            retv = false;
+            break;
+        }
+    }
+    return retv;
+}
+
+void transmit_concatenate(transmit_t* transm, char** arg)
+{
+    size_t concat_size=0;
+    for (size_t k=0; k<transm->max; k++)
+        concat_size += transm->chunks[k].len+1;
+    *arg = malloc(sizeof(char)*1);
+    strcpy(*arg, "\0");
+    if (!transmit_is_complete(transm))
+        return ;
+    *arg = realloc(*arg, sizeof(char)*concat_size);
+    if (*arg==NULL)
+        return ;
+    for (unsigned int k=0; k<transm->max; k++) {
+        strncat(*arg, transm->chunks[k].data, transm->chunks[k].len);
+    }
+}
+
+void transmit_print(transmit_t* transm)
+{
+    printf("hash %lu ", transm->hash);
+    printf("max %u \n", transm->max);
+    printf(" is complete %i\n", transmit_is_complete(transm));
+    for (unsigned int k=0; k<transm->max; k++) {
+        printf(" chunk %i %p \n", k, transm->chunks[k].data); 
+    }
+}
+
+void transmit_get_envelope(transmit_t* transm, envelope_t** arg)
+{
+    char* envstr;
+    transmit_concatenate(transm, &envstr);
+    envelope_unpack(envstr, &*arg);
+    free(envstr);
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// rx frame handler
+
+rxhandler_t* rxhandler_create()
+{
+    rxhandler_t* rxm = malloc(sizeof(rxhandler_t));
+    rxm->transmits = hashmap_new(); 
+    return rxm;
+}
+
+typedef struct {
+    map_t* map;
+    int itrnum;
+    void* user;
+} _itr_helper_t;
+
+typedef struct {
+    list_cb_t* callback;
+    void* user;
+} _list_helper_t;
+
+static int list_iterator(any_t item, any_t data)
+{
+    _itr_helper_t* itrhelper = (_itr_helper_t*) item;
+    _list_helper_t* listhelper = (_list_helper_t*) itrhelper->user;
+    listhelper->callback(data, listhelper->user);
+    itrhelper->itrnum ++;
+    if (itrhelper->itrnum < hashmap_length(itrhelper->map))
+        return MAP_OK;
+    else
+        return MAP_MISSING;
+}
+
+void rxhandler_list(rxhandler_t* rxm, list_cb_t callback, void *user)
+{
+    _list_helper_t* list_helper = malloc(sizeof(_list_helper_t));
+    list_helper->callback = callback;
+    list_helper->user = user;
+    _itr_helper_t* itr_helper = malloc(sizeof(_itr_helper_t));
+    itr_helper->map = rxm->transmits;
+    itr_helper->itrnum = 0;
+    itr_helper->user = list_helper;
+    int error;
+    while(true) {
+        error = hashmap_iterate(rxm->transmits, list_iterator, itr_helper);
+        if (error!=MAP_OK)
+            break; 
+    }
+    free(itr_helper);
+    free(list_helper);
+}
+
+static void _destroy_callback(transmit_t* transm, void* user)
+{
+    (void) user;
+    transmit_destroy(transm);
+}
+
+void rxhandler_destroy(rxhandler_t* rxm)
+{
+    if (rxm) {
+        rxhandler_list(rxm, _destroy_callback, NULL);
+        hashmap_free(rxm->transmits);
+        free(rxm);
+    }
+}
+
+#define KEY_FROM_HASH(hash) \
+    char key[RXMAP_KEY_LEN]; \
+    memset(key, '\0', RXMAP_KEY_LEN); \
+    snprintf((char*)key,\
+                    RXMAP_KEY_LEN,\
+                    RXMAP_KEY_FORMAT,\
+                    hash);
+
+void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, char* buffer, size_t buffer_len)
+{
+    transmit_t *transm = NULL;
+    KEY_FROM_HASH(hash);
+    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    if (error==MAP_MISSING) {
+        transm = transmit_create(hash, max);
+        hashmap_put(rxm->transmits, key, (any_t*)transm); 
+    }
+    transmit_add(transm, num, buffer, buffer_len);
+}
+
+void rxhandler_get(rxhandler_t* rxm, unsigned long hash, transmit_t** arg)
+{
+    transmit_t *transm = NULL;
+    KEY_FROM_HASH(hash);
+    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    if (error==MAP_OK)
+        *arg = transm;
+    else
+        *arg = NULL;
+}
+
+void rxhandler_remove(rxhandler_t* rxm, unsigned long hash)
+{
+    transmit_t *transm = NULL;
+    KEY_FROM_HASH(hash);
+    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    if (error==MAP_MISSING)
+        return;
+    transmit_destroy(transm);
+    hashmap_remove(rxm->transmits, key);
+}
+
+
+static void _reap_callback(transmit_t* transm, void* user)
+{
+    if (transmit_is_complete(transm)) {
+        // NOTE
+        // it is returning just the first and is 
+        // ignoring all other possible complete transmits
+        transmit_t** out = user;
+        if (*out==NULL) {
+            *out = transm;
+        }
+    }
+} 
+
+void rxhandler_reap(rxhandler_t* rxm, transmit_t** ripe)
+{
+    *ripe = NULL;
+    rxhandler_list(rxm, _reap_callback, ripe);
+}
+
+
+
+
+

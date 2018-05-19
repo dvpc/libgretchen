@@ -1,0 +1,12 @@
+--frmtype gmsk
+--frmlen 800
+--frmcrc crc8
+--frmifec none
+--frmofec none
+--frmmod arb256opt 
+--modshape rrcos
+--modsampsym 14
+--modsymdelay 5
+--modexcbandw 0.35
+--modfreq 16200
+--modgain 0.15
