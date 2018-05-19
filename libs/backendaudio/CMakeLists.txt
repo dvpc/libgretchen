@@ -23,8 +23,8 @@ endif()
 
 add_library(backaudio
   STATIC
-  grt_playback.c
-  grt_record.c
+  playback.c
+  record.c
 )
 
 target_include_directories(backaudio PUBLIC
