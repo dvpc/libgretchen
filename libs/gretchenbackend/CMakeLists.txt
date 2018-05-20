@@ -20,24 +20,24 @@ you can get portaudio from http://www.portaudio.com/download.html
 ")
 endif()
 
-add_library(backaudio
+add_library(gretchenbackend
   STATIC
   playback.c
   record.c
   sigcatch.c 
 )
 
-target_include_directories(backaudio PUBLIC
+target_include_directories(gretchenbackend PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         PRIAVTE src)
-set_target_properties(backaudio PROPERTIES PUBLIC_HEADER "gretchen.backend.h")
-target_link_libraries(backaudio portaudio)
+set_target_properties(gretchenbackend PROPERTIES PUBLIC_HEADER "gretchen.backend.h")
+target_link_libraries(gretchenbackend portaudio)
 
 
 add_executable(querypa testpa.c)
-target_link_libraries(querypa backaudio)
+target_link_libraries(querypa gretchenbackend)
 
 add_executable(testsig testsigaction.c)
-target_link_libraries(testsig backaudio)
+target_link_libraries(testsig gretchenbackend)
 
 
