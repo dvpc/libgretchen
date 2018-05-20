@@ -100,10 +100,16 @@ void write_raw_file(char* filename, float* source, size_t len, int* error)
 
 envelope_t* envelope_create(char* name, char* source)
 {
+    // FIXME
+    // using linux/posix method `basename` for now here.
+    // see: man 3 basename
+    // That wont work on windows and other platforms i guess...
+    // So we have to use sth better
+    char *base = basename(name);
     envelope_t *env = malloc(sizeof(envelope_t));
-    char* name2 = malloc(sizeof(char)*strlen(name)+1);
+    char* name2 = malloc(sizeof(char)*strlen(base)+1);
     char* source2 = malloc(sizeof(char)*strlen(source)+1);
-    strcpy(name2, name);
+    strcpy(name2, base);
     strcpy(source2, source);
     env->name = name2;
     env->source = source2;

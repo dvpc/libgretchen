@@ -198,6 +198,7 @@ extern int hashmap_length(map_t in);
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <libgen.h>
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // binary file and related methods
