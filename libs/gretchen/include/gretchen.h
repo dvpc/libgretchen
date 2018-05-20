@@ -21,11 +21,6 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TX
 
-// FIXME
-// maybe better to define a max transfer time???
-// maybe ok but better to parameterize this...
-#define MAX_SUGGESTED_FILESIZE 1 << 20 // 1048576 bytes ~ 1 MB
-
 typedef struct {
     grtModemTX_t* modem_tx;
     char* packed_env;
@@ -38,7 +33,6 @@ gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, int internal_bufsize);
 void gretchenTX_destroy(gretchenTX_t* tx);
 
 typedef struct {
-    int is_toolarge;
     size_t filesize_bytes;
     size_t est_encodedsize_samples;
     size_t est_transfer_sec;

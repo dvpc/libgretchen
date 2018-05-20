@@ -46,10 +46,6 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     read_binary_file_size(filename, &filesize, *&error);
     if (*error!=0)
         return ;
-    if (filesize > MAX_SUGGESTED_FILESIZE)
-        (*info)->is_toolarge = 1;
-    else
-        (*info)->is_toolarge = 0;
     (*info)->filesize_bytes = filesize;
     // a simple pessimistic guess of how many samples are needed
     // pessimistic == counting until next complete frame!! --> overshoot

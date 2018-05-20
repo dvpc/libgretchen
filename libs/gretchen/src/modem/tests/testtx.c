@@ -3,6 +3,10 @@
 
 #include "gretchen.h"
 
+
+#define MAX_SUGGESTED_FILESIZE 1 << 20 // 1048576 bytes ~ 1 MB
+
+
 int main(int argc, char **argv) {
     if (argc!=2) {
         printf("Usage: %s inputfile\n", argv[0]); 
@@ -35,9 +39,16 @@ int main(int argc, char **argv) {
     gretchenTX_inspect(tx, argv[1], &error, &info);
     if (info==NULL)
         goto label_cleanup;
+
+
+    int is_toolarge;
+    if (info->filesize_bytes > MAX_SUGGESTED_FILESIZE)
+        is_toolarge = 1;
+    else
+        is_toolarge = 0;
     fprintf(stderr, "\n");
     fprintf(stderr, "info file: toolarge %i bytes %zu est-samples: %zu est-time-sec: %zu\n", 
-                    info->is_toolarge, info->filesize_bytes, info->est_encodedsize_samples, info->est_transfer_sec);
+                    is_toolarge, info->filesize_bytes, info->est_encodedsize_samples, info->est_transfer_sec);
 
 
     gretchenTX_prepare(tx, argv[1], &error);
