@@ -1,13 +1,12 @@
 message(STATUS "processing gretchen")
 
-
-set (gretchen_VERSION_MAJOR 0)
-set (gretchen_VERSION_MINOR 2)
-configure_file (
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/gretchen.h"
-    "${PROJECT_BINARY_DIR}/libs/gretchen/header/gretchen.h"
-)
-#include_directories("${PROJECT_BINARY_DIR}")
+#set (gretchen_VERSION_MAJOR 0)
+#set (gretchen_VERSION_MINOR 2)
+#configure_file (
+    #"${CMAKE_CURRENT_SOURCE_DIR}/include/gretchen.h"
+    #"${PROJECT_BINARY_DIR}/header/gretchen.h"
+#)
+#include_directories("${PROJECT_BINARY_DIR}/header")
 
 # liquid sdr dependency
 find_path(liquid_include NAMES liquid/liquid.h)
@@ -44,10 +43,8 @@ add_library(gretchen
 target_include_directories(gretchen PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         PRIAVTE include/internal)
-
 set_target_properties(gretchen PROPERTIES PUBLIC_HEADER "gretchen.h")
 target_link_libraries(gretchen liquid)
-
 
 
 add_executable(testopt

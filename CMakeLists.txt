@@ -3,7 +3,8 @@ project(gretchen)
 include(CheckLibraryExists)
 include(FindPackageHandleStandardArgs)
 
-# compile static libs
+
+
 add_subdirectory(libs/gretchen)
 include_directories(libs/gretchen/include)
 
@@ -11,7 +12,6 @@ add_subdirectory(libs/backendaudio)
 include_directories(libs/backendaudio/include)
 
 
-# sandbox binaries
 add_executable(enc sandbox/enc.c)
 add_executable(dec sandbox/dec.c)
 target_link_libraries(enc gretchen)
