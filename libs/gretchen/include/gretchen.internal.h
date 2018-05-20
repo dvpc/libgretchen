@@ -1,3 +1,6 @@
+/*
+ * Gretchen internal
+ */
 #ifndef ___GRETCHEN_INTERNAL_H___
 #define ___GRETCHEN_INTERNAL_H___
 

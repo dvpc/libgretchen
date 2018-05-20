@@ -374,7 +374,6 @@ void rxhandler_remove(rxhandler_t* rxm, unsigned long hash)
     hashmap_remove(rxm->transmits, key);
 }
 
-
 static void _reap_callback(transmit_t* transm, void* user)
 {
     if (transmit_is_complete(transm)) {

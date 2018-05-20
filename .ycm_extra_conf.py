@@ -63,7 +63,7 @@ flags = [
 '-I', './include/',
 
 '-I', './libs/gretchen/include',
-'-I', './libs/backendaudio/include',
+'-I', './libs/gretchenbackend/include',
 # added by me for headers generated and only
 # appear in the build directory
 # IT WORKS :D

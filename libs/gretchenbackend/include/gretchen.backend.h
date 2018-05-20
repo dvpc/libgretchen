@@ -1,3 +1,6 @@
+/*
+ * Gretchen Backend
+ */
 #ifndef GRT_BACKEND
 #define GRT_BACKEND
 

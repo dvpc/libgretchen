@@ -1,6 +1,5 @@
 /*
  * Gretchen
- * transmit and receive modules
  */
 // TODO
 // sampling rate ?? only in options.c...
