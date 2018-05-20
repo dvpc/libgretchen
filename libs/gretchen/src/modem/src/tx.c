@@ -81,10 +81,7 @@ void gretchenTX_prepare(gretchenTX_t* tx, char* filename, int* error)
     grtModemTX_setheaderinfo(tx->modem_tx, hash, packlen);
 
     // modulate packed env
-    // TODO think of a good way to restrict the buffer / chunk sizes
-    // it has to be smaller than the internal buffer of the modem!!!
-    //
-    size_t chunk_want = 1 << 10; 
+    size_t chunk_want = tx->modem_tx->internal_bufsize >> 2; 
     size_t chunk;
     size_t k=0;
     while(true) {
