@@ -102,9 +102,11 @@ envelope_t* envelope_create(char* name, char* source)
 {
     // FIXME
     // using linux/posix method `basename` for now here.
-    // see: man 3 basename
     // That wont work on windows and other platforms i guess...
     // So we have to use sth better
+    // see https://stackoverflow.com/questions/7180293/how-to-extract-filename-from-path
+    // a hint for a self implemented version of basename could be
+    // see: https://stackoverflow.com/a/41949246 
     char *base = basename(name);
     envelope_t *env = malloc(sizeof(envelope_t));
     char* name2 = malloc(sizeof(char)*strlen(base)+1);
@@ -176,7 +178,6 @@ void envelope_writeout(envelope_t* env, char* path, int* error)
     strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
-    /*strcat(name, "_");*/
     // i could require that path ends with '/' or (see above) legel delim
     strcat(name, env->name);
     write_binary_file(name, env->source, &*error);
