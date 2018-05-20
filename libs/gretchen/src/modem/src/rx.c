@@ -63,7 +63,7 @@ void gretchenRX_destroy(gretchenRX_t* rx)
     free(rx);
 }
 
-void gretchenRX_push(gretchenRX_t* rx, float* buffer, size_t len, int* error)
+void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int* error)
 {
     *error = 0;
     size_t consumed;

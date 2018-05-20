@@ -2,13 +2,9 @@
  * Gretchen
  */
 // TODO
-// sampling rate ?? only in options.c...
-// would also need to add a resampler!!! but np!!
-// 
-// FIXME
-// How to indicate that clearly??
-// All internal raw sample data is float 16 bit le
-// 44100 hz
+// PUT the following in the documentation:
+// All internal raw sample data is assumed to be 
+// float 16 bit le with a 44100 hz samplerate.
 //
 #ifndef ___GRETCHEN_H___
 #define ___GRETCHEN_H___
@@ -63,7 +59,7 @@ gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, int internal_bufsize);
 
 void gretchenRX_destroy(gretchenRX_t* rx);
 
-void gretchenRX_push(gretchenRX_t* rx, float* buffer, size_t len, int* error);
+void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int* error);
 
 
 #endif

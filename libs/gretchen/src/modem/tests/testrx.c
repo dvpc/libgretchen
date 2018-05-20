@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
         size_t rlen = fread(chunkbuf, sizeof(float), chunk_want, fp);  
         k+=rlen;
         fseek(fp, 0L, k);
-        gretchenRX_push(rx, chunkbuf, rlen, &error);
+        gretchenRX_push_le16f(rx, chunkbuf, rlen, &error);
         if (rlen==0)
             break;
     }

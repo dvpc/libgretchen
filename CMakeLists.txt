@@ -27,3 +27,10 @@ add_executable(rec sandbox/rec.c)
 add_executable(play sandbox/play.c) 
 target_link_libraries(rec gretchenbackend gretchen)
 target_link_libraries(play gretchenbackend gretchen) 
+
+
+
+
+add_executable(gret sandbox/gret.c)
+target_link_libraries(gret gretchenbackend gretchen)
+

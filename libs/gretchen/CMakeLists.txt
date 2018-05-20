@@ -35,7 +35,8 @@ add_library(gretchen
 
 target_include_directories(gretchen PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PRIAVTE include/internal)
+        PRIAVTE 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_target_properties(gretchen PROPERTIES PUBLIC_HEADER "gretchen.h")
 target_link_libraries(gretchen liquid)
 
