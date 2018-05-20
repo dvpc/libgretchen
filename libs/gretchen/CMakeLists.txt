@@ -21,16 +21,16 @@ endif()
 
 add_library(gretchen
   STATIC
-  src/auxm/src/grt_aux.c
-  src/auxm/src/hashmap.c
-  src/auxm/src/ringbuffer_u.c
-  src/modem/src/grt_modemrx.c
-  src/modem/src/grt_modemtx.c
-  src/modem/src/grt_modulatorrx.c
-  src/modem/src/grt_modulatortx.c
-  src/modem/src/grt_options.c
-  src/modem/src/grt_rx.c
-  src/modem/src/grt_tx.c
+  src/helper/src/helper.c
+  src/helper/src/hashmap.c
+  src/helper/src/ringbuffer_u.c
+  src/modem/src/modemrx.c
+  src/modem/src/modemtx.c
+  src/modem/src/modulatorrx.c
+  src/modem/src/modulatortx.c
+  src/modem/src/options.c
+  src/modem/src/rx.c
+  src/modem/src/tx.c
 )
 
 target_include_directories(gretchen PUBLIC
@@ -42,44 +42,44 @@ target_link_libraries(gretchen liquid)
 
 add_executable(testopt
         src/modem/tests/testoptions.c
-        src/modem/src/grt_options.c)
+        src/modem/src/options.c)
 add_executable(testmodem 
         src/modem/tests/testmodem.c
-        src/modem/src/grt_modulatortx.c
-        src/modem/src/grt_modulatorrx.c)
+        src/modem/src/modulatortx.c
+        src/modem/src/modulatorrx.c)
 
 add_executable(testrxenv 
-        src/auxm/tests/testrxenv.c 
-        src/auxm/src/grt_aux.c 
-        src/auxm/src/hashmap.c)
+        src/helper/tests/testrxenv.c 
+        src/helper/src/helper.c 
+        src/helper/src/hashmap.c)
 add_executable(testrxtransm 
-        src/auxm/tests/testrxtransm.c 
-        src/auxm/src/grt_aux.c 
-        src/auxm/src/hashmap.c)
+        src/helper/tests/testrxtransm.c 
+        src/helper/src/helper.c 
+        src/helper/src/hashmap.c)
 add_executable(testrxreap 
-        src/auxm/tests/testrxreap.c 
-        src/auxm/src/grt_aux.c 
-        src/auxm/src/hashmap.c)
+        src/helper/tests/testrxreap.c 
+        src/helper/src/helper.c 
+        src/helper/src/hashmap.c)
 
 add_executable(testmodtx 
         src/modem/tests/testtx.c 
-        src/modem/src/grt_tx.c 
-        src/modem/src/grt_modemtx.c 
-        src/modem/src/grt_modulatortx.c 
-        src/modem/src/grt_options.c 
-        src/auxm/src/grt_aux.c 
-        src/auxm/src/ringbuffer_u.c 
-        src/auxm/src/hashmap.c)
+        src/modem/src/tx.c 
+        src/modem/src/modemtx.c 
+        src/modem/src/modulatortx.c 
+        src/modem/src/options.c 
+        src/helper/src/helper.c 
+        src/helper/src/ringbuffer_u.c 
+        src/helper/src/hashmap.c)
 
 add_executable(testmodrx 
         src/modem/tests/testrx.c 
-        src/modem/src/grt_rx.c 
-        src/modem/src/grt_modemrx.c 
-        src/modem/src/grt_modulatorrx.c 
-        src/modem/src/grt_options.c 
-        src/auxm/src/grt_aux.c 
-        src/auxm/src/ringbuffer_u.c 
-        src/auxm/src/hashmap.c)
+        src/modem/src/rx.c 
+        src/modem/src/modemrx.c 
+        src/modem/src/modulatorrx.c 
+        src/modem/src/options.c 
+        src/helper/src/helper.c 
+        src/helper/src/ringbuffer_u.c 
+        src/helper/src/hashmap.c)
 
 target_link_libraries(testopt gretchen)
 target_link_libraries(testmodem gretchen) 
