@@ -2,8 +2,6 @@
  * Gretchen
  * transmit and receive modules
  */
-#define gretchen_VERSION_MAJOR @gretchen_VERSION_MAJOR@
-#define gretchen_VERSION_MINOR @gretchen_VERSION_MINOR@
 // TODO
 // sampling rate ?? only in options.c...
 // would also need to add a resampler!!! but np!!
@@ -16,8 +14,10 @@
 #ifndef ___GRETCHEN_H___
 #define ___GRETCHEN_H___
 
-#include "internal/grt.h"
-#include "internal/grt_aux.h"
+#define gretchen_VERSION_MAJOR 0
+#define gretchen_VERSION_MINOR 1
+
+#include "gretchen.internal.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TX

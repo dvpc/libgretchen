@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 int main(int argc, char** argv) {
 

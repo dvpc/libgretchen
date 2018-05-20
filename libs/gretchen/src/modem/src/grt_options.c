@@ -1,4 +1,4 @@
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 
 float grtModemOpt_convert_freq2rad(int frequency, int samplerate) 

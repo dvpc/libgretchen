@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "internal/grt_aux.h"
+#include "gretchen.internal.h"
 
 int main(int argc, char **argv) {
     if (argc!=2) {

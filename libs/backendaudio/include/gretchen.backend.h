@@ -3,6 +3,50 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// SIGNAL CATCHING
+/*
+catching SIGINT (ctrl-c)
+probably only posix (no windows i guess)
+TODO: check and rewrite on windows!
+we will abstract this part out anyway so no problem.
+
+the thing is that calling most functions from inside a handler is unsafe!
+so i just set a global variable inside the handler an do the check in the 
+main function.
+
+https://stackoverflow.com/questions/1641182/how-can-i-catch-a-ctrl-c-event-c
+https://stackoverflow.com/questions/5378778/what-does-d-xopen-source-do-mean
+
+signals are bad one should use sigaction!
+http://pubs.opengroup.org/onlinepubs/9699919799/functions/sigaction.html
+
+another way can be this:
+http://zguide.zeromq.org/c:interrupt
+
+TODO: can it fail?? How to know?? Do we need to know anyway?
+*/
+
+#define _XOPEN_SOURCE 500
+#include <signal.h>
+#include <unistd.h>
+
+typedef struct {
+    int grt_sigcatch_should_terminate;
+} sigcatcher_t;
+
+void grt_sigcatch_handler(int s);
+
+void grt_sigcatch_Init();
+
+int grt_sigcatch_ShouldTerminate();
+
+void grt_sigcatch_Set(int i);
+
+void grt_sigcatch_Destroy();
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

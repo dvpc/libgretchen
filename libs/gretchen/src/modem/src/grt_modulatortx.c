@@ -1,4 +1,4 @@
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 grtModulatorTX_t *grtModulatorTX_create(
                 unsigned int shape,  

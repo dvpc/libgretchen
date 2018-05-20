@@ -1,4 +1,4 @@
-#include "internal/ringbuffer_u.h"
+#include "gretchen.internal.h"
 
 rbufu_t* rbufuCreate(size_t len) {
     rbufu_t *cb = malloc(sizeof(rbufu_t));

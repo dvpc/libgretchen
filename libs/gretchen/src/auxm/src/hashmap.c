@@ -1,7 +1,7 @@
 /*
  * Generic map implementation.
  */
-#include "internal/hashmap.h"
+#include "gretchen.internal.h"
 
 #include <stdlib.h>
 #include <stdio.h>

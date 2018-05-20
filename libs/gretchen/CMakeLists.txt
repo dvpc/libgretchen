@@ -1,12 +1,5 @@
 message(STATUS "processing gretchen")
 
-#set (gretchen_VERSION_MAJOR 0)
-#set (gretchen_VERSION_MINOR 2)
-#configure_file (
-    #"${CMAKE_CURRENT_SOURCE_DIR}/include/gretchen.h"
-    #"${PROJECT_BINARY_DIR}/header/gretchen.h"
-#)
-#include_directories("${PROJECT_BINARY_DIR}/header")
 
 # liquid sdr dependency
 find_path(liquid_include NAMES liquid/liquid.h)
@@ -50,10 +43,6 @@ target_link_libraries(gretchen liquid)
 add_executable(testopt
         src/modem/tests/testoptions.c
         src/modem/src/grt_options.c)
-add_executable(testsig 
-        src/auxm/tests/testsigaction.c
-        src/auxm/src/grt_aux.c
-        src/auxm/src/hashmap.c)
 add_executable(testmodem 
         src/modem/tests/testmodem.c
         src/modem/src/grt_modulatortx.c
@@ -93,7 +82,6 @@ add_executable(testmodrx
         src/auxm/src/hashmap.c)
 
 target_link_libraries(testopt gretchen)
-target_link_libraries(testsig gretchen) 
 target_link_libraries(testmodem gretchen) 
 target_link_libraries(testrxenv gretchen) 
 target_link_libraries(testrxtransm gretchen) 

@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#include "grt_backend.h"
-#include "internal/grt_aux.h"
+#include "gretchen.backend.h"
+#include "gretchen.internal.h"
 
 
 

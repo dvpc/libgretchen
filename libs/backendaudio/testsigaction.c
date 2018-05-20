@@ -7,7 +7,7 @@ simple test.
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "internal/grt_aux.h"
+#include "gretchen.backend.h"
 
 
 

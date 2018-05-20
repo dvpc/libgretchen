@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 static size_t generate_test_cf_symbols(int num_elements,
                                      float max_val,

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "internal/grt_aux.h"
+#include "gretchen.internal.h"
 
 
 static void print_transm(transmit_t* t, void* user)

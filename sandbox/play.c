@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#include "grt_backend.h"
+#include "gretchen.backend.h"
 
 
 int main(int argc, char** argv) {

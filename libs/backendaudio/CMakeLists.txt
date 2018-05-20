@@ -1,10 +1,5 @@
 message(STATUS "processing gretchen audio backend")
 
-#configure_file (
-    #"${CMAKE_CURRENT_SOURCE_DIR}/include/grt_backend.h"
-    #"${PROJECT_BINARY_DIR}/header/grt_backend.h"
-#)
-#include_directories("${PROJECT_BINARY_DIR}/header")
 
 # portaudio dependency
 find_path(portaudio_include NAMES portaudio.h)
@@ -29,18 +24,20 @@ add_library(backaudio
   STATIC
   playback.c
   record.c
+  sigcatch.c 
 )
 
 target_include_directories(backaudio PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         PRIAVTE src)
-set_target_properties(backaudio PROPERTIES PUBLIC_HEADER "grt_backend.h")
+set_target_properties(backaudio PROPERTIES PUBLIC_HEADER "gretchen.backend.h")
 target_link_libraries(backaudio portaudio)
 
 
-add_executable(querypa
-        testpa.c)
+add_executable(querypa testpa.c)
 target_link_libraries(querypa backaudio)
 
+add_executable(testsig testsigaction.c)
+target_link_libraries(testsig backaudio)
 
 

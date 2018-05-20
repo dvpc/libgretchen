@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 void emit_callback(unsigned long hash, unsigned int header_num, unsigned int header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
 {

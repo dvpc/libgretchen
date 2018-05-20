@@ -1,4 +1,4 @@
-#include "internal/grt.h"
+#include "gretchen.internal.h"
 
 static int dec_framesync_callback(
                 unsigned char *header, 
