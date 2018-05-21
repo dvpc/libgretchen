@@ -26,6 +26,18 @@ grtModemOpt_t* grtModemOpt_create_empty()
     return opt;
 }
 
+void grtModemOpt_destroy(grtModemOpt_t* opt)
+{
+    if (opt) {
+        if (opt->frameopt)
+            free(opt->frameopt);
+        if (opt->modopt)
+            free(opt->modopt);
+        free(opt);
+    }
+}
+
+
 static bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
@@ -47,7 +59,7 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
     return true;
 }
 
-grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_enc) 
+grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx) 
 {
     if (argc==1)
         return NULL;
@@ -84,6 +96,8 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_enc)
     while ((ch = getopt_long(argc, argv, 
                              "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:", 
                              long_options, NULL)) != -1) {
+        // FIXME remove
+        printf("ch %c optarg %s\n", ch, optarg);
         switch (ch) {
             case '0':
                 if (strncmp(optarg, "ofdm", 5)==0)
@@ -139,7 +153,7 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_enc)
             // MODULATION OPTIONS
             case 'b':
                 if (strncmp(optarg, "gmsk", 5)==0) {
-                    if (is_enc)
+                    if (is_tx)
                         opt->modopt->shape = liquid_getopt_str2firfilt("gmsktx");
                     else
                         opt->modopt->shape = liquid_getopt_str2firfilt("gmskrx");
@@ -248,16 +262,5 @@ void grtModemOpt_print(grtModemOpt_t* opt)
     printf("modfreq %f \n", opt->modopt->center_rads);
     printf("modgain %f \n", opt->modopt->gain);
     printf("\n");
-}
-
-void grtModemOpt_destroy(grtModemOpt_t* opt)
-{
-    if (opt) {
-        if (opt->frameopt)
-            free(opt->frameopt);
-        if (opt->modopt)
-            free(opt->modopt);
-        free(opt);
-    }
 }
 

@@ -354,7 +354,7 @@ typedef struct {
     grtModulatorOpt_t *modopt;
 } grtModemOpt_t;
 
-grtModemOpt_t *grtModemOpt_parse_args(int argc, char** argv, bool is_enc);
+grtModemOpt_t *grtModemOpt_parse_args(int argc, char** argv, bool is_tx);
 
 void grtModemOpt_destroy(grtModemOpt_t* opt);
 
