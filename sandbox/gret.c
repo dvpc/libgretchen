@@ -11,14 +11,31 @@ static void print_usage(char* binname)
         gretchen_VERSION_MAJOR, gretchen_VERSION_MINOR, binname);
 }
 
+#define TOKENLIST_CREATE() \
+    int num_token = 0; \
+    char** res_tokens  = NULL; \
+
+#define TOKENLIST_ADD(token, len) \
+    num_token++; \
+    res_tokens = realloc(res_tokens, sizeof(char*)*num_token); \
+    if (res_tokens==NULL) \
+        goto cleanup; \
+    res_tokens[num_token-1] = malloc(sizeof(char)*len+1); \
+    strncpy(res_tokens[num_token-1], token, len+1); \
+
+#define TOKENLIST_DESTROY() \
+    cleanup: \
+        for(int i = 0; i < num_token; i++) \
+            free(res_tokens[i]); \
+        free(res_tokens); \
 
 
 int main(int argc, char **argv) {
     // if listening (rx) or transmitting (tx)
     bool is_modetx = false;
+    char* txfilepath = NULL;
     // if using default options
     bool use_defaultopt = true;
-    char* txfilepath = NULL;
     char* optpath = NULL;
 
     char c;
@@ -37,9 +54,11 @@ int main(int argc, char **argv) {
                 break; 
             case 'h':
                 print_usage(argv[0]);
+                return 0;
                 break; 
         default:
             print_usage(argv[0]);
+            return 0;
         }
     }
 
@@ -69,19 +88,19 @@ int main(int argc, char **argv) {
             return -1;
         }
 
-        // 2 split the lines
-        int num_token = 0;
-        char** res  = NULL;
+        // 2 split the lines of the file
+        TOKENLIST_CREATE();
+        /*int num_token = 0;*/
+        /*char** res_tokens  = NULL;*/
 
         // at 0 add the program name (here i just put none into it)
-        num_token++;
-        res = realloc (res, sizeof (char*) * num_token);
-        if (res==NULL)
-            goto cleanup;
-        res[num_token-1] = malloc(sizeof(char)*5);
-        strcpy(res[num_token-1],"none\0");
-        /*res[num_token-1] = malloc(sizeof(char)*strlen(&*argv[0]));*/
-        /*strcpy(res[num_token-1],&*argv[0]);*/
+        TOKENLIST_ADD(&*argv[0], strlen(&*argv[0]));
+        /*num_token++;*/
+        /*res_tokens = realloc(res_tokens, sizeof(char*)*num_token);*/
+        /*if (res_tokens==NULL)*/
+            /*goto cleanup;*/
+        /*res_tokens[num_token-1] = malloc(sizeof(char)*strlen(&*argv[0])+1);*/
+        /*strcpy(res_tokens[num_token-1], &*argv[0]);*/
         
         // walk all tokens (lines of the options data)
         for (char* p=strtok(optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
@@ -99,7 +118,7 @@ int main(int argc, char **argv) {
                 memcpy(arg, &dup[0], lenA);
                 arg[lenA] = '\0';
                 // substring val
-                int lenB = strlen(dup)-index;
+                int lenB = strlen(dup)-index-1;
                 char val[lenB];
                 memcpy(val, &dup[lenA+1], lenB);
                 val[lenB] = '\0';
@@ -107,31 +126,34 @@ int main(int argc, char **argv) {
                 printf("%s %s\n",arg, val);
 
                 // add first token
-                num_token++;
-                res = realloc (res, sizeof (char*) * num_token);
-                if (res==NULL)
-                    goto cleanup;
-                res[num_token-1] = malloc(sizeof(char)*strlen(arg)+1);
-                strcpy(res[num_token-1],arg);
+                TOKENLIST_ADD(arg, strlen(arg));
+                /*num_token++;*/
+                /*res_tokens = realloc(res_tokens, sizeof(char*)*num_token);*/
+                /*if (res_tokens==NULL)*/
+                    /*goto cleanup;*/
+                /*res_tokens[num_token-1] = malloc(sizeof(char)*strlen(arg)+1);*/
+                /*strcpy(res_tokens[num_token-1],arg);*/
                 // add second token
-                num_token++;
-                res = realloc (res, sizeof (char*) * num_token);
-                if (res==NULL)
-                    goto cleanup;
-                res[num_token-1] = malloc(sizeof(char)*strlen(val)+1);
-                strcpy(res[num_token-1],val);
+                TOKENLIST_ADD(val, strlen(val));
+                /*num_token++;*/
+                /*res_tokens = realloc(res_tokens, sizeof(char*)*num_token);*/
+                /*if (res_tokens==NULL)*/
+                    /*goto cleanup;*/
+                /*res_tokens[num_token-1] = malloc(sizeof(char)*strlen(val)+1);*/
+                /*strcpy(res_tokens[num_token-1],val);*/
             }
             free(dup);
         }
         // 3 feed the char** into grtModemOpt
-        opt = grtModemOpt_parse_args(num_token, res, is_modetx); 
+        opt = grtModemOpt_parse_args(num_token, res_tokens, is_modetx); 
         grtModemOpt_print(opt);
         
-        cleanup:
-            for(int i = 0; i < num_token; i++)
-                free(res[i]);
-            free(res);
-            free(optchar);
+        free(optchar);
+        TOKENLIST_DESTROY();
+        /*cleanup:*/
+            /*for(int i = 0; i < num_token; i++)*/
+                /*free(res_tokens[i]);*/
+            /*free(res_tokens);*/
     }
 
 

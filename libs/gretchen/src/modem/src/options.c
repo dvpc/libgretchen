@@ -37,7 +37,6 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
     }
 }
 
-
 static bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
@@ -92,6 +91,13 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
         {"flushlen", required_argument, NULL, 'n'},
         {NULL, 0, NULL, 0}
     };
+
+    // FIXME remove
+    for(int i=0; i<argc; i++) {
+        printf("%i %s\n", i, &*argv[i]);
+    }
+
+
     int ch;
     while ((ch = getopt_long(argc, argv, 
                              "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:", 
