@@ -37,7 +37,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
     }
 }
 
-bool _are_all_values_set(grtModemOpt_t* opt)
+static bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
         return false;
