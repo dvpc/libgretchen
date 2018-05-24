@@ -37,7 +37,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
     }
 }
 
-static bool _are_all_values_set(grtModemOpt_t* opt)
+bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
         return false;
@@ -56,6 +56,76 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
         return false;
     // expelling values with defaults to be checked. see above.
     return true;
+}
+
+#define TOKENLIST_CREATE() \
+    int num_token = 0; \
+    char** res_tokens  = NULL; \
+
+#define TOKENLIST_ADD(token, len) \
+    num_token++; \
+    res_tokens = realloc(res_tokens, sizeof(char*)*num_token); \
+    if (res_tokens==NULL) \
+        goto tokenlist_free; \
+    res_tokens[num_token-1] = malloc(sizeof(char)*len+1); \
+    strncpy(res_tokens[num_token-1], token, len+1); \
+
+#define TOKENLIST_DESTROY() \
+    tokenlist_free: \
+        for(int i = 0; i < num_token; i++) \
+            free(res_tokens[i]); \
+        free(res_tokens); \
+
+grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx)
+{
+    // 1 load the options file
+    int error;
+    long filesize;
+    char* optchar = read_binary_file(filename, &filesize, &error);
+    if (error!=0) {
+        printf("cannot read opt file.\n");
+        return NULL;
+    }
+    // 2 split the lines of the file
+    TOKENLIST_CREATE();
+    // at 0 add the program name (here i just put none into it)
+    TOKENLIST_ADD("\0", 1);
+    // FIXME 
+    // i have to add these two in order to work with parse_args... oO why??
+    TOKENLIST_ADD("\0",1);
+    TOKENLIST_ADD("\0",1);
+    // walk all tokens (lines of the options data)
+    for (char* p=strtok(optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
+        // copy the token first
+        char* dup = strdup(p);
+        // find the pointer to the ' ' char of the token
+        const char* pidx = strchr(dup, ' ');
+        if (pidx) {
+            // get the actual index of the pointer
+            int index = pidx - dup;
+            // substring arg
+            int lenA = index;
+            char arg[lenA+1];
+            memcpy(arg, &dup[0], lenA);
+            arg[lenA] = '\0';
+            // substring val
+            int lenB = strlen(dup)-index-1;
+            char val[lenB];
+            memcpy(val, &dup[lenA+1], lenB);
+            val[lenB] = '\0';
+            /*printf("%s %s\n",arg, val);*/
+            // add first token
+            TOKENLIST_ADD(arg, strlen(arg));
+            // add second token
+            TOKENLIST_ADD(val, strlen(val));
+        }
+        free(dup);
+    }
+    // 3 feed the char** tokenlist into grtModemOpt
+    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx);    
+    TOKENLIST_DESTROY();
+    free(optchar);
+    return opt;
 }
 
 grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx) 
@@ -92,18 +162,10 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
         {NULL, 0, NULL, 0}
     };
 
-    // FIXME remove
-    for(int i=0; i<argc; i++) {
-        printf("%i %s\n", i, &*argv[i]);
-    }
-
-
     int ch;
     while ((ch = getopt_long(argc, argv, 
                              "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:", 
                              long_options, NULL)) != -1) {
-        // FIXME remove
-        printf("ch %c optarg %s\n", ch, optarg);
         switch (ch) {
             case '0':
                 if (strncmp(optarg, "ofdm", 5)==0)
