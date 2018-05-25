@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     // if using default options
     bool use_defaultoption = true;
     char* optionfilepath = NULL;
-
+    // parse the command line args
     char c;
     while(1) {
         c = getopt(argc, argv, "f:o:h:"); 
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             return 0;
         }
     }
-
+    // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
         opt = grtModemOpt_create_empty();
@@ -59,8 +59,18 @@ int main(int argc, char **argv) {
     } else {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
     }
+    // TODO will be removed
     if (opt)
         grtModemOpt_print(opt);
+    // setup backend
+    if (is_tx) {
+
+    } else {
+    
+    }
+
+
+
 
     if (is_tx) {
         // load file from txfilepath

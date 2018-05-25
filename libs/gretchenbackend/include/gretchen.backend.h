@@ -84,7 +84,6 @@ typedef enum grtbckError {
     grtbckErrorBufferUnderrun = -9
 } grtbckError;
 
-
 typedef struct {
     PaError err;
     PaStream* stream;
@@ -94,7 +93,6 @@ typedef struct {
 
     grtbckError cb_err;
 } grt_playback;
-
 
 grt_playback* grt_playback_Create();
 
@@ -112,8 +110,6 @@ size_t grt_playback_PollAvailableSamples(grt_playback* bplay);
 grtbckError grt_playback_StopStreaming(grt_playback* bplay);
 
 void grt_playback_Destroy(grt_playback* bplay);
-
-
 
 typedef struct {
     PaError err;
@@ -141,6 +137,48 @@ size_t grt_record_PollAvailableSamples(grt_record* brec);
 grtbckError grt_record_StopStreaming(grt_record* brec);
 
 void grt_record_Destroy(grt_record* brec);
+
+
+
+
+typedef struct {
+    bool is_tx;
+    PaError err;
+    PaStream* stream;
+    PaStreamParameters strParams;
+    cbufferf samplebuffer;
+} grtBackend_t;
+
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx);
+
+void grtBackend_destroy(grtBackend_t* back);
+
+void grtBackend_startstream(grtBackend_t* back, int* error);
+
+void grtBackend_status(grtBackend_t* back);
+
+void grtBackend_stopstream(grtBackend_t* back, int* error);
+
+void grtBackend_push_available(grtBackend_t* back, size_t* avail);
+
+size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len);
+
+void grtBackend_poll(grtBackend_t* back, float* buffer, size_t* len);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #endif

@@ -25,6 +25,7 @@ add_library(gretchenbackend
   playback.c
   record.c
   sigcatch.c 
+  backend.c
 )
 
 target_include_directories(gretchenbackend PUBLIC
