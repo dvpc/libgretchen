@@ -95,14 +95,14 @@ size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len)
     return num;
 }
 
-void grtBackend_poll(grtBackend_t* back, float* buffer, size_t* len)
+void grtBackend_poll(grtBackend_t* back, size_t ask, float* buffer, size_t* len)
 {
     *len = 0;
+    buffer = NULL;
     if (back->err!=paNoError)
         return ;
     unsigned int nread;
-    // FIXME param how many to ask
-    cbufferf_read(back->samplebuffer, 1<<10, &buffer, &nread);
+    cbufferf_read(back->samplebuffer, ask, &buffer, &nread);
     cbufferf_release(back->samplebuffer, nread);
     *len = nread;
 }

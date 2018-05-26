@@ -163,7 +163,7 @@ void grtBackend_push_available(grtBackend_t* back, size_t* avail);
 
 size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len);
 
-void grtBackend_poll(grtBackend_t* back, float* buffer, size_t* len);
+void grtBackend_poll(grtBackend_t* back, size_t ask, float* buffer, size_t* len);
 
 
 
