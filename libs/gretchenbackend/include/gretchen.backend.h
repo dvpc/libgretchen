@@ -155,11 +155,11 @@ void grtBackend_destroy(grtBackend_t* back);
 
 void grtBackend_startstream(grtBackend_t* back, int* error);
 
-void grtBackend_status(grtBackend_t* back);
+bool grtBackend_isstreamactive(grtBackend_t* back);
 
 void grtBackend_stopstream(grtBackend_t* back, int* error);
 
-void grtBackend_push_available(grtBackend_t* back, size_t* avail);
+size_t grtBackend_push_available(grtBackend_t* back);
 
 size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len);
 
