@@ -22,8 +22,6 @@ endif()
 
 add_library(gretchenbackend
   STATIC
-  playback.c
-  record.c
   sigcatch.c 
   backend.c
 )
