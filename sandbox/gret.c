@@ -58,32 +58,45 @@ int main(int argc, char **argv) {
     } else {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
     }
-    // TODO will be removed
-    /*if (opt)*/
-        /*grtModemOpt_print(opt);*/
-    // setup backend
+    // setup audio backend
+    size_t internbuflen = 1 << 14;
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
+    // setup modem 
+    void *modem;
     if (is_tx) {
-
-    } else {
-    
-    }
-
-
-
-
-    if (is_tx) {
+        modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<12);
         // load file from txfilepath
-        //
-        // etc...
+        gretchenTX_inspect_t* info;
+        int error;
+        gretchenTX_inspect(modem, argv[1], &error, &info);
+        if (info==NULL || error!=0) {
+            printf("Gretchen error: Cannot process file. %s\n", argv[1]);
+            goto cleanup;
+        }
+        // encode the file
+        gretchenTX_prepare(modem, argv[1], &error);
+        // get the sample
+        float* samplebuf;
+        size_t samplebuflen;
+        gretchenTX_get(modem, &samplebuf, &samplebuflen);
+        // play the sample
+      
+        // TBD
+
+        free(info); 
+        free(samplebuf);
     } else {
+        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<12);
         // start listening mode etc...
-    
-    
     }
 
-
-    grtModemOpt_destroy(opt);
-
+    cleanup:
+        if (is_tx)
+            gretchenTX_destroy(modem);
+        else
+            gretchenRX_destroy(modem);
+        grtBackend_destroy(back);
+        grtModemOpt_destroy(opt);
 
     return 0;
 }
