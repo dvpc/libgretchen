@@ -62,15 +62,16 @@ int main(int argc, char** argv) {
             grt_sigcatch_Set(1);
             break;
         }
-        grtBackend_poll(back, asklen, buffer, &nread);
+        grtBackend_poll(back, asklen, &buffer, &nread);
+        /*fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
         if (buffer!=NULL && nread>0)
             fwrite(buffer, sizeof(float), nread, fhandle);
 
         Pa_Sleep(150); 
     }
 
-    free(buffer);
     grt_sigcatch_Destroy();
+    grtBackend_stopstream(back, &error);
     grtBackend_destroy(back);
     fclose(fhandle);
     return 0;
