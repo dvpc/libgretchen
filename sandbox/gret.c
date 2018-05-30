@@ -1,7 +1,6 @@
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
-
 #include "gretchen.h"
 #include "gretchen.backend.h"
 
@@ -60,8 +59,8 @@ int main(int argc, char **argv) {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
     }
     // TODO will be removed
-    if (opt)
-        grtModemOpt_print(opt);
+    /*if (opt)*/
+        /*grtModemOpt_print(opt);*/
     // setup backend
     if (is_tx) {
 

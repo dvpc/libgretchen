@@ -1,13 +1,51 @@
 #include "gretchen.backend.h"
 
-static int _play_callback(); 
-
-static int _record_callback();
-
 static size_t _buffer_available(grtBackend_t* back)
 {
     return cbufferf_max_size(back->samplebuffer) - 
            cbufferf_size(back->samplebuffer);
+}
+
+static int _play_callback(
+                const void *inbuf, 
+                void *outbuf,
+                unsigned long frmsPerBuf, 
+                const PaStreamCallbackTimeInfo* timeInfo,
+                PaStreamCallbackFlags statFlags,
+                void *user)
+{
+    (void) inbuf;
+    (void) statFlags;
+    (void) timeInfo;
+    grtBackend_t* back = (grtBackend_t*)user;
+    float *outp = (float*)outbuf;
+    float *samples;
+    unsigned int nread;
+    cbufferf_read(back->samplebuffer, frmsPerBuf, &samples, &nread);
+    cbufferf_release(back->samplebuffer, nread);
+    for (size_t k=0; k<nread; k++)
+        outp[k] = samples[k];
+    return paContinue;
+} 
+
+static int _record_callback(
+                const void *inbuf, 
+                void *outbuf,
+                unsigned long frmsPerBuf, 
+                const PaStreamCallbackTimeInfo* timeInfo,
+                PaStreamCallbackFlags statFlags,
+                void *user)
+{
+    (void) outbuf;
+    (void) statFlags;
+    (void) timeInfo;
+    grtBackend_t* back = (grtBackend_t*)user;
+    float *inp = (float*)inbuf;
+    size_t avail = _buffer_available(back);
+    if (avail < frmsPerBuf)
+        return paComplete;
+    cbufferf_write(back->samplebuffer, inp, frmsPerBuf); 
+    return paContinue;
 }
 
 grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx)
@@ -65,6 +103,9 @@ void grtBackend_startstream(grtBackend_t* back, int* error)
     }
     if (back->err != paNoError)
         *error = -1;
+    back->err = Pa_StartStream(back->stream);
+    if (back->err != paNoError)
+        *error = -2;
 }
 
 bool grtBackend_isstreamactive(grtBackend_t* back)
@@ -106,47 +147,5 @@ void grtBackend_poll(grtBackend_t* back, size_t ask, float* buffer, size_t* len)
     cbufferf_read(back->samplebuffer, ask, &buffer, &nread);
     cbufferf_release(back->samplebuffer, nread);
     *len = nread;
-}
-
-static int _play_callback(
-                const void *inbuf, 
-                void *outbuf,
-                unsigned long frmsPerBuf, 
-                const PaStreamCallbackTimeInfo* timeInfo,
-                PaStreamCallbackFlags statFlags,
-                void *user)
-{
-    (void) inbuf;
-    (void) statFlags;
-    (void) timeInfo;
-    grtBackend_t* back = (grtBackend_t*)user;
-    float *outp = (float*)outbuf;
-    float *samples;
-    unsigned int nread;
-    cbufferf_read(back->samplebuffer, frmsPerBuf, &samples, &nread);
-    cbufferf_release(back->samplebuffer, nread);
-    for (size_t k=0; k<nread; k++)
-        outp[k] = samples[k];
-    return paContinue;
-} 
-
-static int _record_callback(
-                const void *inbuf, 
-                void *outbuf,
-                unsigned long frmsPerBuf, 
-                const PaStreamCallbackTimeInfo* timeInfo,
-                PaStreamCallbackFlags statFlags,
-                void *user)
-{
-    (void) outbuf;
-    (void) statFlags;
-    (void) timeInfo;
-    grtBackend_t* back = (grtBackend_t*)user;
-    float *inp = (float*)inbuf;
-    size_t avail = _buffer_available(back);
-    if (avail < frmsPerBuf)
-        return paComplete;
-    cbufferf_write(back->samplebuffer, inp, frmsPerBuf); 
-    return paContinue;
 }
 
