@@ -23,14 +23,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
 add_executable(noise sandbox/noise.c) 
 target_link_libraries(noise gretchenbackend gretchen) 
 
-add_executable(rec sandbox/rec.c) 
-add_executable(rec2 sandbox/rec2.c) 
-add_executable(play sandbox/play.c) 
-add_executable(play2 sandbox/play2.c) 
+add_executable(rec sandbox/rec2.c) 
+add_executable(play sandbox/play2.c) 
 target_link_libraries(rec gretchenbackend gretchen)
-target_link_libraries(rec2 gretchenbackend gretchen)
 target_link_libraries(play gretchenbackend gretchen) 
-target_link_libraries(play2 gretchenbackend gretchen) 
 
 
 
