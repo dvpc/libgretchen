@@ -20,14 +20,14 @@ int main(int argc, char** argv) {
                 break;
             case '?':
         default:
-            printf ("Usage: %s [-f <file to play>].\n", argv[0]);
+            printf ("Usage: %s [-f <file to write into>].\n", argv[0]);
         }
     }
     FILE *fhandle = NULL;
     if (use_stdio)
-        fhandle = stdin;
+        fhandle = stdout;
     else {
-        fhandle = fopen(argv[2], "rb");
+        fhandle = fopen(argv[2], "wb");
         if (!fhandle) {
             printf("No File!!!\n");
             return 1;
@@ -35,9 +35,9 @@ int main(int argc, char** argv) {
     }
 
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, true);
+    grtBackend_t* back = grtBackend_create(internbuflen, false);
     if (back == NULL) {
-        fprintf(stderr, "cannot init backend (play).\n");
+        fprintf(stderr, "cannot init backend (rec).\n");
         return 1;
     }
     // NOTE this Pa_Sleep is needed if more than one backend 
@@ -47,33 +47,37 @@ int main(int argc, char** argv) {
     int error;
     grtBackend_startstream(back, &error);
     if (error != 0) {
-        fprintf(stderr, "backend (play): cannot start stream.\n");
+        fprintf(stderr, "backend (rec): cannot start stream. \n");
         grtBackend_destroy(back);
         fclose(fhandle);
         return 1;
     }
-    
-    size_t buflen = 8192;
-    float* buffer = malloc(buflen * sizeof(float));
-    size_t avail, nread, len, pushed;
-    bool done = false;
-    while(!done) {
-        avail = grtBackend_push_available(back);
-        len = avail < buflen ? avail : buflen;
-        nread = fread(buffer, sizeof(float), len, fhandle);  
-        pushed = grtBackend_push(back, buffer, nread);
-        /*fprintf(stderr, "avail %zu nread %zu pushed %zu \n", avail, nread, pushed);*/
-        if (nread!=pushed)
-            fprintf(stderr, "backend (play): loosing %zu samples.", nread-pushed);
-        if (pushed==0)
-            done = true;
 
-        Pa_Sleep(150);
+    grt_sigcatch_Init();
+    size_t asklen = 8192;
+    float* buffer = NULL;
+    size_t nread;
+    while(!grt_sigcatch_ShouldTerminate()) {
+        if (!grtBackend_isstreamactive(back)) {
+            grt_sigcatch_Set(1);
+            break;
+        }
+        grtBackend_poll(back, asklen, buffer, &nread);
+        if (buffer!=NULL && nread>0)
+            fwrite(buffer, sizeof(float), nread, fhandle);
+
+        Pa_Sleep(150); 
     }
-    free(buffer);
 
-    grtBackend_stopstream(back, &error);
+    free(buffer);
+    grt_sigcatch_Destroy();
     grtBackend_destroy(back);
     fclose(fhandle);
     return 0;
 }
+
+
+
+
+
+
