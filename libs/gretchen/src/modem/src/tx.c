@@ -12,7 +12,6 @@ static void _modemtx_callback(
         return ;
     memcpy(tx->samples+tx->samples_len, buffer, buffer_len*sizeof(float));
     tx->samples_len = wantlen;
-
 }
 
 gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, int internalbufsize)

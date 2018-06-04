@@ -14,8 +14,8 @@ static int dec_framesync_callback(
     if (!dvoid)
         return 0;
     grtModemRX_t *dec = dvoid;
-    if (dec->emit_dubug_callback)
-        dec->emit_dubug_callback(header_valid,
+    if (dec->emit_debug_callback)
+        dec->emit_debug_callback(header_valid,
                                  payload_valid, 
                                  payload_len,
                                  _stats);
@@ -110,7 +110,7 @@ grtModemRX_t *grtModemRX_create(
     grtModemRX_reset(dec); 
     dec->emit_callback = NULL;
     dec->emit_callback_userdata = NULL;
-    dec->emit_dubug_callback = NULL;
+    dec->emit_debug_callback = NULL;
     return dec;
 }
 

@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     // dummy values. 
     // can't make a hash from the whole file since we just see chunks in this here
     // also can't estimate filesize here... so setting about 2K
-    grtModemTX_setheaderinfo(enc, 113763524, 2600);
+    grtModemTX_setheaderinfo(enc, 113763524, 2048);
 
     // FIXME check buffer sizes!!!
     // also read all data!!!

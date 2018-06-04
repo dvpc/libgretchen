@@ -424,7 +424,7 @@ typedef struct {
     cbufferf consume_cb;
 
     grtModemRX_emit_callback *emit_callback;
-    grtModemRX_emit_debug_callback *emit_dubug_callback;
+    grtModemRX_emit_debug_callback *emit_debug_callback;
     void *emit_callback_userdata;
 } grtModemRX_t;
 

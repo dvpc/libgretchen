@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     grtModemRX_t *dec = grtModemRX_create(opt, 1 << 14);
     dec->emit_callback = emit_callback;
     dec->emit_callback_userdata = NULL;
-    dec->emit_dubug_callback = debug_callback;
+    dec->emit_debug_callback = debug_callback;
 
     size_t wantread = 1 << 12;
     float *samplebuf = malloc(wantread * sizeof(float));
