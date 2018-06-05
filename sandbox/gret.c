@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
             goto cleanup;
         }
         // FIXME printing that info for now...
-        printf("info file: bytes %zu est-samples: %zu est-time-sec: %zu\n", 
+        printf("info file: bytes %zu est-samples: %zu est-time-sec: %zu\n\n", 
             info->filesize_bytes, info->est_encodedsize_samples, info->est_transfer_sec);
         free(info); 
 
@@ -93,6 +93,7 @@ int main(int argc, char **argv) {
         float* samplebuf;
         size_t samplebuflen;
         gretchenTX_get(modem, &samplebuf, &samplebuflen);
+        printf("samplebuflen %zu\n", samplebuflen);
 
         // play the sample
         grtBackend_startstream(back, &error);
@@ -108,9 +109,10 @@ int main(int argc, char **argv) {
             avail = grtBackend_push_available(back);
             len = avail < buflen ? avail : buflen;
             if (k+len>samplebuflen) {
-                len = k+len-samplebuflen;
+                len = samplebuflen-k;
                 done = true;
             }
+            /*printf("avail %zu len %zu k %zu done %i \n", avail, len, k, done);*/
             pushed = grtBackend_push(back, samplebuf+k, len);
             if (len!=pushed)
                 printf("backend (tx): loosing %zu samples.", len-pushed);
@@ -155,7 +157,10 @@ int main(int argc, char **argv) {
             }
             Pa_Sleep(150); 
         }
-        // flush the rest
+        // FIXME this will be a problem ...
+        // since we just listen 
+        // so flush the rest is bad here
+        // ...
         gretchenRX_push_le16f(modem, buffer, 0, &error);
 
         // cleanup rx
@@ -205,13 +210,13 @@ static void rxfilecomplete_callback(
     printf("rx file complete: name %s len %zu \n", 
                     filename, sourcelen);
 
-    char *path = "test/\0";
-    char *name = malloc(sizeof(char)*(strlen(path)+strlen(filename))+2);
-    strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
     /*strcat(name, "_");*/
     // i could require that path ends with '/' or (see above) legel delim
+    char *path = "test/\0";
+    char *name = malloc(sizeof(char)*(strlen(path)+strlen(filename))+2);
+    strcpy(name, path);
     strcat(name, filename);
     int error;
     write_binary_file(name, source, &error);
