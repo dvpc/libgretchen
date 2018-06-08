@@ -12,8 +12,8 @@ sleep 1
 
 build/gret -f "$1"
 
-jobs
 sleep 1
+jobs
 kill %%
 
 wait
