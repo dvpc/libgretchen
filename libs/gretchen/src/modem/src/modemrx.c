@@ -15,29 +15,37 @@ static int dec_framesync_callback(
         return 0;
     grtModemRX_t *mrx = dvoid;
     if (mrx->emit_debug_callback)
-        mrx->emit_debug_callback(header_valid,
-                                 payload_valid, 
-                                 payload_len,
-                                 _stats);
+        mrx->emit_debug_callback(
+                        header_valid,
+                        payload_valid, 
+                        payload_len,
+                        _stats);
     if (!header_valid)
         return 1;
+    unsigned long hash; 
+    unsigned int frame_num, frame_nummax;
+    sscanf((char *)header,
+           MODEM_HEADER_FORMAT, 
+           &hash, 
+           &frame_num,
+           &frame_nummax);
+    if (mrx->emit_progress_callback)
+        mrx->emit_progress_callback(
+                        hash, 
+                        frame_num, 
+                        frame_nummax, 
+                        payload_valid,
+                        mrx->emit_callback_userdata);
     if (!payload_valid)
         return 1;
-    if (mrx->emit_callback) {
-        unsigned long hash; 
-        unsigned int frame_num, frame_nummax;
-        sscanf((char *)header,
-               MODEM_HEADER_FORMAT, 
-               &hash, 
-               &frame_num,
-               &frame_nummax);
-        mrx->emit_callback(hash,
-                           frame_num,
-                           frame_nummax,
-                           payload_len, 
-                           payload, 
-                           mrx->emit_callback_userdata);
-    }
+    if (mrx->emit_callback)
+        mrx->emit_callback(
+                        hash,
+                        frame_num,
+                        frame_nummax,
+                        payload_len, 
+                        payload, 
+                        mrx->emit_callback_userdata);
     return 0;
 }
 

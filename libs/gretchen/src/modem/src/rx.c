@@ -8,21 +8,16 @@ static void _modemrx_callback(
                 uint8_t *buffer,
                 void *user)
 {
-    // try to add the chunk 
     gretchenRX_t* rx = (gretchenRX_t*)user;
+    if (!rx)
+        return ;
+    // add the chunk anyway
     rxhandler_add(rx->rxhandler,
                 hash, 
                 frame_num, 
                 frame_nummax, 
                 (char*)buffer, 
                 buffer_len);
-    // report progress 
-    if (rx->prog_callback)
-        rx->prog_callback(
-                hash, 
-                frame_num, 
-                frame_nummax, 
-                rx->callbackuser);
     // if complete (ripe) transmits exist
     transmit_t* ripe;
     rxhandler_reap(rx->rxhandler, &ripe);
@@ -44,11 +39,31 @@ static void _modemrx_callback(
     rxhandler_remove(rx->rxhandler, ripe->hash);
 }
 
+static void _modemrx_progress_callback(
+                unsigned long hash, 
+                unsigned int frame_num, 
+                unsigned int frame_nummax, 
+                int payload_valid,
+                void *user)
+{
+    gretchenRX_t* rx = (gretchenRX_t*)user;
+    if (!rx)
+        return ;
+    if (rx->prog_callback)
+        rx->prog_callback(
+                hash, 
+                frame_num, 
+                frame_nummax,
+                payload_valid, 
+                rx->callbackuser);
+}
+
 gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, int internal_bufsize)
 {
     gretchenRX_t* rx = malloc(sizeof(gretchenRX_t));
     rx->modem_rx = grtModemRX_create(opt, internal_bufsize);
     rx->modem_rx->emit_callback = _modemrx_callback;
+    rx->modem_rx->emit_progress_callback = _modemrx_progress_callback;
     rx->modem_rx->emit_callback_userdata = rx;
     rx->rxhandler = rxhandler_create();
     rx->callback = NULL;

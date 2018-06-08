@@ -7,10 +7,11 @@ void progress_callback(
                 unsigned long hash,
                 unsigned int frame_num,
                 unsigned int frame_nummax,
+                int payload_valid, 
                 void* user) {
     (void) user;
-    printf("rx progress callback: hash %lu num %i max %i\n", 
-                    hash, frame_num, frame_nummax);
+    printf("rx progress callback: hash %lu num %i max %i payloadvalid %i\n", 
+                    hash, frame_num, frame_nummax, payload_valid);
 }
 
 

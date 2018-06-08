@@ -45,7 +45,7 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len);
 
 typedef void gretchenRX_filecomplete_callback(char* filename, char* source, size_t sourcelen, void* user);
 
-typedef void gretchenRX_progress_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, void* user);
+typedef void gretchenRX_progress_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void* user);
 
 typedef struct {
     grtModemRX_t* modem_rx;

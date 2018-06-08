@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
         modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
-        ((gretchenRX_t*) modem)->modem_rx->emit_debug_callback = debug_callback;
+        /*((gretchenRX_t*) modem)->modem_rx->emit_debug_callback = debug_callback;*/
 
         // start listening mode
         int error;
@@ -194,10 +194,11 @@ static void rxprogress_callback(
                 unsigned long hash,
                 unsigned int frame_num,
                 unsigned int frame_nummax,
+                int payload_valid, 
                 void* user) {
     (void) user;
-    printf("rx progress callback: hash %lu num %i max %i\n", 
-                    hash, frame_num, frame_nummax);
+    printf("rx progress callback: hash %lu num %i max %i payloadvalid %i\n", 
+                    hash, frame_num, frame_nummax, payload_valid);
 }
 
 

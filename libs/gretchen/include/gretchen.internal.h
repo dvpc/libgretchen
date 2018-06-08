@@ -393,6 +393,8 @@ size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples
 
 typedef void grtModemRX_emit_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
 
+typedef void grtModemRX_emit_progress_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void *user);
+
 typedef void grtModemRX_emit_debug_callback(int header_valid, int payload_valid, unsigned int payload_len, framesyncstats_s stats);
 
 typedef struct { 
@@ -424,6 +426,7 @@ typedef struct {
     cbufferf consume_cb;
 
     grtModemRX_emit_callback *emit_callback;
+    grtModemRX_emit_progress_callback *emit_progress_callback;
     grtModemRX_emit_debug_callback *emit_debug_callback;
     void *emit_callback_userdata;
 } grtModemRX_t;
