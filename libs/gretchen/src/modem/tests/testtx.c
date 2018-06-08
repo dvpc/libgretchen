@@ -13,23 +13,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    grtModemOpt_t* opt = grtModemOpt_create_empty();
-    opt->frametype = frametype_modem;
-    opt->frameopt->payload_len = 800;
-    opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
-    opt->frameopt->inner_fec_scheme = liquid_getopt_str2fec("secded7264");
-    opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
-    opt->frameopt->mod_scheme = liquid_getopt_str2mod("qpsk");
-    // FIXME 
-    // important i have to set this by hand here!!!
-    // think of a method....
-    opt->frameopt->_bits_per_symbol = modulation_types[opt->frameopt->mod_scheme].bps;
-    opt->modopt->shape = liquid_getopt_str2firfilt("pm");
-    opt->modopt->samples_per_symbol = 9;
-    opt->modopt->symbol_delay = 5;
-    opt->modopt->excess_bw = 0.75;
-    opt->modopt->center_rads = grtModemOpt_convert_freq2rad(16200, 44100);
-    opt->modopt->gain = 0.45;
+    grtModemOpt_t* opt = grtModemOpt_create_default();
 
     // TODO buffersizes... and internal chunk sizes...
     gretchenTX_t* tx = gretchenTX_create(opt, 1<<12);

@@ -44,20 +44,7 @@ int main(int argc, char **argv) {
     // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
-        opt = grtModemOpt_create_empty();
-        opt->frametype = frametype_modem;
-        opt->frameopt->payload_len = 800;
-        opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
-        opt->frameopt->inner_fec_scheme = liquid_getopt_str2fec("secded7264");
-        opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
-        opt->frameopt->mod_scheme = liquid_getopt_str2mod("qpsk");
-        opt->frameopt->_bits_per_symbol = modulation_types[opt->frameopt->mod_scheme].bps;
-        opt->modopt->shape = liquid_getopt_str2firfilt("pm");
-        opt->modopt->samples_per_symbol = 9;
-        opt->modopt->symbol_delay = 5;
-        opt->modopt->excess_bw = 0.75;
-        opt->modopt->center_rads = grtModemOpt_convert_freq2rad(16200, 44100);
-        opt->modopt->gain = 0.45;
+        opt = grtModemOpt_create_default();
     } else {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
     }

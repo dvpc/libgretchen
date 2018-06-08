@@ -1,12 +1,12 @@
 #include "gretchen.internal.h"
 
 
-float grtModemOpt_convert_freq2rad(int frequency, int samplerate) 
+static float _convert_freq2rad(int frequency, int samplerate) 
 {
     return ((float)frequency/(float)samplerate) * M_PI * 2.0;
 }
 
-grtModemOpt_t* grtModemOpt_create_empty()
+static grtModemOpt_t* _create_empty()
 {
     grtModemOpt_t *opt = calloc(1, sizeof(grtModemOpt_t));
     grtFrameOpt_t *frame = calloc(1, sizeof(grtFrameOpt_t));
@@ -24,17 +24,6 @@ grtModemOpt_t* grtModemOpt_create_empty()
     mod->rxflt_cutoff_frq = .3f;
     mod->rxflt_center_frq = .36f;
     return opt;
-}
-
-void grtModemOpt_destroy(grtModemOpt_t* opt)
-{
-    if (opt) {
-        if (opt->frameopt)
-            free(opt->frameopt);
-        if (opt->modopt)
-            free(opt->modopt);
-        free(opt);
-    }
 }
 
 static bool _are_all_values_set(grtModemOpt_t* opt)
@@ -56,6 +45,36 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
         return false;
     // expelling values with defaults to be checked. see above.
     return true;
+}
+
+grtModemOpt_t* grtModemOpt_create_default()
+{
+    grtModemOpt_t* opt = _create_empty();
+    opt->frametype = frametype_modem;
+    opt->frameopt->payload_len = 800;
+    opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
+    opt->frameopt->inner_fec_scheme = liquid_getopt_str2fec("secded7264");
+    opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
+    opt->frameopt->mod_scheme = liquid_getopt_str2mod("qpsk");
+    opt->frameopt->_bits_per_symbol = modulation_types[opt->frameopt->mod_scheme].bps;
+    opt->modopt->shape = liquid_getopt_str2firfilt("pm");
+    opt->modopt->samples_per_symbol = 9;
+    opt->modopt->symbol_delay = 5;
+    opt->modopt->excess_bw = 0.75;
+    opt->modopt->center_rads = _convert_freq2rad(16200, 44100);
+    opt->modopt->gain = 0.45;
+    return opt;
+}
+
+void grtModemOpt_destroy(grtModemOpt_t* opt)
+{
+    if (opt) {
+        if (opt->frameopt)
+            free(opt->frameopt);
+        if (opt->modopt)
+            free(opt->modopt);
+        free(opt);
+    }
 }
 
 #define TOKENLIST_CREATE() \
@@ -135,7 +154,7 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
     if (argc==1)
         return NULL;
     
-    grtModemOpt_t* opt = grtModemOpt_create_empty();
+    grtModemOpt_t* opt = _create_empty();
     bool inputvalid = true; 
 
     static struct option long_options[] =
@@ -263,7 +282,7 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
                     inputvalid = false;
                 } else {
                     // FIXME parameter samplingrate??
-                    opt->modopt->center_rads = grtModemOpt_convert_freq2rad(atoi(optarg), 44100);
+                    opt->modopt->center_rads = _convert_freq2rad(atoi(optarg), 44100);
                 }
                 break;
             case 'g':
