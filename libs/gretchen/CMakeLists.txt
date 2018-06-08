@@ -1,6 +1,8 @@
 message(STATUS "processing gretchen")
 
-
+# FIXME this is a dynamic ref
+# so the output still depends on dynamically linking this...
+# ...
 # liquid sdr dependency
 find_path(liquid_include NAMES liquid/liquid.h)
 find_library(liquid_library NAMES liquid)

@@ -516,6 +516,8 @@ void grtModemTX_reset(grtModemTX_t *enc);
 
 size_t grtModemTX_consume(grtModemTX_t *enc, const void *buffer, size_t buflen);
 
+size_t framegen_estimate_num_symbols(grtModemTX_t *enc, size_t len);
+
 #endif
 
 

@@ -1,6 +1,6 @@
 #include "gretchen.internal.h"
 
-static size_t framegen_estimate_num_symbols(
+size_t framegen_estimate_num_symbols(
                 grtModemTX_t *enc,
                 size_t len)
 {

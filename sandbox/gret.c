@@ -93,7 +93,6 @@ int main(int argc, char **argv) {
         float* samplebuf;
         size_t samplebuflen;
         gretchenTX_get(modem, &samplebuf, &samplebuflen);
-        printf("samplebuflen %zu\n", samplebuflen);
 
         // play the sample
         grtBackend_startstream(back, &error);
@@ -112,6 +111,8 @@ int main(int argc, char **argv) {
                 len = samplebuflen-k;
                 done = true;
             }
+            // FIXME 
+            // progress for playing back the sample
             /*printf("avail %zu len %zu k %zu done %i \n", avail, len, k, done);*/
             pushed = grtBackend_push(back, samplebuf+k, len);
             if (len!=pushed)
@@ -127,7 +128,7 @@ int main(int argc, char **argv) {
         modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
-        /*((gretchenRX_t*) modem)->modem_rx->emit_debug_callback = debug_callback;*/
+        ((gretchenRX_t*) modem)->modem_rx->emit_debug_callback = debug_callback;
 
         // start listening mode
         int error;

@@ -46,10 +46,22 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     if (*error!=0)
         return ;
     (*info)->filesize_bytes = filesize;
+    // TODO
+    // better approach
+    // call `framegen_estimate_num_symbols` with 0
+    // to get the header symbol len
+    // one can then subtract this from total to get the payload symbol len
+    // with theses i can calc the rest easily 
+    size_t symbols_header = framegen_estimate_num_symbols(tx->modem_tx, 0);  
+
+
+
     // a simple pessimistic guess of how many samples are needed
     // pessimistic == counting until next complete frame!! --> overshoot
     grtModemOpt_t opt = tx->modem_tx->opt;
     unsigned int num = ceil(filesize / opt.frameopt->frame_len)+1;
+    /*double numf = (double)filesize / (double)opt.frameopt->frame_len; */
+    /*printf("nf %i n %f \n", numf, num);*/
     unsigned int bps = opt.frameopt->_bits_per_symbol;
     unsigned int bits_frame = tx->modem_tx->framelen_symbols * bps; 
     unsigned int bits_flush = tx->modem_tx->mod->flushlen * bps;
