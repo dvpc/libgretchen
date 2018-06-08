@@ -4,11 +4,10 @@
 
 int main(int argc, char** argv) {
 
-    printf("\nif anything is fishy\ndid u call it with ... $(cat dir/optionfile)\n???\n\n");
-
-
-    bool is_enc = true;
-    grtModemOpt_t* opt3 = grtModemOpt_parse_args(argc, argv, is_enc); 
+    /*printf("\nif anything is fishy\ndid u call it with ... $(cat dir/optionfile)\n???\n\n");*/
+    /*bool is_enc = true;*/
+    /*grtModemOpt_t* opt3 = grtModemOpt_parse_args(argc, argv, is_enc); */
+    grtModemOpt_t* opt3 = grtModemOpt_parse_args_from_file(argv[1], true);
     printf("%p \n", opt3);
     grtModemOpt_print(opt3);
     grtModemOpt_destroy(opt3); 

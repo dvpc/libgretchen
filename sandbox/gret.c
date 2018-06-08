@@ -61,6 +61,8 @@ int main(int argc, char **argv) {
     } else {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
     }
+    if (!opt)
+        return 1;
     // setup audio backend
     size_t internbuflen = 1 << 14;
     grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
@@ -68,10 +70,10 @@ int main(int argc, char **argv) {
     // (e.g. playback and record at the same time) is used.
     // FIXME investigate is it still needed??
     Pa_Sleep(150);
-
-    // setup modem 
     void *modem;
+
     if (is_tx) {
+        // setup modem 
         modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<12);
 
         // load file from txfilepath
@@ -125,6 +127,7 @@ int main(int argc, char **argv) {
         free(samplebuf);
         grtBackend_stopstream(back, &error);
     } else {
+        // setup modem 
         modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 

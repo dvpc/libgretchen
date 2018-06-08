@@ -94,6 +94,8 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx)
     // i have to add these two in order to work with parse_args... oO why??
     TOKENLIST_ADD("\0",1);
     TOKENLIST_ADD("\0",1);
+    TOKENLIST_ADD("\0",1);
+    TOKENLIST_ADD("\0",1);
     // walk all tokens (lines of the options data)
     for (char* p=strtok(optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
         // copy the token first
