@@ -46,27 +46,16 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     if (*error!=0)
         return ;
     (*info)->filesize_bytes = filesize;
-    // TODO
-    // better approach
-    // call `framegen_estimate_num_symbols` with 0
-    // to get the header symbol len
-    // one can then subtract this from total to get the payload symbol len
-    // with theses i can calc the rest easily 
-    size_t symbols_header = framegen_estimate_num_symbols(tx->modem_tx, 0);  
-
-
-
-    // a simple pessimistic guess of how many samples are needed
-    // pessimistic == counting until next complete frame!! --> overshoot
+    // better (a bit too optimistic) approach
     grtModemOpt_t opt = tx->modem_tx->opt;
-    unsigned int num = ceil(filesize / opt.frameopt->frame_len)+1;
-    /*double numf = (double)filesize / (double)opt.frameopt->frame_len; */
-    /*printf("nf %i n %f \n", numf, num);*/
-    unsigned int bps = opt.frameopt->_bits_per_symbol;
-    unsigned int bits_frame = tx->modem_tx->framelen_symbols * bps; 
-    unsigned int bits_flush = tx->modem_tx->mod->flushlen * bps;
-    long bits_est = num * (bits_frame+bits_flush);
-    long samples_est = (bits_est/bps)*opt.modopt->samples_per_symbol;
+    size_t symb_header = framegen_estimate_num_symbols(tx->modem_tx, 0);  
+    size_t symb_frame = tx->modem_tx->framelen_symbols; 
+    size_t symb_payload = symb_frame - symb_header;
+    size_t symb_flush = tx->modem_tx->mod->flushlen;
+    double num_payloads = (double)filesize / (double)opt.frameopt->frame_len;
+    size_t symb_total = ceil(num_payloads)*(double)symb_header + 
+            num_payloads*(double)symb_payload + ceil(num_payloads)*symb_flush;
+    size_t samples_est = symb_total*opt.modopt->samples_per_symbol;
     // put estimates in struc
     (*info)->est_encodedsize_samples = samples_est;
     (*info)->est_transfer_sec = samples_est / 44100; // TODO variable samplerate
