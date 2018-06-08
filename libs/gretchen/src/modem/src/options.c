@@ -41,7 +41,7 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
         return false;
-    if (opt->frameopt->frame_len == 0 ||
+    if (opt->frameopt->payload_len == 0 ||
         opt->frameopt->checksum_scheme == 0 ||
         opt->frameopt->inner_fec_scheme == 0 ||
         opt->frameopt->outer_fec_scheme == 0 ||
@@ -180,8 +180,8 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
                 }
                 break;
             case '1':
-                opt->frameopt->frame_len = atoi(optarg);
-                if (opt->frameopt->frame_len == 0) {
+                opt->frameopt->payload_len = atoi(optarg);
+                if (opt->frameopt->payload_len == 0) {
                     printf("arg: error framelen == 0!\n");
                     inputvalid = false;
                 }
@@ -318,7 +318,7 @@ void grtModemOpt_print(grtModemOpt_t* opt)
     printf("are all values set?: %i\n", ok);
     printf("\n");
     printf("frametype %u \n", opt->frametype);
-    printf("framelen %zu \n", opt->frameopt->frame_len);
+    printf("framelen %zu \n", opt->frameopt->payload_len);
     printf("framecrc %u \n", opt->frameopt->checksum_scheme);
     printf("frameifec %u \n", opt->frameopt->inner_fec_scheme);
     printf("frameofec %u \n", opt->frameopt->outer_fec_scheme);

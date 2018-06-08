@@ -324,7 +324,7 @@ typedef enum frametypes {
 } grtFrameType_t;
 
 typedef struct {
-    size_t frame_len;
+    size_t payload_len;
     crc_scheme checksum_scheme;
     fec_scheme inner_fec_scheme;
     fec_scheme outer_fec_scheme;
@@ -430,13 +430,13 @@ typedef struct {
 
 grtModemRX_t *grtModemRX_create(const grtModemOpt_t *opt, size_t internal_bufsize);
 
-void grtModemRX_destroy(grtModemRX_t *dec);
+void grtModemRX_destroy(grtModemRX_t *mrx);
 
-void grtModemRX_flush(grtModemRX_t *dec);
+void grtModemRX_flush(grtModemRX_t *mrx);
 
-void grtModemRX_reset(grtModemRX_t *dec);
+void grtModemRX_reset(grtModemRX_t *mrx);
 
-size_t grtModemRX_consume(grtModemRX_t *dec, float *buffer, size_t buflen);
+size_t grtModemRX_consume(grtModemRX_t *mrx, float *buffer, size_t buflen);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ModulatorTX 
@@ -506,17 +506,17 @@ typedef struct {
 
 grtModemTX_t *grtModemTX_create(const grtModemOpt_t *opt, size_t internal_bufsize);
 
-void grtModemTX_destroy(grtModemTX_t *enc);
+void grtModemTX_destroy(grtModemTX_t *mtx);
 
-void grtModemTX_setheaderinfo(grtModemTX_t *enc, unsigned long filehash, size_t filesize); 
+void grtModemTX_setheaderinfo(grtModemTX_t *mtx, unsigned long filehash, size_t filesize); 
 
-void grtModemTX_enable_flush(grtModemTX_t *enc);
+void grtModemTX_enable_flush(grtModemTX_t *mtx);
 
-void grtModemTX_reset(grtModemTX_t *enc);
+void grtModemTX_reset(grtModemTX_t *mtx);
 
-size_t grtModemTX_consume(grtModemTX_t *enc, const void *buffer, size_t buflen);
+size_t grtModemTX_consume(grtModemTX_t *mtx, const void *buffer, size_t buflen);
 
-size_t framegen_estimate_num_symbols(grtModemTX_t *enc, size_t len);
+size_t framegen_estimate_num_symbols(grtModemTX_t *mtx, size_t len);
 
 #endif
 

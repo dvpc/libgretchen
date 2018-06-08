@@ -52,7 +52,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     size_t symb_frame = tx->modem_tx->framelen_symbols; 
     size_t symb_payload = symb_frame - symb_header;
     size_t symb_flush = tx->modem_tx->mod->flushlen;
-    double num_payloads = (double)filesize / (double)opt.frameopt->frame_len;
+    double num_payloads = (double)filesize / (double)opt.frameopt->payload_len;
     size_t symb_total = ceil(num_payloads)*(double)symb_header + 
             num_payloads*(double)symb_payload + ceil(num_payloads)*symb_flush;
     size_t samples_est = symb_total*opt.modopt->samples_per_symbol;

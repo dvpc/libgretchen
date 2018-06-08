@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 
     grtModemOpt_t* opt = grtModemOpt_create_empty();
     opt->frametype = frametype_modem;
-    opt->frameopt->frame_len = 800;
+    opt->frameopt->payload_len = 800;
     opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
     opt->frameopt->inner_fec_scheme = liquid_getopt_str2fec("secded7264");
     opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
