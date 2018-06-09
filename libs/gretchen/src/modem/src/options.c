@@ -14,7 +14,7 @@ static grtModemOpt_t* _create_empty()
     opt->frameopt = frame;
     opt->modopt = mod;
     // other defaults
-    mod->flushlen_mod = 5;
+    mod->flushlen_mod = 4;
     frame->_bits_per_symbol = 1;
     // filter defaults
     mod->txflt_order = 6;

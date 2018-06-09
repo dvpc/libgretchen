@@ -106,8 +106,8 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     *samplebuffer = NULL;
     if (!tx->samples)
         return ;
-    *len = tx->samples_len;
-    *samplebuffer = malloc(sizeof(float)*tx->samples_len);
+    *len = tx->samples_len+22050;
+    *samplebuffer = calloc(sizeof(float), tx->samples_len+22050);
     memcpy(*samplebuffer, tx->samples, tx->samples_len*sizeof(float));
 }
 

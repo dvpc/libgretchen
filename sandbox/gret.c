@@ -148,9 +148,6 @@ int main(int argc, char **argv) {
             Pa_Sleep(150); 
         } 
         printf("\n");
-        // Flush the rest should be only needed in adhoc self test
-        // not in normal operation
-        gretchenRX_push_le16f(modem, buffer, 0, &error);
         // cleanup rx
         grt_sigcatch_Destroy();
         grtBackend_stopstream(back, &error);
@@ -183,11 +180,11 @@ static void print_banner() {
 static void print_transm(transmit_t* t, void* user) {
 
     (void) user;
-    printf("(hash %lu ", t->hash);
+    printf("(hash %lu chnks ", t->hash);
     for (unsigned int k=0; k<t->max; k++) {
-        printf(".%s", t->chunks[k].data==NULL?"x":"O"); 
+        printf("%s", t->chunks[k].data==NULL?".":"O"); 
     }
-    printf(".)");
+    printf(") ");
     fflush(stdout);
 }
 
@@ -203,8 +200,9 @@ static void rxprogress_callback(
     (void) payload_valid;
     gretchenRX_t* rx = (gretchenRX_t*)user;
     printf("\r.. ");
+    printf("%s ", payload_valid?" ":"!");
     rxhandler_list(rx->rxhandler, print_transm, NULL);
-    printf("\n");
+    /*printf("\n");*/
     /*printf("rx progress callback: hash %lu num %i max %i payloadvalid %i\n", */
                     /*hash, frame_num, frame_nummax, payload_valid);*/
 }
@@ -216,6 +214,10 @@ static void rxfilecomplete_callback(
                 void* user) {
     (void) source;
     (void) user;
+    gretchenRX_t* rx = (gretchenRX_t*)user;
+    printf("\r..  ");
+    rxhandler_list(rx->rxhandler, print_transm, NULL);
+    printf("\n");
     printf("   File complete: name %s len %zu \n", filename, sourcelen);
 
     // FIXME this filesystemdelimiterstuff is hardly platform independent

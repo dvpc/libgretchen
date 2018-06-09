@@ -1,6 +1,6 @@
 #include "gretchen.internal.h"
 
-static int dec_framesync_callback(
+static int mrx_framesync_callback(
                 unsigned char *header, 
                 int header_valid, 
                 unsigned char *payload,
@@ -49,22 +49,22 @@ static int dec_framesync_callback(
     return 0;
 }
 
-static void dec_modem_create(
+static void mrx_modem_create(
                 grtModemRX_t *mrx)
 {
     modem_decoder_t modem;
-    modem.framesync = flexframesync_create(dec_framesync_callback, mrx);
+    modem.framesync = flexframesync_create(mrx_framesync_callback, mrx);
     flexframesync_set_header_len(modem.framesync, MODEM_HEADER_LEN);
     flexframesync_decode_header_soft(modem.framesync, 1);
     flexframesync_decode_payload_soft(modem.framesync, 1);
     mrx->frame.modem = modem;
 }
 
-static void dec_gmsk_create(
+static void mrx_gmsk_create(
                 grtModemRX_t *mrx)
 {
     gmsk_decoder_t gmsk;
-    gmsk.framesync = gmskframesync_create(dec_framesync_callback, mrx);
+    gmsk.framesync = gmskframesync_create(mrx_framesync_callback, mrx);
     gmskframesync_set_header_len(gmsk.framesync, MODEM_HEADER_LEN);
     mrx->frame.gmsk = gmsk;
 }
@@ -86,10 +86,10 @@ grtModemRX_t *grtModemRX_create(
         case frametype_ofdm:
             break;
         case frametype_modem:
-            dec_modem_create(mrx);
+            mrx_modem_create(mrx);
             break;
         case frametype_gmsk:
-            dec_gmsk_create(mrx);
+            mrx_gmsk_create(mrx);
             break;
         case frametype_unset:
             break;

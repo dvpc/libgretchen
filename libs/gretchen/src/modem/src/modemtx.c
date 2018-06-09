@@ -159,16 +159,13 @@ static void process_frames(
         }
         // 2 write the frame
         float complex symbols[frames_want];
-        size_t symwrit = framegen_write_symbols(mtx,
-                                                symbols, 
-                                                frames_want);
+        size_t symwrit = framegen_write_symbols(mtx, symbols, frames_want);
         // 3 modulate symbols
         size_t smpwrit = grtModulatorTX_recv(mtx->mod, 
                                       symbols, 
                                       symwrit, 
                                       mtx->buf_samples);
-        size_t flushwrit = grtModulatorTX_flush(mtx->mod, 
-                                         mtx->buf_flush);
+        size_t flushwrit = grtModulatorTX_flush(mtx->mod, mtx->buf_flush);
         // 4 call callback method with data
         if (mtx->emit_callback) {
             mtx->emit_callback(smpwrit, mtx->buf_samples, mtx->emit_callback_userdata);
@@ -177,7 +174,7 @@ static void process_frames(
     }
 }
 
-static void enc_modem_create(
+static void mtx_modem_create(
                 grtModemTX_t *mtx)
 {
     modem_encoder_t modem;
@@ -187,7 +184,7 @@ static void enc_modem_create(
     mtx->frame.modem = modem;
 }
 
-static void enc_gmsk_create(
+static void mtx_gmsk_create(
                 grtModemTX_t *mtx) 
 {
     gmsk_encoder_t gmsk;
@@ -213,10 +210,10 @@ grtModemTX_t *grtModemTX_create(
         case frametype_ofdm:
             break; 
         case frametype_modem:
-            enc_modem_create(mtx);
+            mtx_modem_create(mtx);
             break;
         case frametype_gmsk:
-            enc_gmsk_create(mtx);
+            mtx_gmsk_create(mtx);
             break;
         case frametype_unset:
             break;
