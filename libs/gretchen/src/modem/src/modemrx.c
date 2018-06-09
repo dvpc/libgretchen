@@ -29,6 +29,14 @@ static int dec_framesync_callback(
            &hash, 
            &frame_num,
            &frame_nummax);
+    if (mrx->emit_callback && payload_valid)
+        mrx->emit_callback(
+                        hash,
+                        frame_num,
+                        frame_nummax,
+                        payload_len, 
+                        payload, 
+                        mrx->emit_callback_userdata);
     if (mrx->emit_progress_callback)
         mrx->emit_progress_callback(
                         hash, 
@@ -38,14 +46,6 @@ static int dec_framesync_callback(
                         mrx->emit_callback_userdata);
     if (!payload_valid)
         return 1;
-    if (mrx->emit_callback)
-        mrx->emit_callback(
-                        hash,
-                        frame_num,
-                        frame_nummax,
-                        payload_len, 
-                        payload, 
-                        mrx->emit_callback_userdata);
     return 0;
 }
 

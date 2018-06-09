@@ -216,7 +216,7 @@ static void rxfilecomplete_callback(
                 void* user) {
     (void) source;
     (void) user;
-    printf("  File complete: name %s len %zu \n", filename, sourcelen);
+    printf("   File complete: name %s len %zu \n", filename, sourcelen);
 
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
@@ -228,7 +228,7 @@ static void rxfilecomplete_callback(
     strcat(name, filename);
     int error;
     write_binary_file(name, source, &error);
-    printf("  File written with error %i \n", error);
+    printf("   File written with error %i \n", error);
     free(name);
 }
 
