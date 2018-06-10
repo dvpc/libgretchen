@@ -207,6 +207,7 @@ static void print_transm(transmit_t* t, void* user) {
     fflush(stdout);
 }
 
+static unsigned int print_count = 0;
 static void rxprogress_callback(
                 unsigned long hash,
                 unsigned int frame_num,
@@ -218,12 +219,30 @@ static void rxprogress_callback(
     (void) frame_nummax;
     (void) payload_valid;
     gretchenRX_t* rx = (gretchenRX_t*)user;
-    printf("\r.. ");
-    /*printf("%s", payload_valid?"":"! ");*/
+    char* prgr;
+    switch(print_count%5) {
+        case 0:
+            prgr = ". \0";
+            break; 
+        case 1:
+            prgr = "..\0";
+            break; 
+        case 2:
+            prgr = ".:\0";
+            break; 
+        case 3:
+            prgr = "::\0";
+            break; 
+        default:
+            prgr = "  \0";
+    }
+    printf("\r%s ", prgr);
+    fflush(stdout);
     rxhandler_list(rx->rxhandler, print_transm, NULL);
     /*printf("\n");*/
     /*printf("rx progress callback: hash %lu num %i max %i payloadvalid %i\n", */
                     /*hash, frame_num, frame_nummax, payload_valid);*/
+    print_count ++;
 }
 
 static void rxfilecomplete_callback(
@@ -234,7 +253,7 @@ static void rxfilecomplete_callback(
     (void) source;
     (void) user;
     gretchenRX_t* rx = (gretchenRX_t*)user;
-    printf("\r.. ");
+    printf("\rok ");
     rxhandler_list(rx->rxhandler, print_transm, NULL);
     printf("\n");
     printf("   File complete: name %s len %zu \n", filename, sourcelen);

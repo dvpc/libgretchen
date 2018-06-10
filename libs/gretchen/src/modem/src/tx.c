@@ -106,12 +106,12 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     *samplebuffer = NULL;
     if (!tx->samples)
         return ;
-    // append half a second of silence
+    // append and prepend .25 seconds of silence
     // to avoid clicks when playing the sample back
     // TODO has to be updated when having variable samplerate...
     *len = tx->samples_len+22050;
     *samplebuffer = calloc(sizeof(float), tx->samples_len+22050);
-    memcpy(*samplebuffer, tx->samples, tx->samples_len*sizeof(float));
+    memcpy(*samplebuffer+11025, tx->samples, tx->samples_len*sizeof(float));
 }
 
 
