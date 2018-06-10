@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include "gretchen.h"
 #include "gretchen.backend.h"
+#include <dirent.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 static void print_usage();
 static void print_banner();
@@ -10,18 +14,22 @@ static void rxprogress_callback();
 static void rxfilecomplete_callback();
 static void debug_callback();
 
+// if listening (rx) or transmitting (tx).
+static bool is_tx = false;
+static char* txfilepath = NULL;
+// if using default options.
+static bool use_defaultoption = true;
+static char* optionfilepath = NULL;
+// directory path for storing incoming files.
+static char* outpath = "incoming/\0";
+
 
 int main(int argc, char **argv) {
-    // if listening (rx) or transmitting (tx)
-    bool is_tx = false;
-    char* txfilepath = NULL;
-    // if using default options
-    bool use_defaultoption = true;
-    char* optionfilepath = NULL;
+
     // parse the command line args
     char c;
     while(1) {
-        c = getopt(argc, argv, "f:o:h:"); 
+        c = getopt(argc, argv, "f:o:p:h:"); 
         if (c==-1)
             break;
         switch(c) {
@@ -33,6 +41,14 @@ int main(int argc, char **argv) {
                 use_defaultoption = false;
                 optionfilepath = optarg;
                 break; 
+            case 'p':
+                // if path contains a trailing slash 
+                if (optarg[strlen(optarg)-1]=='/')
+                    outpath = optarg;
+                else
+                    printf("   Warning. Missing trailing slash in\n");
+                    printf("   output dirname. Using default %s.\n", outpath);
+                break;
             case 'h':
                 print_usage(argv[0]);
                 return 0;
@@ -42,6 +58,7 @@ int main(int argc, char **argv) {
             return 0;
         }
     }
+
     // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
@@ -51,12 +68,14 @@ int main(int argc, char **argv) {
     }
     if (!opt)
         return 1;
+
     // setup audio backend
     size_t internbuflen = 1 << 14;
     grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
     // NOTE Pa_Sleep is only needed for adhoc self test. 
     Pa_Sleep(150);
     print_banner();
+
     // setup gretchen 
     void *modem;
     if (is_tx) {
@@ -200,7 +219,7 @@ static void rxprogress_callback(
     (void) payload_valid;
     gretchenRX_t* rx = (gretchenRX_t*)user;
     printf("\r.. ");
-    printf("%s ", payload_valid?" ":"!");
+    /*printf("%s", payload_valid?"":"! ");*/
     rxhandler_list(rx->rxhandler, print_transm, NULL);
     /*printf("\n");*/
     /*printf("rx progress callback: hash %lu num %i max %i payloadvalid %i\n", */
@@ -215,22 +234,32 @@ static void rxfilecomplete_callback(
     (void) source;
     (void) user;
     gretchenRX_t* rx = (gretchenRX_t*)user;
-    printf("\r..  ");
+    printf("\r.. ");
     rxhandler_list(rx->rxhandler, print_transm, NULL);
     printf("\n");
     printf("   File complete: name %s len %zu \n", filename, sourcelen);
 
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
-    /*strcat(name, "_");*/
-    // i could require that path ends with '/' or (see above) legel delim
-    char *path = "test/\0";
-    char *name = malloc(sizeof(char)*(strlen(path)+strlen(filename))+2);
-    strcpy(name, path);
+    // seems windows has sth https://stackoverflow.com/questions/9235679/create-a-directory-if-it-doesnt-exist#9235708
+    int direrror;
+    DIR* dir = opendir(outpath);
+    if (dir) {
+        closedir(dir);
+        direrror = 0;
+    } else if (ENOENT==errno) {
+        direrror = mkdir(outpath, 0777);
+    } else {
+        direrror = 1; 
+    }
+
+    char *name = malloc(sizeof(char)*(strlen(outpath)+strlen(filename))+2);
+    strcpy(name, outpath);
     strcat(name, filename);
+
     int error;
     write_binary_file(name, source, &error);
-    printf("   File written with error %i \n", error);
+    printf("   File written with %s (%i)\n", error?"error":"no error", error);
     free(name);
 }
 
