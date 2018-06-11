@@ -188,8 +188,10 @@ int main(int argc, char **argv) {
 
 static void print_usage(char* binname) {
     print_banner();
-    printf(".. Usage: %s [[-f <file to transmit>] -o <modem options>].\n\n",
-                    binname);
+    printf(".. Usage: %s \n", binname);
+    printf("   -f <file to transmit>\n");
+    printf("   -o <modem option (file)>\n");
+    printf("   -p <output path>.\n\n");
 }
 
 static void print_banner() {
