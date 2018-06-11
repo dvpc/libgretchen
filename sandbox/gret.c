@@ -12,7 +12,7 @@ static void print_usage();
 static void print_banner();
 static void rxprogress_callback();
 static void rxfilecomplete_callback();
-static void debug_callback();
+
 
 // if listening (rx) or transmitting (tx).
 static bool is_tx = false;
@@ -72,15 +72,14 @@ int main(int argc, char **argv) {
     // setup audio backend
     size_t internbuflen = 1 << 14;
     grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
-    // NOTE Pa_Sleep is only needed for adhoc self test. 
-    Pa_Sleep(150);
+
     print_banner();
 
     // setup gretchen 
     void *modem;
     if (is_tx) {
         printf(".. TX (transfer) mode\n");
-        modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<12);
+        modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<12);//4096
 
         // load file from txfilepath
         gretchenTX_inspect_t* info;
@@ -101,13 +100,13 @@ int main(int argc, char **argv) {
         size_t samplebuflen;
         gretchenTX_get(modem, &samplebuf, &samplebuflen);
 
-        // play the sample
+        // playback the sample
         grtBackend_startstream(back, &error);
         if (error != 0) {
             fprintf(stderr, ".. Error backend cannot start stream.\n");
             goto cleanup;
         }
-        size_t buflen = 8192;
+        size_t buflen = 1<<13;//8192
         size_t avail, len, pushed;
         size_t k = 0;
         bool done = false;
@@ -133,12 +132,12 @@ int main(int argc, char **argv) {
 
     } else {
         printf(".. RX (receive) mode\n");
-        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);
+        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);//16384
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
         ((gretchenRX_t*) modem)->callbackuser = modem;
 
-        // start listening mode
+        // start recording
         int error;
         grtBackend_startstream(back, &error);
         if (error != 0) {
@@ -146,7 +145,7 @@ int main(int argc, char **argv) {
             goto cleanup;
         }
         grt_sigcatch_Init();
-        size_t asklen = 8192;
+        size_t asklen = 1<<13;//8192
         float* buffer = NULL;
         size_t nread;
         while(!grt_sigcatch_ShouldTerminate()) {
@@ -158,11 +157,13 @@ int main(int argc, char **argv) {
             /*printf("ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
             if (buffer!=NULL && nread>0) {
                 gretchenRX_push_le16f(modem, buffer, nread, &error);
-                /*printf("err %i\n", error);    */
-                // FIXME
+                // NOTE
                 // error will be -1 if internal buffer size is too 
-                // small versus asklen...
-                // set them automatically!!!!
+                // small versus asklen (nread)...
+                if (error!=0) {
+                    fprintf(stderr,".. Error modem overflow. \n");
+                    break;
+                }
             }
             Pa_Sleep(150); 
         } 
@@ -193,17 +194,18 @@ static void print_usage(char* binname) {
 
 static void print_banner() {
     printf("\n.. Gretchen version: %i.%i\n", 
-                    gretchen_VERSION_MAJOR, gretchen_VERSION_MINOR);
+                    gretchen_VERSION_MAJOR, 
+                    gretchen_VERSION_MINOR);
 }
 
 static void print_transm(transmit_t* t, void* user) {
 
     (void) user;
-    printf("(hash %lu chnks ", t->hash);
+    printf("[hash %lu chnks ", t->hash);
     for (unsigned int k=0; k<t->max; k++) {
         printf("%s", t->chunks[k].data==NULL?".":"O"); 
     }
-    printf(") ");
+    printf("] ");
     fflush(stdout);
 }
 
@@ -220,21 +222,15 @@ static void rxprogress_callback(
     (void) payload_valid;
     gretchenRX_t* rx = (gretchenRX_t*)user;
     char* prgr;
-    switch(print_count%5) {
-        case 0:
-            prgr = ". \0";
-            break; 
-        case 1:
-            prgr = "..\0";
-            break; 
-        case 2:
-            prgr = ".:\0";
-            break; 
-        case 3:
-            prgr = "::\0";
-            break; 
-        default:
-            prgr = "  \0";
+    switch(print_count%8) {
+        case 0: prgr = ". \0"; break; 
+        case 1: prgr = "..\0"; break; 
+        case 2: prgr = ":.\0"; break; 
+        case 3: prgr = "::\0"; break; 
+        case 4: prgr = ".:\0"; break; 
+        case 5: prgr = "..\0"; break; 
+        case 6: prgr = " .\0"; break; 
+        default:prgr = "  \0";
     }
     printf("\r%s ", prgr);
     fflush(stdout);
