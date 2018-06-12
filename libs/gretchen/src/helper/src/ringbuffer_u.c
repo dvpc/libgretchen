@@ -5,7 +5,7 @@ rbufu_t* rbufuCreate(size_t len) {
 	if (!cb)
         goto err;
     cb->maxlen = len;
-    cb->buffer = malloc(len*sizeof(RBUF_U_TYPE)+4);
+    cb->buffer = calloc(len+2,sizeof(RBUF_U_TYPE));
 	if (!cb->buffer)
         goto err;
     cb->head = cb->buffer;
