@@ -1,5 +1,141 @@
 #include "gretchen.internal.h"
 
+static int framegen_is_assembled();
+static void framegen_assemble();
+static size_t framegen_write_symbols();
+static void process_frames();
+static void mtx_modem_create();
+static void mtx_gmsk_create();
+
+
+grtModemTX_t *grtModemTX_create(
+                const grtModemOpt_t *opt,
+                size_t internal_bufsize)
+{
+    grtModemTX_t *mtx = malloc(sizeof(grtModemTX_t));
+    mtx->opt = *opt;
+    mtx->frametype = opt->frametype;
+    flexframegenprops_init_default(&mtx->fgprops);
+    mtx->fgprops.check = opt->frameopt->checksum_scheme;
+    mtx->fgprops.fec0 = opt->frameopt->inner_fec_scheme;    
+    mtx->fgprops.fec1 = opt->frameopt->outer_fec_scheme;
+    mtx->fgprops.mod_scheme = opt->frameopt->mod_scheme;
+    switch (mtx->frametype) {
+        case frametype_ofdm:
+            break; 
+        case frametype_modem:
+            mtx_modem_create(mtx);
+            break;
+        case frametype_gmsk:
+            mtx_gmsk_create(mtx);
+            break;
+        case frametype_unset:
+            break;
+    }
+    mtx->framelen = opt->frameopt->payload_len;
+    mtx->framelen_symbols = framegen_estimate_num_symbols(mtx, opt->frameopt->payload_len);
+    mtx->internal_bufsize = internal_bufsize;
+
+    mtx->mod = grtModulatorTX_create(opt->modopt->shape,
+                              opt->modopt->samples_per_symbol, 
+                              opt->modopt->symbol_delay, 
+                              opt->modopt->excess_bw, 
+                              opt->modopt->center_rads, 
+                              opt->modopt->gain,
+                              opt->modopt->txflt_order,
+                              opt->modopt->txflt_cutoff_frq,
+                              opt->modopt->txflt_center_frq,
+                              1.0f,
+                              60.0f,
+                              opt->modopt->flushlen_mod);
+
+    mtx->buf_readframe = calloc(mtx->framelen,
+                                sizeof(uint8_t));
+    mtx->buf_samples = calloc(mtx->mod->samples_per_symbol*mtx->framelen_symbols,
+                                sizeof(float));
+    mtx->buf_flush = calloc(mtx->mod->samples_per_symbol*mtx->mod->flushlen,
+                                sizeof(float));
+
+    mtx->cons_rbuf = rbufuCreate(mtx->internal_bufsize);
+    grtModemTX_reset(mtx);
+    mtx->emit_callback = NULL;
+    mtx->emit_callback_userdata = NULL;
+    return mtx;
+}
+
+void grtModemTX_destroy(
+                grtModemTX_t *mtx)
+{
+    if (!mtx)
+        return;
+    switch (mtx->frametype) {
+        case frametype_ofdm:
+            break; 
+        case frametype_modem:
+            flexframegen_destroy(mtx->frame.modem.framegen);
+            break;
+        case frametype_gmsk:
+            gmskframegen_destroy(mtx->frame.gmsk.framegen);
+            break;
+        case frametype_unset:
+            break;
+    }
+    rbufuDestroy(mtx->cons_rbuf);
+    free(mtx->buf_readframe);
+    free(mtx->buf_samples);
+    free(mtx->buf_flush);
+    grtModulatorTX_destroy(mtx->mod);
+    free(mtx);
+}
+
+void grtModemTX_setheaderinfo(
+                grtModemTX_t *mtx,
+                unsigned long filehash, 
+                size_t filesize) 
+{
+    mtx->hash = filehash;
+    mtx->frame_nummax = filesize/mtx->framelen+1;
+} 
+
+void grtModemTX_enable_flush(
+                grtModemTX_t *mtx)
+{
+    mtx->flush = true;
+}
+
+void grtModemTX_reset(
+                grtModemTX_t *mtx)
+{
+    mtx->flush = false;
+    mtx->hash = 0;
+    mtx->frame_num = 0;
+    mtx->frame_nummax = 0;
+    grtModulatorTX_reset(mtx->mod);
+    rbufuReset(mtx->cons_rbuf);
+}
+
+size_t grtModemTX_consume(
+                grtModemTX_t *mtx,
+                const void *buffer, 
+                size_t buflen)
+{
+    size_t avail = rbufuAvailable(mtx->cons_rbuf);
+    if (avail==0)
+        return 0;
+    if (avail<buflen)
+        buflen = avail;
+    mtx->cons_rbuf_err = rbufuPush(mtx->cons_rbuf, 
+                                   buffer, 
+                                   buflen);
+    if (mtx->cons_rbuf_err != rbufNoError) {
+        return 0;
+    }
+
+    process_frames(mtx); 
+
+    return buflen;
+}
+
 size_t framegen_estimate_num_symbols(
                 grtModemTX_t *mtx,
                 size_t len)
@@ -193,134 +329,5 @@ static void mtx_gmsk_create(
     gmsk.stride = 2;
     mtx->frame.gmsk = gmsk;
 }
-
-grtModemTX_t *grtModemTX_create(
-                const grtModemOpt_t *opt,
-                size_t internal_bufsize)
-{
-    grtModemTX_t *mtx = malloc(sizeof(grtModemTX_t));
-    mtx->opt = *opt;
-    mtx->frametype = opt->frametype;
-    flexframegenprops_init_default(&mtx->fgprops);
-    mtx->fgprops.check = opt->frameopt->checksum_scheme;
-    mtx->fgprops.fec0 = opt->frameopt->inner_fec_scheme;    
-    mtx->fgprops.fec1 = opt->frameopt->outer_fec_scheme;
-    mtx->fgprops.mod_scheme = opt->frameopt->mod_scheme;
-    switch (mtx->frametype) {
-        case frametype_ofdm:
-            break; 
-        case frametype_modem:
-            mtx_modem_create(mtx);
-            break;
-        case frametype_gmsk:
-            mtx_gmsk_create(mtx);
-            break;
-        case frametype_unset:
-            break;
-    }
-    mtx->framelen = opt->frameopt->payload_len;
-    mtx->framelen_symbols = framegen_estimate_num_symbols(mtx, opt->frameopt->payload_len);
-    mtx->internal_bufsize = internal_bufsize;
-
-    mtx->mod = grtModulatorTX_create(opt->modopt->shape,
-                              opt->modopt->samples_per_symbol, 
-                              opt->modopt->symbol_delay, 
-                              opt->modopt->excess_bw, 
-                              opt->modopt->center_rads, 
-                              opt->modopt->gain,
-                              opt->modopt->txflt_order,
-                              opt->modopt->txflt_cutoff_frq,
-                              opt->modopt->txflt_center_frq,
-                              1.0f,
-                              60.0f,
-                              opt->modopt->flushlen_mod);
-
-    mtx->buf_readframe = calloc(mtx->framelen,
-                                sizeof(uint8_t));
-    mtx->buf_samples = calloc(mtx->mod->samples_per_symbol*mtx->framelen_symbols,
-                                sizeof(float));
-    mtx->buf_flush = calloc(mtx->mod->samples_per_symbol*mtx->mod->flushlen,
-                                sizeof(float));
-
-    mtx->cons_rbuf = rbufuCreate(mtx->internal_bufsize);
-    grtModemTX_reset(mtx);
-    mtx->emit_callback = NULL;
-    mtx->emit_callback_userdata = NULL;
-    return mtx;
-}
-
-void grtModemTX_destroy(
-                grtModemTX_t *mtx)
-{
-    if (!mtx)
-        return;
-    switch (mtx->frametype) {
-        case frametype_ofdm:
-            break; 
-        case frametype_modem:
-            flexframegen_destroy(mtx->frame.modem.framegen);
-            break;
-        case frametype_gmsk:
-            gmskframegen_destroy(mtx->frame.gmsk.framegen);
-            break;
-        case frametype_unset:
-            break;
-    }
-    rbufuDestroy(mtx->cons_rbuf);
-    free(mtx->buf_readframe);
-    free(mtx->buf_samples);
-    free(mtx->buf_flush);
-    grtModulatorTX_destroy(mtx->mod);
-    free(mtx);
-}
-
-void grtModemTX_setheaderinfo(
-                grtModemTX_t *mtx,
-                unsigned long filehash, 
-                size_t filesize) 
-{
-    mtx->hash = filehash;
-    mtx->frame_nummax = filesize/mtx->framelen+1;
-} 
-
-void grtModemTX_enable_flush(
-                grtModemTX_t *mtx)
-{
-    mtx->flush = true;
-}
-
-void grtModemTX_reset(
-                grtModemTX_t *mtx)
-{
-    mtx->flush = false;
-    mtx->hash = 0;
-    mtx->frame_num = 0;
-    mtx->frame_nummax = 0;
-    grtModulatorTX_reset(mtx->mod);
-    rbufuReset(mtx->cons_rbuf);
-}
-
-size_t grtModemTX_consume(
-                grtModemTX_t *mtx,
-                const void *buffer, 
-                size_t buflen)
-{
-    size_t avail = rbufuAvailable(mtx->cons_rbuf);
-    if (avail==0)
-        return 0;
-    if (avail<buflen)
-        buflen = avail;
-    mtx->cons_rbuf_err = rbufuPush(mtx->cons_rbuf, 
-                                   buffer, 
-                                   buflen);
-    if (mtx->cons_rbuf_err != rbufNoError) {
-        return 0;
-    }
-
-    process_frames(mtx); 
-
-    return buflen;
-}
-
 
 

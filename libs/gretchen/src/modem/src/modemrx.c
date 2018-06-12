@@ -1,73 +1,9 @@
 #include "gretchen.internal.h"
 
-static int mrx_framesync_callback(
-                unsigned char *header, 
-                int header_valid, 
-                unsigned char *payload,
-                unsigned int payload_len, 
-                int payload_valid,
-                framesyncstats_s _stats,
-                void *dvoid)
-{
-    (void) header;
-    (void) _stats;
-    if (!dvoid)
-        return 0;
-    grtModemRX_t *mrx = dvoid;
-    if (mrx->emit_debug_callback)
-        mrx->emit_debug_callback(
-                        header_valid,
-                        payload_valid, 
-                        payload_len,
-                        _stats);
-    if (!header_valid)
-        return 1;
-    unsigned long hash; 
-    unsigned int frame_num, frame_nummax;
-    sscanf((char *)header,
-           MODEM_HEADER_FORMAT, 
-           &hash, 
-           &frame_num,
-           &frame_nummax);
-    if (mrx->emit_callback && payload_valid)
-        mrx->emit_callback(
-                        hash,
-                        frame_num,
-                        frame_nummax,
-                        payload_len, 
-                        payload, 
-                        mrx->emit_callback_userdata);
-    if (mrx->emit_progress_callback)
-        mrx->emit_progress_callback(
-                        hash, 
-                        frame_num, 
-                        frame_nummax, 
-                        payload_valid,
-                        mrx->emit_callback_userdata);
-    if (!payload_valid)
-        return 1;
-    return 0;
-}
+static int mrx_framesync_callback();
+static void mrx_modem_create();
+static void mrx_gmsk_create();
 
-static void mrx_modem_create(
-                grtModemRX_t *mrx)
-{
-    modem_decoder_t modem;
-    modem.framesync = flexframesync_create(mrx_framesync_callback, mrx);
-    flexframesync_set_header_len(modem.framesync, MODEM_HEADER_LEN);
-    flexframesync_decode_header_soft(modem.framesync, 1);
-    flexframesync_decode_payload_soft(modem.framesync, 1);
-    mrx->frame.modem = modem;
-}
-
-static void mrx_gmsk_create(
-                grtModemRX_t *mrx)
-{
-    gmsk_decoder_t gmsk;
-    gmsk.framesync = gmskframesync_create(mrx_framesync_callback, mrx);
-    gmskframesync_set_header_len(gmsk.framesync, MODEM_HEADER_LEN);
-    mrx->frame.gmsk = gmsk;
-}
 
 grtModemRX_t *grtModemRX_create(
                 const grtModemOpt_t *opt,
@@ -212,3 +148,71 @@ size_t grtModemRX_consume(
     return buflen;
 }
 
+static int mrx_framesync_callback(
+                unsigned char *header, 
+                int header_valid, 
+                unsigned char *payload,
+                unsigned int payload_len, 
+                int payload_valid,
+                framesyncstats_s _stats,
+                void *dvoid)
+{
+    (void) header;
+    (void) _stats;
+    if (!dvoid)
+        return 0;
+    grtModemRX_t *mrx = dvoid;
+    if (mrx->emit_debug_callback)
+        mrx->emit_debug_callback(
+                        header_valid,
+                        payload_valid, 
+                        payload_len,
+                        _stats);
+    if (!header_valid)
+        return 1;
+    unsigned long hash; 
+    unsigned int frame_num, frame_nummax;
+    sscanf((char *)header,
+           MODEM_HEADER_FORMAT, 
+           &hash, 
+           &frame_num,
+           &frame_nummax);
+    if (mrx->emit_callback && payload_valid)
+        mrx->emit_callback(
+                        hash,
+                        frame_num,
+                        frame_nummax,
+                        payload_len, 
+                        payload, 
+                        mrx->emit_callback_userdata);
+    if (mrx->emit_progress_callback)
+        mrx->emit_progress_callback(
+                        hash, 
+                        frame_num, 
+                        frame_nummax, 
+                        payload_valid,
+                        mrx->emit_callback_userdata);
+    if (!payload_valid)
+        return 1;
+    return 0;
+}
+
+static void mrx_modem_create(
+                grtModemRX_t *mrx)
+{
+    modem_decoder_t modem;
+    modem.framesync = flexframesync_create(mrx_framesync_callback, mrx);
+    flexframesync_set_header_len(modem.framesync, MODEM_HEADER_LEN);
+    flexframesync_decode_header_soft(modem.framesync, 1);
+    flexframesync_decode_payload_soft(modem.framesync, 1);
+    mrx->frame.modem = modem;
+}
+
+static void mrx_gmsk_create(
+                grtModemRX_t *mrx)
+{
+    gmsk_decoder_t gmsk;
+    gmsk.framesync = gmskframesync_create(mrx_framesync_callback, mrx);
+    gmskframesync_set_header_len(gmsk.framesync, MODEM_HEADER_LEN);
+    mrx->frame.gmsk = gmsk;
+}
