@@ -8,7 +8,7 @@ fi
 
 opt="$(cat $1)"
 
-OUTPUTDIR="test"
+OUTPUTDIR="incoming"
 if [ ! -d "$OUTPUTDIR" ]; then
     mkdir "$OUTPUTDIR"
 fi

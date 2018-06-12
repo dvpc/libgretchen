@@ -254,7 +254,7 @@ static void rxfilecomplete_callback(
     printf("\rok ");
     rxhandler_list(rx->rxhandler, print_transm, NULL);
     printf("\n");
-    printf("   File complete: name %s len %zu \n", filename, sourcelen);
+    printf("   File complete: %s size (bytes) %zu \n", filename, sourcelen);
 
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out

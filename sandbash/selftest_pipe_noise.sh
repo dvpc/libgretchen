@@ -9,7 +9,7 @@ fi
 opt="$(cat $1)"
 noiseopt="$(cat $2)"
 
-OUTPUTDIR="test"
+OUTPUTDIR="incoming"
 if [ ! -d "$OUTPUTDIR" ]; then
     mkdir "$OUTPUTDIR"
 fi
