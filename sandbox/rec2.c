@@ -53,13 +53,13 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    grt_sigcatch_Init();
+    grtSigcatcher_Init();
     size_t asklen = 8192;
     float* buffer = NULL;
     size_t nread;
-    while(!grt_sigcatch_ShouldTerminate()) {
+    while(!grtSigcatcher_ShouldTerminate()) {
         if (!grtBackend_isstreamactive(back)) {
-            grt_sigcatch_Set(1);
+            grtSigcatcher_Set(1);
             break;
         }
         grtBackend_poll(back, asklen, &buffer, &nread);
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
         Pa_Sleep(150); 
     }
 
-    grt_sigcatch_Destroy();
+    grtSigcatcher_Destroy();
     grtBackend_stopstream(back, &error);
     grtBackend_destroy(back);
     fclose(fhandle);

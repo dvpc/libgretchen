@@ -144,13 +144,13 @@ int main(int argc, char **argv) {
             fprintf(stderr,".. Error backend cannot start stream. \n");
             goto cleanup;
         }
-        grt_sigcatch_Init();
+        grtSigcatcher_Init();
         size_t asklen = 1<<13;//8192
         float* buffer = NULL;
         size_t nread;
-        while(!grt_sigcatch_ShouldTerminate()) {
+        while(!grtSigcatcher_ShouldTerminate()) {
             if (!grtBackend_isstreamactive(back)) {
-                grt_sigcatch_Set(1);
+                grtSigcatcher_Set(1);
                 break;
             }
             grtBackend_poll(back, asklen, &buffer, &nread);
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
         } 
         printf("\n");
         // cleanup rx
-        grt_sigcatch_Destroy();
+        grtSigcatcher_Destroy();
         grtBackend_stopstream(back, &error);
     }
 

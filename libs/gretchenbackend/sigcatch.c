@@ -5,15 +5,15 @@
 
 static sigcatcher_t* sigc;
 
-void grt_sigcatch_handler(int s) {
+void grtSigcatcher_handler(int s) {
     (void) s;
     if (sigc)
-        sigc->grt_sigcatch_should_terminate=1;
+        sigc->grtSigcatcher_should_terminate=1;
 }
 
-void grt_sigcatch_Init() {
+void grtSigcatcher_Init() {
     struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = grt_sigcatch_handler;
+    sigIntHandler.sa_handler = grtSigcatcher_handler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, NULL);
@@ -22,22 +22,22 @@ void grt_sigcatch_Init() {
     if (sigc==NULL)
         sigc = malloc(sizeof(sigcatcher_t));
     if (sigc)
-        sigc->grt_sigcatch_should_terminate=0;
+        sigc->grtSigcatcher_should_terminate=0;
 }
 
-int grt_sigcatch_ShouldTerminate() {
+int grtSigcatcher_ShouldTerminate() {
     if (sigc)
-        return sigc->grt_sigcatch_should_terminate==1;
+        return sigc->grtSigcatcher_should_terminate==1;
     else
         return 0;
 }
 
-void grt_sigcatch_Set(int i) {
+void grtSigcatcher_Set(int i) {
     if (sigc)
-        sigc->grt_sigcatch_should_terminate=i;
+        sigc->grtSigcatcher_should_terminate=i;
 }
 
-void grt_sigcatch_Destroy() {
+void grtSigcatcher_Destroy() {
     free(sigc);
     sigc=NULL;
 }

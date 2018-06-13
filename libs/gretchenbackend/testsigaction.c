@@ -16,16 +16,16 @@ int main(int argc, char** argv) {
     (void) argc;
     (void) argv;
 
-    grt_sigcatch_Init();
+    grtSigcatcher_Init();
 
-    while(!grt_sigcatch_ShouldTerminate()) {
-        printf("%i ", grt_sigcatch_ShouldTerminate());
+    while(!grtSigcatcher_ShouldTerminate()) {
+        printf("%i ", grtSigcatcher_ShouldTerminate());
         fflush(stdout);
         sleep(1);
     }
-    if (grt_sigcatch_ShouldTerminate()) {
+    if (grtSigcatcher_ShouldTerminate()) {
         printf("\nCleaning up....\n");
-        grt_sigcatch_Destroy();
+        grtSigcatcher_Destroy();
         exit(1);
     }
 

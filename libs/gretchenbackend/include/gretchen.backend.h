@@ -38,18 +38,18 @@ TODO: can it fail?? How to know?? Do we need to know anyway?
 #include <unistd.h>
 
 typedef struct {
-    int grt_sigcatch_should_terminate;
+    int grtSigcatcher_should_terminate;
 } sigcatcher_t;
 
-void grt_sigcatch_handler(int s);
+void grtSigcatcher_handler(int s);
 
-void grt_sigcatch_Init();
+void grtSigcatcher_Init();
 
-int grt_sigcatch_ShouldTerminate();
+int grtSigcatcher_ShouldTerminate();
 
-void grt_sigcatch_Set(int i);
+void grtSigcatcher_Set(int i);
 
-void grt_sigcatch_Destroy();
+void grtSigcatcher_Destroy();
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
