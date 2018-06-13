@@ -1,9 +1,10 @@
+```
   ____          _       _                
  / ___|_ __ ___| |_ ___| |__   ___ _ __  
 | |  _| '__/ _ \ __/ __| '_ \ / _ \ '_ \ 
 | |_| | | |  __/ || (__| | | |  __/ | | |
  \____|_|  \___|\__\___|_| |_|\___|_| |_|
-
+```
 The project consists of gretchen and gretchenbackend. The backend is 
 used in the shell app (gret.c) to demonstrate the usage of gretechen.
 
