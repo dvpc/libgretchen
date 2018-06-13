@@ -3,3 +3,4 @@ build/
 *.wav
 *.bin
 *.raw
+libs/external/
