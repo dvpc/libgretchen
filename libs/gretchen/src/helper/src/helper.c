@@ -216,7 +216,7 @@ void transmit_destroy(transmit_t* transm)
 
 void transmit_add(transmit_t* transm, unsigned int num, char* buffer, size_t buffer_len)
 {
-    if (num < 0 || num >= transm->max)
+    if (num >= transm->max)
         return;
     if (!transm->chunks[num].data) {
         transm->chunks[num].data = malloc(sizeof(char)*buffer_len+1);
