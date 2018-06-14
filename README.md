@@ -23,27 +23,27 @@ $ ./configure
 $ make
 $ make install (as sudo)
 ```
-Now you can copy the .a file and `fec.h` to `libs/external/libfec`.
+Now you can copy the `libfec.a` file and `fec.h` to `libs/external/libfec`.
 #### liquid sdr
 ```
 $ ./bootstrap (if repo is cloned)
 $ ./configure
 ```
 Next edit the generated `config.h` file and set 
-#define HAVE_FFTW3_H 0  
+`#define HAVE_FFTW3_H 0`  
 and 
-#define HAVE_LIBFFTW3F 0  
-to zero. To compile without fftw3 support. We don't need it.  
+`#define HAVE_LIBFFTW3F 0`  
+to zero. To compile without fftw3 support. We won't need it.  
 ```
 $ make 
 ```
-Next copy the libliquid.a and the headerfiles `liquid.h` and `liquid.internal.h` into `libs/external/liquid/`.
-In order to build gretchen simply run:
+Next copy the `libliquid.a` and the headerfiles `liquid.h` and `liquid.internal.h` into `libs/external/liquid/`.  
+To build gretchen simply run:
 ```
 $ sh runmake.sh
 or
 $ sh runmake_debug.sh
-```
+``` 
 
 ### osx
 #### libfec
