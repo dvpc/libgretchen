@@ -13,8 +13,8 @@ libfec          https://github.com/quiet/libfec
 liquid sdr      https://github.com/jgaeddert/liquid-dsp/  
 
 ## Building
-After building and copying the static libraries to `libs/external/LIBNAME` (see below),
-the project is simply build by running the runcmake.sh file (on posix and OSX).
+After building and copying the static libraries to `libs/external/LIBNAME` (see below), 
+the project is simply build by running the `runcmake.sh` file (on posix and OSX).
 
 ### posix
 #### libfec
@@ -38,16 +38,38 @@ to zero. To compile without fftw3 support. We won't need it.
 $ make 
 ```
 Next copy the `libliquid.a` and the headerfiles `liquid.h` and `liquid.internal.h` into `libs/external/liquid/`.  
-To build gretchen simply run:
-```
-$ sh runmake.sh
-or
-$ sh runmake_debug.sh
-``` 
+#### portaudio
+The portaudio package is available in most distributions.  
+If its not available, follow their instructions of how to install it systemwide. 
 
 ### osx
 #### libfec
+```
+$ ./configure --build=x86_64-apple-darwin
+$ make
+$ make install (as sudo)
+```
+Now you can copy the `libfec.a` file and `fec.h` to `libs/external/libfec`.
 #### liquid sdr
+```
+$ ./bootstrap (if repo is cloned)
+$ ./configure
+```
+Next edit the generated `config.h` file and set 
+`#define HAVE_FFTW3_H 0`  
+and 
+`#define HAVE_LIBFFTW3F 0`  
+to zero. To compile without fftw3 support. We won't need it.  
+```
+$ make 
+```
+Next copy the `libliquid.a` and the headerfiles `liquid.h` and `liquid.internal.h` into `libs/external/liquid/`.  
+#### portaudio
+Portaudio can be simply be installed system wide via homebrew `https://brew.sh`.  
+```
+$ brew install portaudio
+```
+
 ### windows
 
 
