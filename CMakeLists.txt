@@ -3,14 +3,20 @@ project(gretchen)
 include(CheckLibraryExists)
 include(FindPackageHandleStandardArgs)
 
-
-
+# Guess the platform
 # http://cmake.3232098.n2.nabble.com/How-to-check-the-operating-system-is-MacOSX-td7581659.html
-if(UNIX)
-# FIXME only glibc (linux,,,)
-# so we need platform branching anyways...
-# https://stackoverflow.com/questions/16006145/ld-undefined-reference-to-symbol-log2glibc-2-2-5#16006618
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(WINDOWS TRUE)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(LINUX TRUE)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+endif()
+
+
+if(LINUX)
+    # https://stackoverflow.com/questions/16006145/ld-undefined-reference-to-symbol-log2glibc-2-2-5#16006618
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
 endif()
 
 
