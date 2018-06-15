@@ -11,6 +11,8 @@ static grtModemOpt_t* _create_empty()
     grtModemOpt_t *opt = calloc(1, sizeof(grtModemOpt_t));
     grtFrameOpt_t *frame = calloc(1, sizeof(grtFrameOpt_t));
     grtModulatorOpt_t *mod = calloc(1, sizeof(grtModulatorOpt_t));
+    grtOfdmOpt_t *ofdm = calloc(1, sizeof(grtOfdmOpt_t));
+    opt->ofdmopt = ofdm;
     opt->frameopt = frame;
     opt->modopt = mod;
     // other defaults
@@ -30,6 +32,13 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
 {
     if (opt->frametype == frametype_unset)
         return false;
+    if (opt->frametype == frametype_ofdm)
+        if (opt->ofdmopt->num_subcarriers == 0 ||
+            opt->ofdmopt->cyclic_prefix_len == 0 ||               
+            opt->ofdmopt->taper_len == 0 ||      
+            opt->ofdmopt->left_band == 0 ||
+            opt->ofdmopt->right_band == 0)
+            return false;
     if (opt->frameopt->payload_len == 0 ||
         opt->frameopt->checksum_scheme == 0 ||
         opt->frameopt->inner_fec_scheme == 0 ||
@@ -73,6 +82,8 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
             free(opt->frameopt);
         if (opt->modopt)
             free(opt->modopt);
+        if (opt->ofdmopt)
+            free(opt->ofdmopt);
         free(opt);
     }
 }
@@ -180,12 +191,19 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
         {"rxcenter", required_argument, NULL, 'm'},
 
         {"flushlen", required_argument, NULL, 'n'},
+        
+        {"ofdmnsub", required_argument, NULL, '6'},
+        {"ofdmprefix", required_argument, NULL, '7'},
+        {"ofdmtaper", required_argument, NULL, '8'},
+        {"ofdmlband", required_argument, NULL, '9'},
+        {"ofdmrband", required_argument, NULL, 'a'},
+
         {NULL, 0, NULL, 0}
     };
 
     int ch;
     while ((ch = getopt_long(argc, argv, 
-                             "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:", 
+                             "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:6:7:8:9:a:", 
                              long_options, NULL)) != -1) {
         switch (ch) {
             case '0':
@@ -314,6 +332,42 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
             case 'n':
                 opt->modopt->flushlen_mod = atof(optarg);
                 break;
+            // OFDM options
+            case '6':
+                opt->ofdmopt->num_subcarriers = atoi(optarg);
+                if (opt->ofdmopt->num_subcarriers == 0) {
+                    printf("arg: error ofdm num subcarriers == 0!\n");
+                    inputvalid = false;
+                }
+                break;
+            case '7':
+                opt->ofdmopt->cyclic_prefix_len = atoi(optarg);
+                if (opt->ofdmopt->cyclic_prefix_len == 0) {
+                    printf("arg: error ofdm cyclic prefix len == 0!\n");
+                    inputvalid = false;
+                }
+                break;
+            case '8':
+                opt->ofdmopt->taper_len = atoi(optarg);
+                if (opt->ofdmopt->taper_len == 0) {
+                    printf("arg: error ofdm taper len == 0!\n");
+                    inputvalid = false;
+                }
+                break;
+            case '9':
+                opt->ofdmopt->left_band = atoi(optarg);
+                if (opt->ofdmopt->left_band == 0) {
+                    printf("arg: error ofdm left band == 0!\n");
+                    inputvalid = false;
+                }
+                break;
+            case 'a':
+                opt->ofdmopt->right_band = atoi(optarg);
+                if (opt->ofdmopt->right_band == 0) {
+                    printf("arg: error ofdm right band == 0!\n");
+                    inputvalid = false;
+                }
+                break;
             default:
                 // if any arg is not recognized all is false!
                 inputvalid = false;
@@ -350,6 +404,11 @@ void grtModemOpt_print(grtModemOpt_t* opt)
     printf("modexcbandw %f \n", opt->modopt->excess_bw);
     printf("modfreq %f \n", opt->modopt->center_rads);
     printf("modgain %f \n", opt->modopt->gain);
+    printf("ofdmnsub %u \n", opt->ofdmopt->num_subcarriers);
+    printf("ofdmprefix %u \n", opt->ofdmopt->cyclic_prefix_len);
+    printf("ofdmtaper %u \n", opt->ofdmopt->taper_len);
+    printf("ofdmlband %zu \n", opt->ofdmopt->left_band);
+    printf("ofdmrband %zu \n", opt->ofdmopt->right_band);
     printf("\n");
 }
 

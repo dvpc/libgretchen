@@ -315,7 +315,6 @@ void rxhandler_list(rxhandler_t* rxm, list_cb_t* callback, void* user);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // MODEM OPTIONS 
-
 typedef enum frametypes {
     frametype_unset,
     frametype_ofdm,
@@ -349,9 +348,18 @@ typedef struct {
 } grtModulatorOpt_t;
 
 typedef struct {
+    unsigned int num_subcarriers;
+    unsigned int cyclic_prefix_len;
+    unsigned int taper_len;
+    size_t left_band;
+    size_t right_band;
+} grtOfdmOpt_t;
+
+typedef struct {
     grtFrameType_t frametype;
     grtFrameOpt_t *frameopt;
     grtModulatorOpt_t *modopt;
+    grtOfdmOpt_t *ofdmopt;
 } grtModemOpt_t;
 
 grtModemOpt_t* grtModemOpt_create_default();
