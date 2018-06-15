@@ -3,9 +3,9 @@
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
---frmmod qpsk
+--frmmod sqam32
 --modshape kaiser
---modsampsym 9
+--modsampsym 19
 --modsymdelay 5
 --modexcbandw 0.05
 --modfreq 16200

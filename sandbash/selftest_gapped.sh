@@ -14,6 +14,7 @@ if [ ! -d "$OUTPUTDIR" ]; then
 fi
 OUTPUT_file="$OUTPUTDIR/tmp.output.bin"
 OUTPUT_filewav="$OUTPUTDIR/tmp.output.raw"
+OUTPUT_filewav2="$OUTPUTDIR/tmp.output2.raw"
 
 # TODO output is not written to file...
 # did not succeed in digging this out.
@@ -23,7 +24,7 @@ build/rec | tee $OUTPUT_filewav | build/dec $opt &
 
 # encoding and playing the file
 sleep 1
-cat $2 | build/enc $opt | build/play
+cat $2 | build/enc $opt | tee $OUTPUT_filewav2 | build/play
 
 # stop the recording process (moved to the background)
 #jobs
