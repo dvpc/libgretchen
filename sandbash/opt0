@@ -3,7 +3,7 @@
 --frmcrc crc8
 --frmifec none
 --frmofec none
---frmmod arb256opt 
+--frmmod arb256opt
 --modshape rrcos
 --modsampsym 14
 --modsymdelay 5
