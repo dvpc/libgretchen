@@ -3,11 +3,15 @@ project(gretchen)
 include(CheckLibraryExists)
 include(FindPackageHandleStandardArgs)
 
+
+
+# http://cmake.3232098.n2.nabble.com/How-to-check-the-operating-system-is-MacOSX-td7581659.html
+if(UNIX)
 # FIXME only glibc (linux,,,)
 # so we need platform branching anyways...
 # https://stackoverflow.com/questions/16006145/ld-undefined-reference-to-symbol-log2glibc-2-2-5#16006618
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
-
+endif()
 
 
 
