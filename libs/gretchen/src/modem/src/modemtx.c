@@ -149,7 +149,9 @@ size_t framegen_estimate_num_symbols(
                                       header,
                                       empty,
                                       len);
-            num_symbols = ofdmflexframegen_getframelen(mtx->frame.ofdm.framegen);
+            size_t blocks = ofdmflexframegen_getframelen(mtx->frame.ofdm.framegen);
+            num_symbols = blocks * mtx->opt.ofdmopt->num_subcarriers + 
+                    mtx->opt.ofdmopt->cyclic_prefix_len; 
             ofdmflexframegen_reset(mtx->frame.ofdm.framegen);
             break; 
         case frametype_modem:
@@ -246,17 +248,25 @@ static size_t framegen_write_symbols(
 {
     size_t written = 0;
     int gmsk_rem = 0;
+    int last_symbol=0;
     switch(mtx->frametype) {
         case frametype_ofdm:
-            return written;
+            while (!last_symbol) {
+                last_symbol = ofdmflexframegen_write(
+                                mtx->frame.ofdm.framegen,
+                                symbols,
+                                len);
+            }
+            return len;
         case frametype_modem:
             if (len > mtx->frame.modem.symbols_remaining)
                 written = mtx->frame.modem.symbols_remaining;
             else
                 written = len;
-            flexframegen_write_samples(mtx->frame.modem.framegen,
-                                       symbols,
-                                       written);
+            flexframegen_write_samples(
+                            mtx->frame.modem.framegen,
+                            symbols,
+                            written);
             mtx->frame.modem.symbols_remaining -= written;
             return written;
         case frametype_gmsk:
@@ -267,8 +277,9 @@ static size_t framegen_write_symbols(
                 written = len;
             size_t idx;
             for (idx=0; idx < written; idx+=mtx->frame.gmsk.stride) {
-                int done = gmskframegen_write_samples(mtx->frame.gmsk.framegen,
-                                                      symbols + idx);
+                int done = gmskframegen_write_samples(
+                                mtx->frame.gmsk.framegen,
+                                symbols + idx);
                 if (done)
                     break; 
             }
