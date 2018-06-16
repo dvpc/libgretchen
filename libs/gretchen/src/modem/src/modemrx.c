@@ -3,7 +3,7 @@
 static int mrx_framesync_callback();
 static void mrx_modem_create();
 static void mrx_gmsk_create();
-
+static void mrx_ofdm_create();
 
 grtModemRX_t *grtModemRX_create(
                 const grtModemOpt_t *opt,
@@ -20,6 +20,7 @@ grtModemRX_t *grtModemRX_create(
     mrx->fgprops.mod_scheme = opt->frameopt->mod_scheme;
     switch (mrx->frametype) {
         case frametype_ofdm:
+            mrx_ofdm_create(mrx);
             break;
         case frametype_modem:
             mrx_modem_create(mrx);
@@ -58,13 +59,13 @@ grtModemRX_t *grtModemRX_create(
     return mrx;
 }
 
-void grtModemRX_destroy(
-                grtModemRX_t *mrx)
+void grtModemRX_destroy(grtModemRX_t *mrx)
 {
     if (!mrx)
         return;
     switch (mrx->frametype) {
         case frametype_ofdm:
+            ofdmflexframesync_destroy(mrx->frame.ofdm.framesync);
             break;
         case frametype_modem:
             flexframesync_destroy(mrx->frame.modem.framesync);
@@ -81,14 +82,12 @@ void grtModemRX_destroy(
     free(mrx);
 }
 
-void grtModemRX_flush(
-                grtModemRX_t *mrx)
+void grtModemRX_flush(grtModemRX_t *mrx)
 {
     mrx->flush = true;
 }
 
-void grtModemRX_reset(
-                grtModemRX_t *mrx)
+void grtModemRX_reset(grtModemRX_t *mrx)
 {
     mrx->flush = false;
     cbufferf_reset(mrx->consume_cb);
@@ -129,6 +128,9 @@ size_t grtModemRX_consume(
 
         switch(mrx->frametype) {
             case frametype_ofdm:
+                ofdmflexframesync_execute(mrx->frame.ofdm.framesync,
+                                          mrx->symbolbuf,
+                                          symbols);
                 break;
             case frametype_modem:
                 flexframesync_execute(mrx->frame.modem.framesync,
@@ -197,8 +199,7 @@ static int mrx_framesync_callback(
     return 0;
 }
 
-static void mrx_modem_create(
-                grtModemRX_t *mrx)
+static void mrx_modem_create(grtModemRX_t *mrx)
 {
     modem_decoder_t modem;
     modem.framesync = flexframesync_create(mrx_framesync_callback, mrx);
@@ -208,11 +209,28 @@ static void mrx_modem_create(
     mrx->frame.modem = modem;
 }
 
-static void mrx_gmsk_create(
-                grtModemRX_t *mrx)
+static void mrx_gmsk_create(grtModemRX_t *mrx)
 {
     gmsk_decoder_t gmsk;
     gmsk.framesync = gmskframesync_create(mrx_framesync_callback, mrx);
     gmskframesync_set_header_len(gmsk.framesync, MODEM_HEADER_LEN);
     mrx->frame.gmsk = gmsk;
 }
+
+static void mrx_ofdm_create(grtModemRX_t *mrx)
+{
+    ofdm_decoder_t ofdm;
+    ofdm.framesync = ofdmflexframesync_create(
+                    mrx->opt.ofdmopt->num_subcarriers,
+                    mrx->opt.ofdmopt->cyclic_prefix_len,
+                    mrx->opt.ofdmopt->taper_len,
+                    NULL,
+                    mrx_framesync_callback, 
+                    NULL 
+                    ); 
+    ofdmflexframesync_set_header_len(ofdm.framesync, MODEM_HEADER_LEN);
+    mrx->frame.ofdm = ofdm;
+}
+
+
+
