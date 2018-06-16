@@ -6,7 +6,7 @@ static size_t framegen_write_symbols();
 static void process_frames();
 static void mtx_modem_create();
 static void mtx_gmsk_create();
-
+static void mtx_ofdm_create();
 
 grtModemTX_t *grtModemTX_create(
                 const grtModemOpt_t *opt,
@@ -22,6 +22,7 @@ grtModemTX_t *grtModemTX_create(
     mtx->fgprops.mod_scheme = opt->frameopt->mod_scheme;
     switch (mtx->frametype) {
         case frametype_ofdm:
+            mtx_ofdm_create(mtx);
             break; 
         case frametype_modem:
             mtx_modem_create(mtx);
@@ -63,13 +64,13 @@ grtModemTX_t *grtModemTX_create(
     return mtx;
 }
 
-void grtModemTX_destroy(
-                grtModemTX_t *mtx)
+void grtModemTX_destroy(grtModemTX_t *mtx)
 {
     if (!mtx)
         return;
     switch (mtx->frametype) {
         case frametype_ofdm:
+            ofdmflexframegen_destroy(mtx->frame.ofdm.framegen);
             break; 
         case frametype_modem:
             flexframegen_destroy(mtx->frame.modem.framegen);
@@ -97,14 +98,12 @@ void grtModemTX_setheaderinfo(
     mtx->frame_nummax = filesize/mtx->framelen+1;
 } 
 
-void grtModemTX_enable_flush(
-                grtModemTX_t *mtx)
+void grtModemTX_enable_flush(grtModemTX_t *mtx)
 {
     mtx->flush = true;
 }
 
-void grtModemTX_reset(
-                grtModemTX_t *mtx)
+void grtModemTX_reset(grtModemTX_t *mtx)
 {
     mtx->flush = false;
     mtx->hash = 0;
@@ -146,6 +145,12 @@ size_t framegen_estimate_num_symbols(
     size_t num_symbols = 0;
     switch(mtx->frametype) {
         case frametype_ofdm:
+            ofdmflexframegen_assemble(mtx->frame.ofdm.framegen, 
+                                      header,
+                                      empty,
+                                      len);
+            num_symbols = ofdmflexframegen_getframelen(mtx->frame.ofdm.framegen);
+            ofdmflexframegen_reset(mtx->frame.ofdm.framegen);
             break; 
         case frametype_modem:
             flexframegen_assemble(mtx->frame.modem.framegen, 
@@ -178,7 +183,7 @@ static int framegen_is_assembled(
 {
     switch(mtx->frametype) {
         case frametype_ofdm:
-            return 0;
+            return ofdmflexframegen_is_assembled(mtx->frame.ofdm.framegen);
         case frametype_modem:
             return flexframegen_is_assembled(mtx->frame.modem.framegen);
         case frametype_gmsk:
@@ -203,6 +208,11 @@ static void framegen_assemble(
                     mtx->frame_nummax); 
     switch(mtx->frametype) {
         case frametype_ofdm:
+            ofdmflexframegen_assemble(mtx->frame.ofdm.framegen,
+                                      header,
+                                      readframe,
+                                      len);
+            mtx->frame_num ++;
             break; 
         case frametype_modem:
             flexframegen_assemble(mtx->frame.modem.framegen, 
@@ -268,8 +278,7 @@ static size_t framegen_write_symbols(
     }
 }
 
-static void process_frames(
-                grtModemTX_t *mtx)
+static void process_frames(grtModemTX_t *mtx)
 {
     size_t cons_want = mtx->framelen;
     size_t frames_want = mtx->framelen_symbols;
@@ -310,8 +319,7 @@ static void process_frames(
     }
 }
 
-static void mtx_modem_create(
-                grtModemTX_t *mtx)
+static void mtx_modem_create(grtModemTX_t *mtx)
 {
     modem_encoder_t modem;
     modem.framegen = flexframegen_create(&mtx->fgprops);
@@ -320,8 +328,7 @@ static void mtx_modem_create(
     mtx->frame.modem = modem;
 }
 
-static void mtx_gmsk_create(
-                grtModemTX_t *mtx) 
+static void mtx_gmsk_create(grtModemTX_t *mtx) 
 {
     gmsk_encoder_t gmsk;
     gmsk.framegen = gmskframegen_create();
@@ -330,4 +337,21 @@ static void mtx_gmsk_create(
     mtx->frame.gmsk = gmsk;
 }
 
-
+static void mtx_ofdm_create(grtModemTX_t *mtx)
+{
+    ofdmflexframegenprops_s fgprops;
+    ofdmflexframegenprops_init_default(&fgprops);
+    fgprops.check           = mtx->fgprops.check;
+    fgprops.fec0            = mtx->fgprops.fec0;
+    fgprops.fec1            = mtx->fgprops.fec1;
+    fgprops.mod_scheme      = mtx->fgprops.mod_scheme;
+    ofdm_encoder_t ofdm;
+    ofdm.framegen = ofdmflexframegen_create(
+                    mtx->opt.ofdmopt->num_subcarriers,
+                    mtx->opt.ofdmopt->cyclic_prefix_len,
+                    mtx->opt.ofdmopt->taper_len,
+                    NULL,
+                    &fgprops); 
+    ofdmflexframegen_set_header_len(ofdm.framegen, MODEM_HEADER_LEN);
+    mtx->frame.ofdm = ofdm;
+}

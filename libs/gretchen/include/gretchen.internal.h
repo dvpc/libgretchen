@@ -412,6 +412,10 @@ typedef struct {
 } gmsk_decoder_t;
 
 typedef struct {
+    ofdmflexframesync framesync;
+} ofdm_decoder_t;
+
+typedef struct {
     bool flush;
     grtFrameType_t frametype;
 
@@ -423,6 +427,7 @@ typedef struct {
     union {
         modem_decoder_t modem;
         gmsk_decoder_t gmsk;
+        ofdm_decoder_t ofdm;
     } frame;
     grtModulatorRX_t *dem;
 
@@ -485,6 +490,10 @@ typedef struct {
 } gmsk_encoder_t;
 
 typedef struct {
+    ofdmflexframegen framegen;
+} ofdm_encoder_t;
+
+typedef struct {
     bool flush;
     grtModemOpt_t opt;
     grtFrameType_t frametype;
@@ -495,6 +504,7 @@ typedef struct {
     union {
         modem_encoder_t modem;
         gmsk_encoder_t gmsk;
+        ofdm_encoder_t ofdm;
     } frame;
     grtModulatorTX_t *mod;
 
