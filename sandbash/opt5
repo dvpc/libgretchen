@@ -9,7 +9,7 @@
 --modsymdelay 5
 --modexcbandw 0.15
 --modfreq 16200
---modgain 0.35
+--modgain 0.15
 --txorder 6  
 --txcutoff .25
 --txcenter .45

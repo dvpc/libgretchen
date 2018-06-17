@@ -462,6 +462,7 @@ typedef struct {
     unsigned int samples_per_symbol;
     float gain;
     size_t flushlen;
+    iirfilt_crcf dcfilter; 
 } grtModulatorTX_t;
 
 grtModulatorTX_t *grtModulatorTX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, float gain, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, unsigned int flushlen_mod);

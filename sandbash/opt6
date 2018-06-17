@@ -5,7 +5,7 @@
 --frmofec h84
 --frmmod dpsk128
 --modshape arkaiser
---modsampsym 19
+--modsampsym 29
 --modsymdelay 5
 --modexcbandw 0.01
 --modfreq 2200
