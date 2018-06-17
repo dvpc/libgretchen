@@ -3,7 +3,7 @@
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
---frmmod dpsk128 
+--frmmod dpsk128
 --modshape arkaiser
 --modsampsym 19
 --modsymdelay 5
