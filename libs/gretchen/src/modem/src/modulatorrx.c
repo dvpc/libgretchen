@@ -37,9 +37,9 @@ grtModulatorRX_t *grtModulatorRX_create(
     agc_rrrf_set_bandwidth(dem->agc, 0.25f);
     dem->eqlms = eqlms_cccf_create_rnyquist(
                     LIQUID_FIRFILT_RRC,
-                    samples_per_symbol, 
+                    2,//samples_per_symbol, 
                     3, 
-                    0.2f, 
+                    0.02f, 
                     0.0f);
     eqlms_cccf_set_bw(dem->eqlms, 0.08f);
     return dem;
