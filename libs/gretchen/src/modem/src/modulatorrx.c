@@ -78,10 +78,10 @@ size_t grtModulatorRX_recv(
                             dem->nco,
                             samples[i+j],
                             &mixer_out[j]);
-            eqlms_cccf_push(dem->eqlms, mixer_out[j]);
-            eqlms_cccf_execute(dem->eqlms, &d_hat);
-            eqlms_cccf_step_blind(dem->eqlms, d_hat);
-            mixer_out[j] = d_hat;
+            /*eqlms_cccf_push(dem->eqlms, mixer_out[j]);*/
+            /*eqlms_cccf_execute(dem->eqlms, &d_hat);*/
+            /*eqlms_cccf_step_blind(dem->eqlms, d_hat);*/
+            /*mixer_out[j] = d_hat;*/
             nco_crcf_step(dem->nco);
         }
         int idx = i/dem->samples_per_symbol;
