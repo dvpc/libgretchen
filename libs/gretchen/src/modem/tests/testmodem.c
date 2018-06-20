@@ -72,9 +72,8 @@ int main(int argc, char** argv) {
     /*float center_rads = 0.4f * 2*M_PI;//18200;*/
     float gain = 0.15;
     unsigned int flushlen_mod = 5;
-    unsigned int modscheme = LIQUID_MODEM_PSK2;
     grtModulatorTX_t *mod = grtModulatorTX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, gain, 6, .25f, .45f, 1.0f, 60.0f, flushlen_mod);
-    grtModulatorRX_t *dem = grtModulatorRX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, 7, .3f, .36f, 1.0f, 60.0f, modscheme);
+    grtModulatorRX_t *dem = grtModulatorRX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, 7, .3f, .36f, 1.0f, 60.0f);
 
 
 

@@ -44,8 +44,7 @@ grtModemRX_t *grtModemRX_create(
                               opt->modopt->rxflt_cutoff_frq,
                               opt->modopt->rxflt_center_frq,
                               1.0f,
-                              60.0f,
-                              opt->frameopt->mod_scheme);
+                              60.0f);
     // FIXME buffer size
     size_t symbolbuf_len = mrx->framelen*4;
     mrx->symbolbuf = malloc(symbolbuf_len*sizeof(float complex));

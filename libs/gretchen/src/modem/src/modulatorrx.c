@@ -10,8 +10,7 @@ grtModulatorRX_t *grtModulatorRX_create(
                 float flt_cutoff_frq,
                 float flt_center_frq,
                 float flt_passband_ripple,
-                float flt_stopband_ripple,
-                unsigned int mod_scheme)
+                float flt_stopband_ripple)
 {
     grtModulatorRX_t *dem = malloc(sizeof(grtModulatorRX_t));
     dem->nco = nco_crcf_create(LIQUID_NCO);
@@ -39,10 +38,6 @@ grtModulatorRX_t *grtModulatorRX_create(
     agc_rrrf_squelch_enable(dem->agc);
     agc_rrrf_squelch_set_threshold(dem->agc, -50);
     agc_rrrf_squelch_set_timeout(dem->agc, 100);
-
-    dem->symsync = symsync_rrrf_create_rnyquist(shape, samples_per_symbol, symbol_delay, excess_bw, 16);
-    /*symsync_rrrf_set_output_rate(dem->symsync, 2);*/
-
     return dem;
 }
 
@@ -55,7 +50,6 @@ void grtModulatorRX_destroy(
     firdecim_crcf_destroy(dem->decim);
     iirfilt_rrrf_destroy(dem->filter_rx);
     agc_rrrf_destroy(dem->agc);
-    symsync_rrrf_destroy(dem->symsync);
     free(dem);
 }
 
@@ -65,31 +59,6 @@ size_t grtModulatorRX_recv(
                 size_t samples_len, 
                 float complex *symbols)
 {
-    /*size_t processed = 0;*/
-    /*float complex mixer_out[dem->samples_per_symbol];*/
-    /*float buf[2];*/
-    /*size_t ncoproc = 0;*/
-    /*for(size_t i=0; i<samples_len; i++) {*/
-        /*float v;*/
-        /*agc_rrrf_execute(dem->agc, samples[i], &v);*/
-        /*unsigned int nw;*/
-        /*symsync_rrrf_execute(dem->symsync, &v, 1, buf, &nw);*/
-        /*for (size_t j=0; j<nw; j++) {*/
-            /*nco_crcf_mix_down(dem->nco, buf[j], &mixer_out[ncoproc]);*/
-        
-            /*nco_crcf_step(dem->nco);*/
-            /*ncoproc ++;*/
-        /*}*/
-        /*if (nw!=0) {*/
-            /*firdecim_crcf_execute(dem->decim, &mixer_out[0], &symbols[processed]);*/
-            /*processed++;*/
-            /*ncoproc = 0;*/
-        /*}*/
-    /*}*/
-    /*fprintf(stderr, "%zu ", processed);*/
-    /*return processed;*/
-
-
     size_t processed = 0;
     float complex mixer_out[dem->samples_per_symbol];
     for(size_t i=0; i<samples_len; i+=dem->samples_per_symbol) {
