@@ -39,7 +39,7 @@ grtModulatorRX_t *grtModulatorRX_create(
                     LIQUID_FIRFILT_RRC,
                     samples_per_symbol, 
                     3, 
-                    excess_bw, 
+                    0.2f, 
                     0.0f);
     eqlms_cccf_set_bw(dem->eqlms, 0.08f);
     return dem;
@@ -81,8 +81,8 @@ size_t grtModulatorRX_recv(
             eqlms_cccf_push(dem->eqlms, mixer_out[j]);
             eqlms_cccf_execute(dem->eqlms, &d_hat);
             eqlms_cccf_step_blind(dem->eqlms, d_hat);
-            nco_crcf_step(dem->nco);
             mixer_out[j] = d_hat;
+            nco_crcf_step(dem->nco);
         }
         int idx = i/dem->samples_per_symbol;
         firdecim_crcf_execute(
