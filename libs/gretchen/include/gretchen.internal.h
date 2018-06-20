@@ -386,9 +386,11 @@ typedef struct {
     firdecim_crcf decim;
     iirfilt_rrrf filter_rx;
     unsigned int samples_per_symbol;
+    agc_rrrf agc;
+    symsync_rrrf symsync;
 } grtModulatorRX_t;
 
-grtModulatorRX_t *grtModulatorRX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
+grtModulatorRX_t *grtModulatorRX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, unsigned int mod_scheme);
 
 void grtModulatorRX_destroy(grtModulatorRX_t *dem);
 

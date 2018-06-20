@@ -44,8 +44,8 @@ grtModemRX_t *grtModemRX_create(
                               opt->modopt->rxflt_cutoff_frq,
                               opt->modopt->rxflt_center_frq,
                               1.0f,
-                              60.0f);
-
+                              60.0f,
+                              opt->frameopt->mod_scheme);
     // FIXME buffer size
     size_t symbolbuf_len = mrx->framelen*4;
     mrx->symbolbuf = malloc(symbolbuf_len*sizeof(float complex));
@@ -120,9 +120,9 @@ size_t grtModemRX_consume(
         cbufferf_release(mrx->consume_cb, nread);
 
         size_t symbols = grtModulatorRX_recv(mrx->dem,
-                                      samples,
-                                      nread,
-                                      mrx->symbolbuf);
+                                             samples,
+                                             nread,
+                                             mrx->symbolbuf);
         if (symbols == 0)
             break;
 
@@ -226,12 +226,10 @@ static void mrx_ofdm_create(grtModemRX_t *mrx)
                     mrx->opt.ofdmopt->taper_len,
                     NULL,
                     mrx_framesync_callback, 
-                    NULL 
-                    ); 
+                    mrx); 
     ofdmflexframesync_set_header_len(ofdm.framesync, MODEM_HEADER_LEN);
     ofdmflexframesync_decode_header_soft(ofdm.framesync, 1);                                                                                                                               
     ofdmflexframesync_decode_payload_soft(ofdm.framesync, 1);
-
     mrx->frame.ofdm = ofdm;
 }
 

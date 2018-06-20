@@ -4,7 +4,7 @@
 --frmifec secded7264
 --frmofec h84
 --frmmod qpsk
---modshape pm
+--modshape kaiser
 --modsampsym 9
 --modsymdelay 5
 --modexcbandw 0.75

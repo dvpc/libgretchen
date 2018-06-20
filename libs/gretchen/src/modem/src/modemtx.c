@@ -180,8 +180,7 @@ size_t framegen_estimate_num_symbols(
     return num_symbols;
 }
 
-static int framegen_is_assembled(
-                grtModemTX_t *mtx)
+static int framegen_is_assembled(grtModemTX_t *mtx)
 {
     switch(mtx->frametype) {
         case frametype_ofdm:
@@ -318,9 +317,9 @@ static void process_frames(grtModemTX_t *mtx)
         size_t symwrit = framegen_write_symbols(mtx, symbols, frames_want);
         // 3 modulate symbols
         size_t smpwrit = grtModulatorTX_recv(mtx->mod, 
-                                      symbols, 
-                                      symwrit, 
-                                      mtx->buf_samples);
+                                             symbols, 
+                                             symwrit, 
+                                             mtx->buf_samples);
         size_t flushwrit = grtModulatorTX_flush(mtx->mod, mtx->buf_flush);
         // 4 call callback method with data
         if (mtx->emit_callback) {

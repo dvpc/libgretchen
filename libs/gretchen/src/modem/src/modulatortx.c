@@ -75,11 +75,11 @@ size_t grtModulatorTX_recv(
                         mod->nco, 
                         v1, 
                         &v1);
-            iirfilt_crcf_execute(
-                        mod->filter_tx, 
-                        v1, 
-                        &v1);
-            iirfilt_crcf_execute(mod->dcfilter, v1, &v1);
+            /*iirfilt_crcf_execute(*/
+                        /*mod->filter_tx, */
+                        /*v1, */
+                        /*&v1);*/
+            /*iirfilt_crcf_execute(mod->dcfilter, v1, &v1);*/
             samples[i*mod->samples_per_symbol+j] = crealf(v1)*mod->gain; 
             nco_crcf_step(mod->nco);
             processed++;
