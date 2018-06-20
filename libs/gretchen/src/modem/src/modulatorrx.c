@@ -35,9 +35,9 @@ grtModulatorRX_t *grtModulatorRX_create(
                     flt_stopband_ripple);
     dem->agc = agc_rrrf_create();
     agc_rrrf_set_bandwidth(dem->agc, 0.25f);
-    agc_rrrf_squelch_enable(dem->agc);
-    agc_rrrf_squelch_set_threshold(dem->agc, -50);
-    agc_rrrf_squelch_set_timeout(dem->agc, 100);
+    /*agc_rrrf_squelch_enable(dem->agc);*/
+    /*agc_rrrf_squelch_set_threshold(dem->agc, -50);*/
+    /*agc_rrrf_squelch_set_timeout(dem->agc, 100);*/
     return dem;
 }
 
