@@ -24,20 +24,24 @@ grtModulatorRX_t *grtModulatorRX_create(
                     excess_bw,
                     0);
     dem->samples_per_symbol = samples_per_symbol;
-    dem->filter_rx = iirfilt_rrrf_create_prototype(
-                    LIQUID_IIRDES_BUTTER,
-                    LIQUID_IIRDES_BANDPASS,
-                    LIQUID_IIRDES_SOS,
-                    flt_order,
-                    flt_cutoff_frq,
-                    flt_center_frq,
-                    flt_passband_ripple,
-                    flt_stopband_ripple);
+    /*dem->filter_rx = iirfilt_rrrf_create_prototype(*/
+                    /*LIQUID_IIRDES_BUTTER,*/
+                    /*LIQUID_IIRDES_BANDPASS,*/
+                    /*LIQUID_IIRDES_SOS,*/
+                    /*flt_order,*/
+                    /*flt_cutoff_frq,*/
+                    /*flt_center_frq,*/
+                    /*flt_passband_ripple,*/
+                    /*flt_stopband_ripple);*/
     dem->agc = agc_rrrf_create();
     agc_rrrf_set_bandwidth(dem->agc, 0.25f);
-    /*agc_rrrf_squelch_enable(dem->agc);*/
-    /*agc_rrrf_squelch_set_threshold(dem->agc, -50);*/
-    /*agc_rrrf_squelch_set_timeout(dem->agc, 100);*/
+    dem->eqlms = eqlms_cccf_create_rnyquist(
+                    LIQUID_FIRFILT_RRC,
+                    samples_per_symbol, 
+                    3, 
+                    excess_bw, 
+                    0.0f);
+    eqlms_cccf_set_bw(dem->eqlms, 0.08f);
     return dem;
 }
 
@@ -48,8 +52,9 @@ void grtModulatorRX_destroy(
         return;
     nco_crcf_destroy(dem->nco);
     firdecim_crcf_destroy(dem->decim);
-    iirfilt_rrrf_destroy(dem->filter_rx);
+    /*iirfilt_rrrf_destroy(dem->filter_rx);*/
     agc_rrrf_destroy(dem->agc);
+    eqlms_cccf_destroy(dem->eqlms);
     free(dem);
 }
 
@@ -61,6 +66,7 @@ size_t grtModulatorRX_recv(
 {
     size_t processed = 0;
     float complex mixer_out[dem->samples_per_symbol];
+    float complex d_hat = 0.0f;
     for(size_t i=0; i<samples_len; i+=dem->samples_per_symbol) {
         for(size_t j=0; j<dem->samples_per_symbol; j++) {
             //iirfilt_rrrf_execute(
@@ -72,7 +78,11 @@ size_t grtModulatorRX_recv(
                             dem->nco,
                             samples[i+j],
                             &mixer_out[j]);
+            eqlms_cccf_push(dem->eqlms, mixer_out[j]);
+            eqlms_cccf_execute(dem->eqlms, &d_hat);
+            eqlms_cccf_step_blind(dem->eqlms, d_hat);
             nco_crcf_step(dem->nco);
+            mixer_out[j] = d_hat;
         }
         int idx = i/dem->samples_per_symbol;
         firdecim_crcf_execute(

@@ -29,15 +29,15 @@ grtModulatorTX_t *grtModulatorTX_create(
     mod->samples_per_symbol = samples_per_symbol;
     mod->gain = gain;
     mod->flushlen = samples_per_symbol*flushlen_mod*symbol_delay;
-    mod->filter_tx = iirfilt_crcf_create_prototype(
-                    LIQUID_IIRDES_BUTTER,
-                    LIQUID_IIRDES_BANDPASS,
-                    LIQUID_IIRDES_SOS,
-                    flt_order,
-                    flt_cutoff_frq,
-                    flt_center_frq,
-                    flt_passband_ripple,
-                    flt_stopband_ripple);
+    /*mod->filter_tx = iirfilt_crcf_create_prototype(*/
+                    /*LIQUID_IIRDES_BUTTER,*/
+                    /*LIQUID_IIRDES_BANDPASS,*/
+                    /*LIQUID_IIRDES_SOS,*/
+                    /*flt_order,*/
+                    /*flt_cutoff_frq,*/
+                    /*flt_center_frq,*/
+                    /*flt_passband_ripple,*/
+                    /*flt_stopband_ripple);*/
 
     mod->dcfilter = iirfilt_crcf_create_dc_blocker(.99);
 
@@ -51,7 +51,7 @@ void grtModulatorTX_destroy(
         return;
     nco_crcf_destroy(mod->nco);
     firinterp_crcf_destroy(mod->interp);
-    iirfilt_crcf_destroy(mod->filter_tx);
+    /*iirfilt_crcf_destroy(mod->filter_tx);*/
     iirfilt_crcf_destroy(mod->dcfilter);
     free(mod);
 }
