@@ -24,15 +24,15 @@ grtModulatorRX_t *grtModulatorRX_create(
                     excess_bw,
                     0);
     dem->samples_per_symbol = samples_per_symbol;
-    /*dem->filter_rx = iirfilt_rrrf_create_prototype(*/
-                    /*LIQUID_IIRDES_BUTTER,*/
-                    /*LIQUID_IIRDES_BANDPASS,*/
-                    /*LIQUID_IIRDES_SOS,*/
-                    /*flt_order,*/
-                    /*flt_cutoff_frq,*/
-                    /*flt_center_frq,*/
-                    /*flt_passband_ripple,*/
-                    /*flt_stopband_ripple);*/
+    dem->filter_rx = iirfilt_rrrf_create_prototype(
+                    LIQUID_IIRDES_BUTTER,
+                    LIQUID_IIRDES_BANDPASS,
+                    LIQUID_IIRDES_SOS,
+                    flt_order,
+                    flt_cutoff_frq,
+                    flt_center_frq,
+                    flt_passband_ripple,
+                    flt_stopband_ripple);
     dem->agc = agc_rrrf_create();
     agc_rrrf_set_bandwidth(dem->agc, 0.25f);
     return dem;
@@ -45,7 +45,7 @@ void grtModulatorRX_destroy(
         return;
     nco_crcf_destroy(dem->nco);
     firdecim_crcf_destroy(dem->decim);
-    /*iirfilt_rrrf_destroy(dem->filter_rx);*/
+    iirfilt_rrrf_destroy(dem->filter_rx);
     agc_rrrf_destroy(dem->agc);
     free(dem);
 }
@@ -60,13 +60,13 @@ size_t grtModulatorRX_recv(
     float complex mixer_out[dem->samples_per_symbol];
     for(size_t i=0; i<samples_len; i+=dem->samples_per_symbol) {
         for(size_t j=0; j<dem->samples_per_symbol; j++) {
-            //iirfilt_rrrf_execute(
-            //                dem->filter_rx, 
-            //                samples[i+j],
-            //                &samples[i+j]);
             agc_rrrf_execute(
                             dem->agc,
                             samples[i+j], 
+                            &samples[i+j]);
+            iirfilt_rrrf_execute(
+                            dem->filter_rx, 
+                            samples[i+j],
                             &samples[i+j]);
             nco_crcf_mix_down(
                             dem->nco,

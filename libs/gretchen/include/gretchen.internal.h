@@ -384,7 +384,7 @@ void grtModemOpt_print(grtModemOpt_t* opt);
 typedef struct {
     nco_crcf nco;
     firdecim_crcf decim;
-    //iirfilt_rrrf filter_rx;
+    iirfilt_rrrf filter_rx;
     unsigned int samples_per_symbol;
     agc_rrrf agc;
 } grtModulatorRX_t;
