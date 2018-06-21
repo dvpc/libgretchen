@@ -9,4 +9,4 @@
 --modsymdelay 5
 --modexcbandw 0.75
 --modfreq 16200
---modgain 0.15
+--modgain 0.05
