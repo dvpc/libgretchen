@@ -247,15 +247,19 @@ static size_t framegen_write_symbols(
 {
     size_t written = 0;
     int gmsk_rem = 0;
-    int last_symbol=0;
+    /*int last_symbol=0;*/
     switch(mtx->frametype) {
         case frametype_ofdm:
-            while (!last_symbol) {
-                last_symbol = ofdmflexframegen_write(
+            /*while (!last_symbol) {*/
+                /*last_symbol = ofdmflexframegen_write(*/
+                                /*mtx->frame.ofdm.framegen,*/
+                                /*symbols,*/
+                                /*len);*/
+            /*}*/
+            ofdmflexframegen_write(
                                 mtx->frame.ofdm.framegen,
                                 symbols,
                                 len);
-            }
             return len;
         case frametype_modem:
             if (len > mtx->frame.modem.symbols_remaining)
@@ -324,7 +328,8 @@ static void process_frames(grtModemTX_t *mtx)
         // 4 call callback method with data
         if (mtx->emit_callback) {
             mtx->emit_callback(smpwrit, mtx->buf_samples, mtx->emit_callback_userdata);
-            mtx->emit_callback(flushwrit, mtx->buf_flush, mtx->emit_callback_userdata);
+            if (mtx->frametype!=frametype_ofdm)
+                mtx->emit_callback(flushwrit, mtx->buf_flush, mtx->emit_callback_userdata);
         }
     }
 }
