@@ -13,7 +13,7 @@ grtModulatorRX_t *grtModulatorRX_create(
                 float flt_stopband_ripple)
 {
     grtModulatorRX_t *dem = malloc(sizeof(grtModulatorRX_t));
-    dem->nco = nco_crcf_create(LIQUID_NCO);
+    dem->nco = nco_crcf_create(LIQUID_VCO);
     nco_crcf_set_frequency(dem->nco,
                            center_rads);
     nco_crcf_set_phase(dem->nco, 0.0f);
@@ -35,6 +35,9 @@ grtModulatorRX_t *grtModulatorRX_create(
                     flt_stopband_ripple);
     dem->agc = agc_rrrf_create();
     agc_rrrf_set_bandwidth(dem->agc, 0.25f);
+
+    dem->dcfilter = iirfilt_crcf_create_dc_blocker(.99);
+
     return dem;
 }
 
@@ -47,6 +50,7 @@ void grtModulatorRX_destroy(
     firdecim_crcf_destroy(dem->decim);
     iirfilt_rrrf_destroy(dem->filter_rx);
     agc_rrrf_destroy(dem->agc);
+    iirfilt_crcf_destroy(dem->dcfilter);
     free(dem);
 }
 
@@ -79,6 +83,10 @@ size_t grtModulatorRX_recv(
                             dem->decim,
                             &mixer_out[0],
                             &symbols[idx]);
+        /*iirfilt_crcf_execute(*/
+                            /*dem->dcfilter, */
+                            /*symbols[idx], */
+                            /*&mixer_out[idx]);*/
         symbols[idx] /= dem->samples_per_symbol;
         processed++;
     }

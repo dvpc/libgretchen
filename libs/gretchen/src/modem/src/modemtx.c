@@ -247,15 +247,8 @@ static size_t framegen_write_symbols(
 {
     size_t written = 0;
     int gmsk_rem = 0;
-    /*int last_symbol=0;*/
     switch(mtx->frametype) {
         case frametype_ofdm:
-            /*while (!last_symbol) {*/
-                /*last_symbol = ofdmflexframegen_write(*/
-                                /*mtx->frame.ofdm.framegen,*/
-                                /*symbols,*/
-                                /*len);*/
-            /*}*/
             ofdmflexframegen_write(
                                 mtx->frame.ofdm.framegen,
                                 symbols,

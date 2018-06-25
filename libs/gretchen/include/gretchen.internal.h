@@ -14,10 +14,6 @@
  * Simple ring buffer with memcpy
  * not thread safe!
  * ugly and simple :D
- *
- * NOTE!!!!!!! about memcpy
- * Some notes on memcpy
- * http://brnz.org/hbr/?p=1094
  */
 #ifndef ___RINGBUFFER_U___
 #define ___RINGBUFFER_U___
@@ -387,6 +383,7 @@ typedef struct {
     iirfilt_rrrf filter_rx;
     unsigned int samples_per_symbol;
     agc_rrrf agc;
+    iirfilt_crcf dcfilter; 
 } grtModulatorRX_t;
 
 grtModulatorRX_t *grtModulatorRX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
@@ -463,7 +460,6 @@ typedef struct {
     unsigned int samples_per_symbol;
     float gain;
     size_t flushlen;
-    iirfilt_crcf dcfilter; 
 } grtModulatorTX_t;
 
 grtModulatorTX_t *grtModulatorTX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, float gain, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, unsigned int flushlen_mod);

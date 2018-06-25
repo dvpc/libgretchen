@@ -16,7 +16,7 @@ grtModulatorTX_t *grtModulatorTX_create(
 {
     grtModulatorTX_t *mod = malloc(sizeof(grtModulatorTX_t));
 
-    mod->nco = nco_crcf_create(LIQUID_NCO);
+    mod->nco = nco_crcf_create(LIQUID_VCO);
     nco_crcf_set_frequency(mod->nco,
                            center_rads);
     nco_crcf_set_phase(mod->nco, 0.0f);
@@ -38,9 +38,6 @@ grtModulatorTX_t *grtModulatorTX_create(
                     /*flt_center_frq,*/
                     /*flt_passband_ripple,*/
                     /*flt_stopband_ripple);*/
-
-    mod->dcfilter = iirfilt_crcf_create_dc_blocker(.99);
-
     return mod;
 }
 
@@ -52,7 +49,6 @@ void grtModulatorTX_destroy(
     nco_crcf_destroy(mod->nco);
     firinterp_crcf_destroy(mod->interp);
     /*iirfilt_crcf_destroy(mod->filter_tx);*/
-    iirfilt_crcf_destroy(mod->dcfilter);
     free(mod);
 }
 
@@ -79,7 +75,6 @@ size_t grtModulatorTX_recv(
                         /*mod->filter_tx, */
                         /*v1, */
                         /*&v1);*/
-            /*iirfilt_crcf_execute(mod->dcfilter, v1, &v1);*/
             samples[i*mod->samples_per_symbol+j] = crealf(v1)*mod->gain; 
             nco_crcf_step(mod->nco);
             processed++;
@@ -105,7 +100,6 @@ void grtModulatorTX_reset(
                 grtModulatorTX_t *mod)
 {
     firinterp_crcf_reset(mod->interp);
-    iirfilt_crcf_reset(mod->dcfilter);
 }
 
 

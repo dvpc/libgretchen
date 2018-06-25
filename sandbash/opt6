@@ -10,3 +10,6 @@
 --modexcbandw 0.75
 --modfreq 2200
 --modgain 0.05
+--rxorder 1
+--rxcutoff .01
+--rxcenter .25

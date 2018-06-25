@@ -227,7 +227,9 @@ static void mrx_ofdm_create(grtModemRX_t *mrx)
                     mrx_framesync_callback, 
                     mrx); 
     ofdmflexframesync_set_header_len(ofdm.framesync, MODEM_HEADER_LEN);
-    /*ofdmflexframesync_decode_header_soft(ofdm.framesync, 1);                                                                                                                               */
+    // FIXME soft or not...
+    // idk
+    /*ofdmflexframesync_decode_header_soft(ofdm.framesync, 1);*/
     /*ofdmflexframesync_decode_payload_soft(ofdm.framesync, 1);*/
     mrx->frame.ofdm = ofdm;
 }

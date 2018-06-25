@@ -1,3 +1,6 @@
+// TODO
+// better use this http://liquidsdr.org/doc/channel/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
