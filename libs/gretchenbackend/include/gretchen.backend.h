@@ -65,9 +65,11 @@ typedef struct {
     PaStream* stream;
     PaStreamParameters strParams;
     cbufferf samplebuffer;
+    float* recbuf;
+    size_t recbuf_len;
 } grtBackend_t;
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx);
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool rx_is_stereo);
 
 void grtBackend_destroy(grtBackend_t* back);
 

@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
     // setup audio backend
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, false);
 
     print_banner();
 

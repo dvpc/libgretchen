@@ -9,14 +9,18 @@
 
 int main(int argc, char** argv) {
     bool use_stdio = true;
+    bool rec_stereo = false;
     char c;
     while (1) {
-        c = getopt (argc, argv, "f:");
+        c = getopt (argc, argv, "f:s:");
         if (c == -1)
             break;
         switch (c) {
             case 'f':
                 use_stdio = false;
+                break;
+            case 's':
+                rec_stereo = true;
                 break;
             case '?':
         default:
@@ -35,7 +39,7 @@ int main(int argc, char** argv) {
     }
 
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, false);
+    grtBackend_t* back = grtBackend_create(internbuflen, false, rec_stereo);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (rec).\n");
         return 1;
@@ -54,7 +58,7 @@ int main(int argc, char** argv) {
     }
 
     grtSigcatcher_Init();
-    size_t asklen = 8192;
+    size_t asklen = 8192 * (rec_stereo ? 2 : 1);
     float* buffer = NULL;
     size_t nread;
     while(!grtSigcatcher_ShouldTerminate()) {
