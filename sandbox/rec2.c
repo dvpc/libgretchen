@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
             break;
         }
         grtBackend_poll(back, asklen, &buffer, &nread);
-        fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);
+        /*fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
         if (buffer!=NULL && nread>0)
             fwrite(buffer, sizeof(float), nread, fhandle);
 
