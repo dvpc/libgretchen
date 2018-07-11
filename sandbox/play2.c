@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
             break;
         switch (c) {
             case 'f':
-                use_stdio = false;
+                use_stdio = atoi(optarg);
                 break;
             case '?':
         default:

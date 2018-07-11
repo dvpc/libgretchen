@@ -17,14 +17,14 @@ int main(int argc, char** argv) {
             break;
         switch (c) {
             case 'f':
-                use_stdio = false;
+                use_stdio = atoi(optarg);
                 break;
             case 's':
-                rec_stereo = true;
+                rec_stereo = atoi(optarg);
                 break;
             case '?':
         default:
-            printf ("Usage: %s [-f <file to write into>].\n", argv[0]);
+            printf ("Usage: %s [-f <file to write into> -s <record {0 mono, 1 stereo}].\n", argv[0]);
         }
     }
     FILE *fhandle = NULL;
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     }
 
     grtSigcatcher_Init();
-    size_t asklen = 8192 * (rec_stereo ? 2 : 1);
+    size_t asklen = 8192 * (rec_stereo?2:1);
     float* buffer = NULL;
     size_t nread;
     while(!grtSigcatcher_ShouldTerminate()) {
@@ -67,11 +67,11 @@ int main(int argc, char** argv) {
             break;
         }
         grtBackend_poll(back, asklen, &buffer, &nread);
-        /*fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
+        fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);
         if (buffer!=NULL && nread>0)
             fwrite(buffer, sizeof(float), nread, fhandle);
 
-        Pa_Sleep(150); 
+        Pa_Sleep(200); 
     }
 
     grtSigcatcher_Destroy();
