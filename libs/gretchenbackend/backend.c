@@ -4,7 +4,7 @@ static size_t _buffer_available();
 static int _play_callback();
 static int _record_callback();
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool rx_is_stereo)
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_multichannel)
 {
     grtBackend_t* back = malloc(sizeof(grtBackend_t));
     if (!back)
@@ -17,7 +17,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool rx_is_s
             Pa_GetDefaultOutputDevice() : Pa_GetDefaultInputDevice();
     if (back->strParams.device==paNoDevice)
         goto error; 
-    if (!is_tx && rx_is_stereo) {
+    if (!is_tx && is_rx_multichannel) {
         // FIXME
         // i get on my arch box the value of maxInputChannels == 128!!!
         // that is a bit too much and i guess my box has not 128 microphones...
@@ -34,8 +34,6 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool rx_is_s
     back->strParams.hostApiSpecificStreamInfo = NULL;
     size_t bufsize = internalbufsize * back->strParams.channelCount;
     back->samplebuffer = cbufferf_create(bufsize);
-    back->recbuf_len = 1<<10;
-    back->recbuf = malloc(sizeof(float)*back->recbuf_len);
     return back;
     error:
         if (back)
@@ -47,7 +45,6 @@ void grtBackend_destroy(grtBackend_t* back)
 {
     if (back) {
         Pa_Terminate();
-        free(back->recbuf);
         if (back->samplebuffer)
             cbufferf_destroy(back->samplebuffer);
     }
