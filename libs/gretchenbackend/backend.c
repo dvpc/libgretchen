@@ -19,10 +19,19 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_m
         goto error; 
     if (!is_tx && is_rx_multichannel) {
         // FIXME
+        // it seems that it is not possible in portaudio to 
+        // query the exact amount of input channels...  
+        // https://stackoverflow.com/questions/40176632/how-to-discover-a-list-of-physical-audio-input-channels
+        //
         // i get on my arch box the value of maxInputChannels == 128!!!
         // that is a bit too much and i guess my box has not 128 microphones...
         // const PaDeviceInfo* info = Pa_GetDeviceInfo(back->strParams.device);
         // back->strParams.channelCount = info->maxInputChannels;
+        //
+        // FIXME 
+        // so i should change the api to pass the desired number of channels 
+        // and fail if not enough...
+        //
         back->strParams.channelCount = 2;
     } else {
         back->strParams.channelCount = 1;

@@ -69,6 +69,7 @@ int main(int argc, char** argv) {
         }
         grtBackend_poll(back, asklen, &buffer, &nread);
         /*fprintf(stderr, "ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
+
         // FIXME 
         // explicit polling of the first channel only
         // just for testing purposes
@@ -87,11 +88,11 @@ int main(int argc, char** argv) {
         Pa_Sleep(200); 
     }
 
+    free(tmpbuf);
     grtSigcatcher_Destroy();
     grtBackend_stopstream(back, &error);
     grtBackend_destroy(back);
     fclose(fhandle);
-    free(tmpbuf);
     return 0;
 }
 
