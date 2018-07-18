@@ -73,8 +73,11 @@ int main(int argc, char **argv) {
 
     // setup audio backend
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, false);
-
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 2);
+    if (back==NULL) {
+        fprintf(stderr, ".. Error cannot initialize audio backend.\n");
+        goto cleanup;
+    }
     print_banner();
 
     // setup gretchen 
@@ -149,22 +152,37 @@ int main(int argc, char **argv) {
             goto cleanup;
         }
         grtSigcatcher_Init();
-        size_t asklen = 1<<13;//8192
+        size_t asklen = 1<<14;//8192
         float* buffer = NULL;
         size_t nread;
+        float* monobuf = malloc(sizeof(float)*asklen);
         while(!grtSigcatcher_ShouldTerminate()) {
             if (!grtBackend_isstreamactive(back)) {
+                // FIXME 
+                // move next statement to backend... (ask error method or so)
+                fprintf(stderr, ".. Recording stream stopped. %s \n", Pa_GetErrorText(back->err));
                 grtSigcatcher_Set(1);
                 break;
             }
             grtBackend_poll(back, asklen, &buffer, &nread);
-            /*printf("ask %zu nread %zu buff %p \n", asklen, nread, buffer);*/
+            printf("ask %zu nread %zu buff %p \n", asklen, nread, buffer);
             if (buffer!=NULL && nread>0) {
-                gretchenRX_push_le16f(modem, buffer, nread, &error);
                 // NOTE
-                // error will be -1 if internal buffer size is too 
-                // small versus asklen (nread)...
+                // presuming that we are recording stereo
+                // FIXME
+                // will move to backend!!! 
+                // no info of actual data here...
+                size_t idx=0;
+                for (size_t k=0; k<nread; k+=2) {
+                    monobuf[idx] = buffer[k];
+                    idx++;
+                }
+                gretchenRX_push_le16f(modem, monobuf, idx, &error);
+                /*gretchenRX_push_le16f(modem, buffer, nread, &error);*/
                 if (error!=0) {
+                    // NOTE
+                    // error will be -1 if internal buffer size is too 
+                    // small versus asklen (nread)...
                     fprintf(stderr,".. Error modem overflow. \n");
                     break;
                 }
@@ -173,6 +191,7 @@ int main(int argc, char **argv) {
         } 
         printf("\n");
         // cleanup rx
+        free(monobuf);
         grtSigcatcher_Destroy();
         grtBackend_stopstream(back, &error);
     }

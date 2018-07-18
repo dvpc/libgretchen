@@ -67,7 +67,7 @@ typedef struct {
     cbufferf samplebuffer;
 } grtBackend_t;
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_multichannel);
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int rx_ask_num_channel);
 
 void grtBackend_destroy(grtBackend_t* back);
 

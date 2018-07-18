@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     }
 
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, false, rec_stereo);
+    grtBackend_t* back = grtBackend_create(internbuflen, false, rec_stereo?2:1);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (rec).\n");
         return 1;
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     grtSigcatcher_Init();
     size_t asklen = 8192 * (rec_stereo?2:1);
     float* buffer = NULL;
-    float* tmpbuf = malloc(sizeof(float)*asklen);
+    float* monobuf = malloc(sizeof(float)*asklen);
     size_t nread;
     while(!grtSigcatcher_ShouldTerminate()) {
         if (!grtBackend_isstreamactive(back)) {
@@ -78,17 +78,17 @@ int main(int argc, char** argv) {
             if (rec_stereo) {
                 size_t idx=0;
                 for (size_t k=0; k<nread; k+=2) {
-                    tmpbuf[idx] = buffer[k];
+                    monobuf[idx] = buffer[k];
                     idx++;
                 }
-                fwrite(tmpbuf, sizeof(float), idx, fhandle); 
+                fwrite(monobuf, sizeof(float), idx, fhandle); 
             } if (!rec_stereo) {
                 fwrite(buffer, sizeof(float), nread, fhandle);
             }
         Pa_Sleep(200); 
     }
 
-    free(tmpbuf);
+    free(monobuf);
     grtSigcatcher_Destroy();
     grtBackend_stopstream(back, &error);
     grtBackend_destroy(back);

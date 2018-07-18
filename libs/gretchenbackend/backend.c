@@ -4,7 +4,7 @@ static size_t _buffer_available();
 static int _play_callback();
 static int _record_callback();
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_multichannel)
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int rx_ask_num_channel)
 {
     grtBackend_t* back = malloc(sizeof(grtBackend_t));
     if (!back)
@@ -17,7 +17,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_m
             Pa_GetDefaultOutputDevice() : Pa_GetDefaultInputDevice();
     if (back->strParams.device==paNoDevice)
         goto error; 
-    if (!is_tx && is_rx_multichannel) {
+    if (!is_tx) {
         // FIXME
         // it seems that it is not possible in portaudio to 
         // query the exact amount of input channels...  
@@ -27,12 +27,12 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, bool is_rx_m
         // that is a bit too much and i guess my box has not 128 microphones...
         // const PaDeviceInfo* info = Pa_GetDeviceInfo(back->strParams.device);
         // back->strParams.channelCount = info->maxInputChannels;
-        //
-        // FIXME 
-        // so i should change the api to pass the desired number of channels 
-        // and fail if not enough...
-        //
-        back->strParams.channelCount = 2;
+         
+        const PaDeviceInfo* info = Pa_GetDeviceInfo(back->strParams.device);
+        if (rx_ask_num_channel > 0 && (int)rx_ask_num_channel < info->maxInputChannels)    
+            back->strParams.channelCount = rx_ask_num_channel;
+        else
+            goto error;
     } else {
         back->strParams.channelCount = 1;
     }
