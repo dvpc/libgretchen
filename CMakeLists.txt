@@ -50,6 +50,7 @@ add_executable(play sandbox/play2.c)
 target_link_libraries(play gretchenbackend gretchen) 
 
 
-
+add_executable(est est_rec_device.c)
+target_link_libraries(est gretchenbackend)
 
 
