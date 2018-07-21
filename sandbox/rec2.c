@@ -9,7 +9,6 @@
 
 int main(int argc, char** argv) {
     bool use_stdio = true;
-    bool rec_stereo = false;
     char c;
     while (1) {
         c = getopt (argc, argv, "f:s:");
@@ -19,12 +18,9 @@ int main(int argc, char** argv) {
             case 'f':
                 use_stdio = atoi(optarg);
                 break;
-            case 's':
-                rec_stereo = atoi(optarg);
-                break;
             case '?':
         default:
-            printf ("Usage: %s [-f <file to write into> -s <record {0 mono, 1 stereo}].\n", argv[0]);
+            printf ("Usage: %s [-f <file to write into> -s\n", argv[0]);
         }
     }
     FILE *fhandle = NULL;
@@ -39,7 +35,7 @@ int main(int argc, char** argv) {
     }
 
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, false, rec_stereo?2:1);
+    grtBackend_t* back = grtBackend_create(internbuflen, false);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (rec).\n");
         return 1;
@@ -56,14 +52,20 @@ int main(int argc, char** argv) {
         fclose(fhandle);
         return 1;
     }
+    // FIXME
+    // getting number of input channels temporarily
+    unsigned int num_channels = back->strParams.channelCount;
+    fprintf(stderr, "using %u imput channels...\n", num_channels);
 
     grtSigcatcher_Init();
-    size_t asklen = 8192 * (rec_stereo?2:1);
+    size_t asklen = 1<<15;//8192 * 4;
     float* buffer = NULL;
     float* monobuf = malloc(sizeof(float)*asklen);
     size_t nread;
     while(!grtSigcatcher_ShouldTerminate()) {
         if (!grtBackend_isstreamactive(back)) {
+            fprintf(stderr, ".. Recording stream stopped. %s \n", 
+                            grtBackend_getstatustext(back));
             grtSigcatcher_Set(1);
             break;
         }
@@ -73,18 +75,15 @@ int main(int argc, char** argv) {
         // FIXME 
         // explicit polling of the first channel only
         // just for testing purposes
-        // 
-        if (buffer!=NULL && nread>0)
-            if (rec_stereo) {
-                size_t idx=0;
-                for (size_t k=0; k<nread; k+=2) {
-                    monobuf[idx] = buffer[k];
-                    idx++;
-                }
-                fwrite(monobuf, sizeof(float), idx, fhandle); 
-            } if (!rec_stereo) {
-                fwrite(buffer, sizeof(float), nread, fhandle);
+        if (buffer!=NULL && nread>0) {
+            size_t idx=0;
+            for (size_t k=0; k<nread; k+=num_channels) {
+                monobuf[idx] = buffer[k];
+                idx++;
             }
+            fwrite(monobuf, sizeof(float), idx, fhandle); 
+            /*fwrite(buffer, sizeof(float), nread, fhandle);*/
+        }
         Pa_Sleep(200); 
     }
 

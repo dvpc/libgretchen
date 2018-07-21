@@ -3,7 +3,7 @@
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
---frmmod qam8
+--frmmod qam4
 --modshape pm
 --modsampsym 9
 --modsymdelay 5

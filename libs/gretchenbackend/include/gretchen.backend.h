@@ -67,13 +67,17 @@ typedef struct {
     cbufferf samplebuffer;
 } grtBackend_t;
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int rx_ask_num_channel);
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error);
+
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx);
 
 void grtBackend_destroy(grtBackend_t* back);
 
 void grtBackend_startstream(grtBackend_t* back, int* error);
 
 bool grtBackend_isstreamactive(grtBackend_t* back);
+
+const char* grtBackend_getstatustext(grtBackend_t* back);
 
 void grtBackend_stopstream(grtBackend_t* back, int* error);
 
@@ -82,6 +86,5 @@ size_t grtBackend_push_available(grtBackend_t* back);
 size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len);
 
 void grtBackend_poll(grtBackend_t* back, size_t ask, float** buffer, size_t* len);
-
-
+        
 #endif

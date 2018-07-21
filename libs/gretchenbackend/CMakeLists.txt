@@ -39,4 +39,3 @@ target_link_libraries(querypa gretchenbackend)
 add_executable(testsig testsigaction.c)
 target_link_libraries(testsig gretchenbackend)
 
-
