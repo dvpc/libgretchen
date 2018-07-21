@@ -51,7 +51,7 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
             *error = err;
             break;
         }
-        Pa_Sleep(5);
+        Pa_Sleep(1);
         Pa_StopStream(stream);
         Pa_CloseStream(stream);
         /*fprintf(stderr, "Test %s\n", */
@@ -193,6 +193,11 @@ static size_t _buffer_available(grtBackend_t* back)
            cbufferf_size(back->samplebuffer);
 }
 
+// FIXME
+// evaluate
+// is it better to just force playing back a sample only using 
+// ONE speaker??? to avoid possibly smaering the output??
+// will have check!!! 
 static int _play_callback(
                 const void *inbuf, 
                 void *outbuf,

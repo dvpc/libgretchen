@@ -32,7 +32,6 @@ return the number of successful channels...
 
 
 
-
 int main(int argc, char** argv) {
     (void) argc;
     (void) argv;
@@ -41,7 +40,7 @@ int main(int argc, char** argv) {
     if (err != paNoError)
         return 1;
 
-    fprintf(stderr, "Estimating the actual number of input channels...");
+    fprintf(stderr, "Estimating the actual number of input channels...\n");
 
     int error;
     int num_channel;
