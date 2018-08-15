@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
     void *modem;
     if (is_tx) {
         printf(".. TX (transfer) mode\n");
-        modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<12);//4096
+        modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<13);//8192
 
         // load file from txfilepath
         gretchenTX_inspect_t* info;
