@@ -33,8 +33,6 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
     data->chlimit_reached = false;
     PaError err = paNoError;
     while(true) {
-        /*fprintf(stderr, "Testing with %u channels \n", */
-                            /*data->num_channels);*/
         strParams.channelCount = data->num_channels;
         PaStream* stream; 
         err = Pa_OpenStream(&stream, &strParams, NULL,
@@ -54,8 +52,6 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
         Pa_Sleep(1);
         Pa_StopStream(stream);
         Pa_CloseStream(stream);
-        /*fprintf(stderr, "Test %s\n", */
-                            /*(data->chlimit_reached?"Not Ok":"Ok"));*/
         if (data->chlimit_reached) {
             *error = err;
             *result_num_channel = data->num_channels-1;
@@ -65,6 +61,7 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
     }
     free(data);
 }
+
 
 grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx)
 {
@@ -81,7 +78,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx)
         back->strParams.device = Pa_GetDefaultOutputDevice();
         if (back->strParams.device==paNoDevice)
             goto error; 
-        back->strParams.channelCount = 1;
+        back->strParams.channelCount = 2;
         back->strParams.suggestedLatency = 
             Pa_GetDeviceInfo(back->strParams.device)->defaultLowOutputLatency;
     } else {
@@ -157,7 +154,7 @@ void grtBackend_stopstream(grtBackend_t* back, int* error)
     back->err = Pa_StopStream(back->stream);
     back->err = Pa_CloseStream(back->stream);
     if (back->err != paNoError)
-        *error = -2;
+        *error = -3;
 }
 
 size_t grtBackend_push_available(grtBackend_t* back)
@@ -197,7 +194,6 @@ static size_t _buffer_available(grtBackend_t* back)
 // evaluate
 // is it better to just force playing back a sample only using 
 // ONE speaker??? to avoid possibly smaering the output??
-// will have check!!! 
 static int _play_callback(
                 const void *inbuf, 
                 void *outbuf,
@@ -215,11 +211,22 @@ static int _play_callback(
     unsigned int nread;
     cbufferf_read(back->samplebuffer, frmsPerBuf, &samples, &nread);
     cbufferf_release(back->samplebuffer, nread);
-    for (size_t k=0; k<nread; k++)
-        outp[k] = samples[k];
+    /*for (size_t k=0; k<nread; k++)*/
+        /*outp[k] = samples[k];*/
+    // FIXME testing
+    // discarding all but the 1st channel 
+    unsigned int channels = back->strParams.channelCount;
+    size_t idx=0;
+    for (size_t k=0; k<nread; k+=channels) {
+        outp[idx++] = samples[k];
+        outp[idx++] = 0.0f;
+    }
     return paContinue;
 } 
-
+// FIXME
+// why not discard all but one channel here in the 
+// callback??
+// possible beamforming???
 static int _record_callback(
                 const void *inbuf, 
                 void *outbuf,
@@ -268,7 +275,6 @@ static int _estimator_num_input_channels_callback(
     (void) outbuf;
     (void) statFlags;
     (void) timeInfo;
-    (void) user;
     _estimator_num_input_channels_data_t* data = 
             (_estimator_num_input_channels_data_t*) user;
     if (inbuf == NULL)
@@ -277,16 +283,16 @@ static int _estimator_num_input_channels_callback(
         size_t chlen = frmsPerBuf / data->num_channels;
         float* interlv = (float*) inbuf;
         for (unsigned int j=0; j<data->num_channels; j++) {
-            /*fprintf(stderr,"c%u: ", j); */
+/*fprintf(stderr,"c%u: ", j); */
             bool all_zero = true;
             float* chp = ((float**) interlv)[j];
             for (size_t k=0; k<chlen; k++) {
                 all_zero = chp[k]==0?true:false;
-                /*fprintf(stderr, "%f(%s)", chp[k], (chp[k]==0?"y":"n"));*/
+/*fprintf(stderr, "%f(%s)", chp[k], (chp[k]==0?"y":"n"));*/
                 if (!all_zero)
                     break;
             } 
-            /*fprintf(stderr,"\n"); */
+/*fprintf(stderr,"\n"); */
             if (all_zero) {
                 data->chlimit_reached = true;
             }
@@ -295,4 +301,39 @@ static int _estimator_num_input_channels_callback(
     return paComplete;
 }
 
-
+static int _estimator_num_output_channels_callback(
+                const void *inbuf, 
+                void *outbuf,
+                unsigned long frmsPerBuf, 
+                const PaStreamCallbackTimeInfo* timeInfo,
+                PaStreamCallbackFlags statFlags,
+                void *user)
+{
+    (void) inbuf;
+    (void) statFlags;
+    (void) timeInfo;
+    _estimator_num_input_channels_data_t* data = 
+            (_estimator_num_input_channels_data_t*) user;
+    if (outbuf == NULL)
+        return paComplete;
+    else {
+        size_t chlen = frmsPerBuf / data->num_channels;
+        float* interlv = (float*) outbuf;
+        for (unsigned int j=0; j<data->num_channels; j++) {
+fprintf(stderr,"c%u: ", j); 
+            bool all_zero = true;
+            float* chp = ((float**) interlv)[j];
+            for (size_t k=0; k<chlen; k++) {
+                all_zero = chp[k]==0?true:false;
+fprintf(stderr, "%f(%s)", chp[k], (chp[k]==0?"y":"n"));
+                if (!all_zero)
+                    break;
+            } 
+fprintf(stderr,"\n"); 
+            if (all_zero) {
+                data->chlimit_reached = true;
+            }
+        }
+    }
+    return paComplete;
+}

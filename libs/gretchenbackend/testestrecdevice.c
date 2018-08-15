@@ -54,12 +54,12 @@ int main(int argc, char** argv) {
 
     if (error!=paNoError) {
         fprintf(stderr, "Portaudio error %s\n", Pa_GetErrorText(err));
-        return 1;
     } else {
-        fprintf(stderr, "The device seems to have %u input channels %s\n", 
+        fprintf(stderr, "The device seems to have %u input channels %s\n\n", 
                         num_channel, Pa_GetErrorText(err));
-        return 0;
     }
+
+    fprintf(stderr, "Estimating the actual number of output channels...\n");
 
 }
 

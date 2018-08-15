@@ -69,6 +69,21 @@ typedef struct {
 
 void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error);
 
+
+// FIXME
+// appears better to split the creation method into tx and rx modes.
+// rx can determine by iteself the number of input channels.
+// i cannot do that with tx (playback) so the creation method should
+// include a suggested number of playback channels.
+// so in order to not clutter the API i should have two methods instead.
+//
+// aka:
+//
+// grtBackend_t* grtBackend_createplay(size_t internalbufsize, unsigned int num_channels);
+//
+// grtBackend_t* grtBackend_createrecord(size_t internalbufsize, bool output_mono);
+//
+
 grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx);
 
 void grtBackend_destroy(grtBackend_t* back);
