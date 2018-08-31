@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     }
 
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, true, 44100);
+    grtBackend_t* back = grtBackend_create(internbuflen, true, 48000);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (play).\n");
         return 1;

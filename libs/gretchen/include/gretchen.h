@@ -4,7 +4,7 @@
 // TODO
 // PUT the following in the documentation:
 // All internal raw sample data is assumed to be 
-// float 16 bit le with a 44100 hz samplerate.
+// float 16 bit le with a now variable samplerate.
 //
 #ifndef ___GRETCHEN_H___
 #define ___GRETCHEN_H___

@@ -11,7 +11,7 @@
 --frmmod ask2
 --modshape arkaiser
 --modsampsym 17
---modsymdelay 4
---modexcbandw 0.75
---modfreq 16200
---modgain 0.05
+--modsymdelay 5
+--modexcbandw 0.55
+--modfreq 19200
+--modgain 0.01
