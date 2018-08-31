@@ -1,0 +1,17 @@
+--frmtype ofdm
+--ofdmnsub 256
+--ofdmprefix 5
+--ofdmtaper 5
+--ofdmlband 400
+--ofdmrband 300
+--frmlen 200
+--frmcrc crc32
+--frmifec secded7264
+--frmofec h84
+--frmmod ask2
+--modshape arkaiser
+--modsampsym 17
+--modsymdelay 4
+--modexcbandw 0.75
+--modfreq 16200
+--modgain 0.05

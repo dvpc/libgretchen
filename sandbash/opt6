@@ -3,13 +3,14 @@
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
---frmmod dpsk2
+--frmmod dpsk4
 --modshape arkaiser
 --modsampsym 19
 --modsymdelay 15
 --modexcbandw 0.75
---modfreq 2200
+--modfreq 12200
 --modgain 0.05
 --rxorder 1
 --rxcutoff .01
 --rxcenter .25
+
