@@ -56,26 +56,23 @@ int main(int argc, char** argv) {
         printf("Default high input latency  = %8.4f\n", deviceInfo->defaultHighInputLatency);
         printf("Default high output latency = %8.4f\n", deviceInfo->defaultHighOutputLatency);
         printf("-------------------------------------------------------\n");
-       
-        if (deviceInfo->maxInputChannels != 0) { 
-            PaStreamParameters inputParameters;
-            inputParameters.sampleFormat = paFloat32;
-            inputParameters.channelCount = 1;
-            inputParameters.device = i;
-            inputParameters.hostApiSpecificStreamInfo = NULL;
-            inputParameters.suggestedLatency = deviceInfo->defaultLowInputLatency ;
-            inputParameters.hostApiSpecificStreamInfo = NULL;
 
-            PaStreamParameters outputParameters;
-            outputParameters.sampleFormat = paFloat32;
-            outputParameters.channelCount = 1;
-            outputParameters.device = i;
-            outputParameters.hostApiSpecificStreamInfo = NULL;
-            outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency ;
-            outputParameters.hostApiSpecificStreamInfo = NULL; 
-
-            supported_samplerates(&inputParameters, &outputParameters);
-        }
+        printf("Supported Samplerates\n");
+        PaStreamParameters inputParameters;
+        inputParameters.sampleFormat = paFloat32;
+        inputParameters.channelCount = 1;
+        inputParameters.device = i;
+        inputParameters.hostApiSpecificStreamInfo = NULL;
+        inputParameters.suggestedLatency = deviceInfo->defaultLowInputLatency;
+        inputParameters.hostApiSpecificStreamInfo = NULL;
+        PaStreamParameters outputParameters;
+        outputParameters.sampleFormat = paFloat32;
+        outputParameters.channelCount = 1;
+        outputParameters.device = i;
+        outputParameters.hostApiSpecificStreamInfo = NULL;
+        outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
+        outputParameters.hostApiSpecificStreamInfo = NULL; 
+        supported_samplerates(&inputParameters, &outputParameters);
     }
 
     
