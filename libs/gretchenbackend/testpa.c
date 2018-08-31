@@ -57,7 +57,6 @@ int main(int argc, char** argv) {
         printf("Default high output latency = %8.4f\n", deviceInfo->defaultHighOutputLatency);
         printf("-------------------------------------------------------\n");
 
-        printf("Supported Samplerates\n");
         PaStreamParameters inputParameters;
         inputParameters.sampleFormat = paFloat32;
         inputParameters.channelCount = 1;
@@ -72,7 +71,12 @@ int main(int argc, char** argv) {
         outputParameters.hostApiSpecificStreamInfo = NULL;
         outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
         outputParameters.hostApiSpecificStreamInfo = NULL; 
-        supported_samplerates(&inputParameters, &outputParameters);
+
+        printf("Supported Samplerates Input\n");
+        supported_samplerates(&inputParameters, NULL);
+        printf("Supported Samplerates Output\n");
+        supported_samplerates(NULL, &outputParameters);
+        /*supported_samplerates(&inputParameters, &outputParameters);*/
     }
 
     
