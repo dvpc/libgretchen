@@ -79,10 +79,6 @@ int main(int argc, char** argv) {
         /*supported_samplerates(&inputParameters, &outputParameters);*/
     }
 
-    
-
-
-
 
 error:
     Pa_Terminate();

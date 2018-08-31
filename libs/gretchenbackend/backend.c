@@ -15,7 +15,7 @@ typedef struct {
     bool chlimit_reached;
 } _estimator_num_input_channels_data_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error)
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, unsigned int samplerate)
 {
     *error = 0;
     *result_num_channel = 0;
@@ -36,7 +36,7 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
         strParams.channelCount = data->num_channels;
         PaStream* stream; 
         err = Pa_OpenStream(&stream, &strParams, NULL,
-                            44100, paFramesPerBufferUnspecified,
+                            samplerate, paFramesPerBufferUnspecified,
                             paDitherOff | paClipOff, 
                             _estimator_num_input_channels_callback,
                             data); 
@@ -63,12 +63,13 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
 }
 
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx)
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int samplerate)
 {
     grtBackend_t* back = malloc(sizeof(grtBackend_t));
     if (!back)
         goto error;
     back->is_tx = is_tx;
+    back->samplerate = samplerate;
     back->err = Pa_Initialize();
     if (back->err != paNoError)
         goto error;
@@ -90,7 +91,8 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx)
         grtBackend_estimate_inputdecive_numchannels(
                         back->strParams.device,
                         &num_input_channels, 
-                        &error);
+                        &error,
+                        samplerate);
         if (error!=paNoError)
             goto error;
         back->strParams.channelCount = num_input_channels;
@@ -121,13 +123,13 @@ void grtBackend_startstream(grtBackend_t* back, int* error)
     if (back->is_tx) {
         back->err = Pa_OpenStream(
                         &back->stream, NULL, &back->strParams,
-                        44100, paFramesPerBufferUnspecified,
+                        back->samplerate, paFramesPerBufferUnspecified,
                         paDitherOff | paClipOff, _play_callback,
                         back);
     } else {
         back->err = Pa_OpenStream(
                         &back->stream, &back->strParams, NULL,
-                        44100, paFramesPerBufferUnspecified,
+                        back->samplerate, paFramesPerBufferUnspecified,
                         paDitherOff | paClipOff, _record_callback,
                         back); 
     }

@@ -356,13 +356,14 @@ typedef struct {
     grtFrameOpt_t *frameopt;
     grtModulatorOpt_t *modopt;
     grtOfdmOpt_t *ofdmopt;
+    unsigned int samplerate;
 } grtModemOpt_t;
 
-grtModemOpt_t* grtModemOpt_create_default();
+grtModemOpt_t* grtModemOpt_create_default(unsigned int samplerate);
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx); 
+grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx, unsigned int samplerate); 
 
-grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx);
+grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, unsigned int samplerate);
 
 void grtModemOpt_destroy(grtModemOpt_t* opt);
 

@@ -47,7 +47,8 @@ int main(int argc, char** argv) {
     grtBackend_estimate_inputdecive_numchannels(
                     Pa_GetDefaultInputDevice(), 
                     &num_channel, 
-                    &error);
+                    &error,
+                    44100);
     
 
     Pa_Terminate();

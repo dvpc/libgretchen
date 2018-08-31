@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     FILE *input = stdin;
     FILE *output = stdout;
 
-    grtModemOpt_t* opt = grtModemOpt_parse_args(argc, argv, false); 
+    grtModemOpt_t* opt = grtModemOpt_parse_args(argc, argv, false, 44100); 
     if (!opt)
         return -1;
 

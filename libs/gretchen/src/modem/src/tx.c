@@ -58,7 +58,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     size_t samples_est = symb_total*opt.modopt->samples_per_symbol;
     // put estimates in struc
     (*info)->est_encodedsize_samples = samples_est;
-    (*info)->est_transfer_sec = samples_est / 44100; // TODO variable samplerate
+    (*info)->est_transfer_sec = samples_est / tx->modem_tx->opt.samplerate;
 }
 
 void gretchenTX_prepare(gretchenTX_t* tx, char* filename, int* error)

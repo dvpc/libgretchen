@@ -1,12 +1,12 @@
 #include "gretchen.internal.h"
 
 
-static float _convert_freq2rad(int frequency, int samplerate) 
+static float _convert_freq2rad(int frequency, unsigned int samplerate) 
 {
     return ((float)frequency/(float)samplerate) * M_PI * 2.0;
 }
 
-static grtModemOpt_t* _create_empty()
+static grtModemOpt_t* _create_empty(unsigned int samplerate)
 {
     grtModemOpt_t *opt = calloc(1, sizeof(grtModemOpt_t));
     grtFrameOpt_t *frame = calloc(1, sizeof(grtFrameOpt_t));
@@ -15,6 +15,7 @@ static grtModemOpt_t* _create_empty()
     opt->ofdmopt = ofdm;
     opt->frameopt = frame;
     opt->modopt = mod;
+    opt->samplerate = samplerate;
     // other defaults
     mod->flushlen_mod = 4;
     frame->_bits_per_symbol = 1;
@@ -56,9 +57,9 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
     return true;
 }
 
-grtModemOpt_t* grtModemOpt_create_default()
+grtModemOpt_t* grtModemOpt_create_default(unsigned int samplerate)
 {
-    grtModemOpt_t* opt = _create_empty();
+    grtModemOpt_t* opt = _create_empty(samplerate);
     opt->frametype = frametype_modem;
     opt->frameopt->payload_len = 800;
     opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
@@ -70,7 +71,7 @@ grtModemOpt_t* grtModemOpt_create_default()
     opt->modopt->samples_per_symbol = 9;
     opt->modopt->symbol_delay = 5;
     opt->modopt->excess_bw = 0.75;
-    opt->modopt->center_rads = _convert_freq2rad(16200, 44100);
+    opt->modopt->center_rads = _convert_freq2rad(16200, samplerate);
     opt->modopt->gain = 0.45;
     return opt;
 }
@@ -106,7 +107,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
             free(res_tokens[i]); \
         free(res_tokens); \
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx)
+grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx, unsigned int samplerate)
 {
     // 1 load the options file
     int error;
@@ -154,18 +155,18 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx)
         free(dup);
     }
     // 3 feed the char** tokenlist into grtModemOpt
-    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx);    
+    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx, samplerate);    
     TOKENLIST_DESTROY();
     free(optchar);
     return opt;
 }
 
-grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx) 
+grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, unsigned int samplerate) 
 {
     if (argc==1)
         return NULL;
     
-    grtModemOpt_t* opt = _create_empty();
+    grtModemOpt_t* opt = _create_empty(samplerate);
     bool inputvalid = true; 
 
     static struct option long_options[] =
@@ -300,7 +301,7 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx)
                     inputvalid = false;
                 } else {
                     // FIXME parameter samplingrate??
-                    opt->modopt->center_rads = _convert_freq2rad(atoi(optarg), 44100);
+                    opt->modopt->center_rads = _convert_freq2rad(atoi(optarg), samplerate);
                 }
                 break;
             case 'g':

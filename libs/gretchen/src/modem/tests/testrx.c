@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    grtModemOpt_t* opt = grtModemOpt_create_default();
+    grtModemOpt_t* opt = grtModemOpt_create_default(44100);
 
     // TODO buffersize
     gretchenRX_t* rx = gretchenRX_create(opt, 1 << 14);

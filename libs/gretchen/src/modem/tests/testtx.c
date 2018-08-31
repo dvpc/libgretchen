@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    grtModemOpt_t* opt = grtModemOpt_create_default();
+    grtModemOpt_t* opt = grtModemOpt_create_default(44100);
 
     // TODO buffersizes... and internal chunk sizes...
     gretchenTX_t* tx = gretchenTX_create(opt, 1<<12);

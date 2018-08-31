@@ -64,16 +64,16 @@ int main(int argc, char **argv) {
     // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
-        opt = grtModemOpt_create_default();
+        opt = grtModemOpt_create_default(44100);
     } else {
-        opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx);
+        opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx, 44100);
     }
     if (!opt)
         return 1;
 
     // setup audio backend
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, is_tx);
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 44100);
     if (back==NULL) {
         fprintf(stderr, ".. Error cannot initialize audio backend.\n");
         goto cleanup;
