@@ -5,10 +5,10 @@
 --frmofec h84
 --frmmod qam4
 --modshape pm
---modsampsym 9
+--modsampsym 8
 --modsymdelay 5
---modexcbandw 0.15
---modfreq 16200
+--modexcbandw 0.45
+--modfreq 18200
 --modgain 0.15
 --txorder 6  
 --txcutoff .25
