@@ -64,9 +64,9 @@ int main(int argc, char **argv) {
     // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
-        opt = grtModemOpt_create_default(44100);
+        opt = grtModemOpt_create_default(48000);
     } else {
-        opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx, 44100);
+        opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx, 48000);
     }
     if (!opt)
         return 1;
