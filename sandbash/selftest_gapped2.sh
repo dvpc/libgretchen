@@ -6,11 +6,11 @@ if [ ! $1 ]; then
     exit 1;
 fi
 
-build/gret &
+build/gret -o sandbash/opt5 &
 
 sleep 1
 
-build/gret -f "$1"
+build/gret -o sandbash/opt5 -f "$1" 
 
 sleep 1
 jobs
