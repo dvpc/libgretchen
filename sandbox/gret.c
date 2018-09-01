@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
             goto cleanup;
         }
         grtSigcatcher_Init();
-        size_t asklen = 1<<16;//8192
+        size_t asklen = 1<<14;//8192
         float* buffer = NULL;
         size_t nread;
         unsigned int num_channels = back->strParams.channelCount;
