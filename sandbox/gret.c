@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
     // setup audio backend
     size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 44100);
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 48000);
     if (back==NULL) {
         fprintf(stderr, ".. Error cannot initialize audio backend.\n");
         goto cleanup;
