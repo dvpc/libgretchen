@@ -70,8 +70,6 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int
         goto error;
     back->is_tx = is_tx;
     back->samplerate = samplerate;
-    size_t bufsize = internalbufsize * back->strParams.channelCount;
-    back->samplebuffer = cbufferf_create(bufsize);
     back->err = Pa_Initialize();
     if (back->err != paNoError)
         goto error;
@@ -101,6 +99,8 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int
         back->strParams.suggestedLatency = 
                 Pa_GetDeviceInfo(back->strParams.device)->defaultLowInputLatency;
     }
+    size_t bufsize = internalbufsize * back->strParams.channelCount;
+    back->samplebuffer = cbufferf_create(bufsize);
     return back;
     error:
         if (back)
