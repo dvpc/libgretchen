@@ -71,13 +71,6 @@ int main(int argc, char **argv) {
     if (!opt)
         goto cleanup_opt;
 
-    // FIXME
-    // crash on cleanup if audio backend cannot be initialized
-    // fail gracefully
-    // so moving backend init to the top
-    // or define several cleanups...
-    //
-    
     // setup audio backend
     size_t internbuflen = 1 << 14;
     grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 48000);
@@ -194,8 +187,6 @@ int main(int argc, char **argv) {
         grtBackend_stopstream(back, &error);
     }
 
-    // FIXME
-    // crash on cleanup if audio backend cannot be initialized
 cleanup_modem:
         if (is_tx)
             gretchenTX_destroy(modem);

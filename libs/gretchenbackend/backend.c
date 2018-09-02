@@ -68,25 +68,25 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int
 {
     grtBackend_t* back = malloc(sizeof(grtBackend_t));
     if (!back)
-        goto error;
+        goto error_create;
     back->is_tx = is_tx;
     back->samplerate = samplerate;
     back->err = Pa_Initialize();
     if (back->err != paNoError)
-        goto error;
+        goto error_create;
     back->strParams.sampleFormat = paFloat32;
     back->strParams.hostApiSpecificStreamInfo = NULL;
     if (is_tx) {
         back->strParams.device = Pa_GetDefaultOutputDevice();
         if (back->strParams.device==paNoDevice)
-            goto error; 
+            goto error_create; 
         back->strParams.channelCount = 1;
         back->strParams.suggestedLatency = 
             Pa_GetDeviceInfo(back->strParams.device)->defaultLowOutputLatency;
     } else {
         back->strParams.device = Pa_GetDefaultInputDevice();
         if (back->strParams.device==paNoDevice)
-            goto error; 
+            goto error_create; 
         int error;
         int num_input_channels;
         grtBackend_estimate_inputdecive_numchannels(
@@ -95,7 +95,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int
                         &error,
                         samplerate);
         if (num_input_channels==0)
-            goto error;
+            goto error_create;
         back->strParams.channelCount = num_input_channels;
         back->strParams.suggestedLatency = 
                 Pa_GetDeviceInfo(back->strParams.device)->defaultLowInputLatency;
@@ -103,10 +103,10 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int
     size_t bufsize = internalbufsize * back->strParams.channelCount;
     back->samplebuffer = cbufferf_create(bufsize);
     return back;
-    error:
-        if (back)
-            grtBackend_destroy(back);
-        return NULL;
+error_create:
+    if (back)
+        grtBackend_destroy(back);
+    return NULL;
 }
 
 void grtBackend_destroy(grtBackend_t* back)
