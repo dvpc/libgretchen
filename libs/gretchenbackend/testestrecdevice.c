@@ -60,8 +60,6 @@ int main(int argc, char** argv) {
                         num_channel, Pa_GetErrorText(err));
     }
 
-    fprintf(stderr, "Estimating the actual number of output channels...\n");
-
 }
 
 

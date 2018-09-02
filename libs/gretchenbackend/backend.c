@@ -41,24 +41,34 @@ void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* resu
                             _estimator_num_input_channels_callback,
                             data); 
         if (err!=paNoError) {
-            *error = err;
-            break;
+            /**error = err;*/
+            /**result_num_channel = data->num_channels-1;*/
+            goto while_exit;
+            /*break;*/
         }
         err = Pa_StartStream(stream);
         if (err!=paNoError) {
-            *error = err;
-            break;
+            /**error = err;*/
+            /**result_num_channel = data->num_channels-1;*/
+            goto while_exit;
+            /*break;*/
         }
         Pa_Sleep(1);
         Pa_StopStream(stream);
         Pa_CloseStream(stream);
         if (data->chlimit_reached) {
-            *error = err;
-            *result_num_channel = data->num_channels-1;
-            break;
+            /**error = err;*/
+            /**result_num_channel = data->num_channels-1;*/
+            goto while_exit;
+            /*break;*/
         }
         data->num_channels ++;
     }
+
+while_exit:
+    *error = err;
+    *result_num_channel = data->num_channels-1;
+
     free(data);
 }
 
