@@ -69,14 +69,21 @@ int main(int argc, char **argv) {
         opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx, 48000);
     }
     if (!opt)
-        return 1;
+        goto cleanup_opt;
 
+    // FIXME
+    // crash on cleanup if audio backend cannot be initialized
+    // fail gracefully
+    // so moving backend init to the top
+    // or define several cleanups...
+    //
+    
     // setup audio backend
     size_t internbuflen = 1 << 14;
     grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 48000);
     if (back==NULL) {
         fprintf(stderr, ".. Error cannot initialize audio backend.\n");
-        goto cleanup;
+        goto cleanup_backend;
     }
     print_banner();
 
@@ -92,7 +99,7 @@ int main(int argc, char **argv) {
         gretchenTX_inspect(modem, txfilepath, &error, &info);
         if (info==NULL || error!=0) {
             fprintf(stderr, ".. Error cannot process file. %s\n", argv[1]);
-            goto cleanup;
+            goto cleanup_modem;
         }
         printf("   filesize (bytes) %zu\n", info->filesize_bytes);
         printf("   estimated time (sec) %zu\n", info->est_transfer_sec);
@@ -109,7 +116,7 @@ int main(int argc, char **argv) {
         grtBackend_startstream(back, &error);
         if (error != 0) {
             fprintf(stderr, ".. Error backend cannot start stream.\n");
-            goto cleanup;
+            goto cleanup_modem;
         }
         size_t buflen = 1<<13;//8192
         size_t avail, len, pushed;
@@ -149,7 +156,7 @@ int main(int argc, char **argv) {
         grtBackend_startstream(back, &error);
         if (error != 0) {
             fprintf(stderr, ".. Error backend cannot start stream. \n");
-            goto cleanup;
+            goto cleanup_modem;
         }
         grtSigcatcher_Init();
         size_t asklen = 1<<14;//8192
@@ -187,12 +194,18 @@ int main(int argc, char **argv) {
         grtBackend_stopstream(back, &error);
     }
 
-    cleanup:
+    // FIXME
+    // crash on cleanup if audio backend cannot be initialized
+cleanup_modem:
         if (is_tx)
             gretchenTX_destroy(modem);
         else
             gretchenRX_destroy(modem);
+
+cleanup_backend:
         grtBackend_destroy(back);
+
+cleanup_opt:
         grtModemOpt_destroy(opt);
 
     return 0;
