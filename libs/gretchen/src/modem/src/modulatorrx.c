@@ -68,10 +68,10 @@ size_t grtModulatorRX_recv(
                             dem->agc,
                             samples[i+j], 
                             &samples[i+j]);
-            iirfilt_rrrf_execute(
-                            dem->filter_rx, 
-                            samples[i+j],
-                            &samples[i+j]);
+            /*iirfilt_rrrf_execute(*/
+                            /*dem->filter_rx, */
+                            /*samples[i+j],*/
+                            /*&samples[i+j]);*/
             nco_crcf_mix_down(
                             dem->nco,
                             samples[i+j],
