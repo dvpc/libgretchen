@@ -12,8 +12,6 @@ static void print_usage();
 static void print_banner();
 static void rxprogress_callback();
 static void rxfilecomplete_callback();
-// FIXME will be removed
-static void debug_callback();
 
 
 // if listening (rx) or transmitting (tx).
@@ -141,8 +139,6 @@ int main(int argc, char **argv) {
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
         ((gretchenRX_t*) modem)->callbackuser = modem;
-        // FIXME will be removed
-        ((gretchenRX_t*) modem)->modem_rx->emit_debug_callback = debug_callback;
 
         // start recording
         int error;
@@ -298,20 +294,3 @@ static void rxfilecomplete_callback(
     free(name);
 }
 
-// FIXME will be removed
-void debug_callback(int header_valid, int payload_valid, unsigned int payload_len, framesyncstats_s stats)
-{
-    fprintf(stderr, "__callback h-valid:%i p-valid:%i len:%i\n", header_valid, payload_valid, payload_len);
-    fprintf(stderr, "    EVM                 :   %12.8f dB\n", stats.evm);
-    fprintf(stderr, "    rssi                :   %12.8f dB\n", stats.rssi);
-    fprintf(stderr, "    carrier offset      :   %12.8f Fs\n", stats.cfo);
-    fprintf(stderr, "    num symbols         :   %u\n", stats.num_framesyms);
-    fprintf(stderr, "    mod scheme          :   %s (%u bits/symbol)\n",
-            modulation_types[stats.mod_scheme].name, stats.mod_bps);
-    fprintf(stderr, "    validity check      :   %s\n", crc_scheme_str[stats.check][0]);
-    fprintf(stderr, "    fec (inner)         :   %s\n", fec_scheme_str[stats.fec0][0]);
-    fprintf(stderr, "    fec (outer)         :   %s\n", fec_scheme_str[stats.fec1][0]);
-    fprintf(stderr, "    header crc          :   %s\n", header_valid ?  "pass" : "FAIL");
-    fprintf(stderr, "    payload length      :   %u\n", payload_len);
-    fprintf(stderr, "    payload crc         :   %s\n", payload_valid ?  "pass" : "FAIL");
-}
