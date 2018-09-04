@@ -5,8 +5,8 @@
 --frmofec h84
 --frmmod qam8
 --modshape pm
---modsampsym 11
+--modsampsym 17
 --modsymdelay 7
 --modexcbandw 0.95
---modfreq 16150
+--modfreq 16625
 --modgain 0.45
