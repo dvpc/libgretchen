@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     uint8_t *name = argv[1];
-    long filesize;
+    int64_t filesize;
     int error;
     uint8_t *source = read_binary_file(name, &filesize, &error);
     if (error!=0 || source==NULL) {

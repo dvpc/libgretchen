@@ -41,7 +41,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretche
     *info = malloc(sizeof(gretchenTX_inspect_t));
     if (!*info)
         return ;
-    long filesize;
+    int64_t filesize;
     read_binary_file_size(filename, &filesize, *&error);
     if (*error!=0)
         return ;
@@ -64,7 +64,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretche
 void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int* error)
 {
     // load the file
-    long filesize;
+    int64_t filesize;
     uint8_t *source = read_binary_file(filename, &filesize, *&error);
     if (*error!=0)
         return ;

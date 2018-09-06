@@ -11,9 +11,6 @@ while no error
 set stream parameters with n
 open stream 
 start stream
-    ?? how long should it run?
-in recording callback check data
-    ?? how
 
 cleanup
 

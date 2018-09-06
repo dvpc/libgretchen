@@ -14,7 +14,7 @@ uint64_t hash_djb2(uint8_t *str)
 }
 
 //https://stackoverflow.com/questions/2029103/correct-way-to-read-a-text-file-into-a-buffer-in-c#2029227
-uint8_t* read_binary_file(uint8_t* filename, long* size, int* error)
+uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int* error)
 {
     *size = -1;
     *error = 0;
@@ -48,7 +48,7 @@ uint8_t* read_binary_file(uint8_t* filename, long* size, int* error)
     return source;
 }
 
-void read_binary_file_size(uint8_t* filename, long* size, int* error)
+void read_binary_file_size(uint8_t* filename, int64_t* size, int* error)
 {
     *size = -1;
     *error = 0;

@@ -190,9 +190,9 @@ extern int hashmap_length(map_t in);
 
 uint64_t hash_djb2(uint8_t *str);
 
-uint8_t* read_binary_file(uint8_t* filename, long* size, int* error);
+uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int* error);
 
-void read_binary_file_size(uint8_t* filename, long* size, int* error);
+void read_binary_file_size(uint8_t* filename, int64_t* size, int* error);
 
 void write_binary_file(uint8_t* filename, uint8_t* source, int* error);
 

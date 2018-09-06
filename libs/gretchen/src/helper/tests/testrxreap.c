@@ -32,13 +32,6 @@ int main(int argc, char **argv) {
     (void) argv;
     (void) argc;
 
-
-    // TODO
-    // change data type for hash to unsinged long!!!!
-    // see if there are no read errors anymore in transmit_print...
-    //
-    // -> later change also in modem...
-
     // dummy data
     uint64_t hash;
     size_t buflen = 50;
