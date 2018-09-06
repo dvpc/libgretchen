@@ -146,7 +146,7 @@ bool grtBackend_isstreamactive(grtBackend_t* back)
     return Pa_IsStreamActive(back->stream);
 }
 
-const char* grtBackend_getstatustext(grtBackend_t* back)
+const uint8_t* grtBackend_getstatustext(grtBackend_t* back)
 {
     return Pa_GetErrorText(back->err);
 }

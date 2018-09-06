@@ -4,7 +4,7 @@
 // binary file and related methods
 
 // http://www.cse.yorku.ca/~oz/hash.html
-unsigned long hash_djb2(unsigned char *str)
+unsigned long hash_djb2(uint8_t *str)
 { 
     unsigned long hash = 5381;
     int c;
@@ -14,11 +14,11 @@ unsigned long hash_djb2(unsigned char *str)
 }
 
 //https://stackoverflow.com/questions/2029103/correct-way-to-read-a-text-file-into-a-buffer-in-c#2029227
-char* read_binary_file(char* filename, long* size, int* error)
+uint8_t* read_binary_file(uint8_t* filename, long* size, int* error)
 {
     *size = -1;
     *error = 0;
-    char* source = NULL;
+    uint8_t* source = NULL;
     FILE *fp = fopen(filename, "rb");
     if (fp==NULL) {
         *error = -1;
@@ -30,13 +30,13 @@ char* read_binary_file(char* filename, long* size, int* error)
                 *error = ferror(fp);
             }
             // allocate
-            source = malloc(sizeof(char) * *size+1);
+            source = malloc(sizeof(uint8_t) * *size+1);
             // go to start
             if (fseek(fp, 0L, SEEK_SET)!=0) {
                 *error = ferror(fp);
             }
             // read the entire file
-            size_t nlen = fread(source, sizeof(char), *size, fp);  
+            size_t nlen = fread(source, sizeof(uint8_t), *size, fp);  
             if (ferror(fp)!=0) {
                 *error = ferror(fp);
             } else {
@@ -48,7 +48,7 @@ char* read_binary_file(char* filename, long* size, int* error)
     return source;
 }
 
-void read_binary_file_size(char* filename, long* size, int* error)
+void read_binary_file_size(uint8_t* filename, long* size, int* error)
 {
     *size = -1;
     *error = 0;
@@ -67,7 +67,7 @@ void read_binary_file_size(char* filename, long* size, int* error)
 }
 
 // https://stackoverflow.com/questions/17598572/read-write-to-binary-files-in-c#17598785
-void write_binary_file(char* filename, char* source, int* error)
+void write_binary_file(uint8_t* filename, uint8_t* source, int* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -75,13 +75,13 @@ void write_binary_file(char* filename, char* source, int* error)
         *error = -1;
         return ;
     }
-    fwrite(source, sizeof(char), strlen(source)+1, wf);
+    fwrite(source, sizeof(uint8_t), strlen(source)+1, wf);
     if (ferror(wf)!=0)
         *error = ferror(wf);
     fclose(wf);
 }
 
-void write_raw_file(char* filename, float* source, size_t len, int* error)
+void write_raw_file(uint8_t* filename, float* source, size_t len, int* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -98,7 +98,7 @@ void write_raw_file(char* filename, float* source, size_t len, int* error)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // envelope methods
 
-envelope_t* envelope_create(char* name, char* source)
+envelope_t* envelope_create(uint8_t* name, uint8_t* source)
 {
     // FIXME
     // using linux/posix method `basename` for now here.
@@ -107,10 +107,10 @@ envelope_t* envelope_create(char* name, char* source)
     // see https://stackoverflow.com/questions/7180293/how-to-extract-filename-from-path
     // a hint for a self implemented version of basename could be
     // see: https://stackoverflow.com/a/41949246 
-    char *base = basename(name);
+    uint8_t *base = basename(name);
     envelope_t *env = malloc(sizeof(envelope_t));
-    char* name2 = malloc(sizeof(char)*strlen(base)+1);
-    char* source2 = malloc(sizeof(char)*strlen(source)+1);
+    uint8_t* name2 = malloc(sizeof(uint8_t)*strlen(base)+1);
+    uint8_t* source2 = malloc(sizeof(uint8_t)*strlen(source)+1);
     strcpy(name2, base);
     strcpy(source2, source);
     env->name = name2;
@@ -127,11 +127,11 @@ void envelope_destroy(envelope_t* env)
     }
 }
 
-void envelope_pack(envelope_t* envelope, char** arg)
+void envelope_pack(envelope_t* envelope, uint8_t** arg)
 {
     size_t env_pack_size = strlen(envelope->name) + 
             strlen(envelope->source) + 2;
-    *arg = malloc(sizeof(char)*env_pack_size);
+    *arg = malloc(sizeof(uint8_t)*env_pack_size);
     strcpy(*arg, "\0");
     snprintf(*arg, 
              env_pack_size,
@@ -141,22 +141,22 @@ void envelope_pack(envelope_t* envelope, char** arg)
 }
 
 // https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-void envelope_unpack(char* envelope, envelope_t** arg)
+void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
-    const char delim[1] = ENVELOPE_FORMAT_DELIMITER;
+    const uint8_t delim[1] = ENVELOPE_FORMAT_DELIMITER;
     *arg = malloc(sizeof(envelope_t));
-    char* n = strtok(envelope, delim);
-    char* s = strtok(NULL, delim);
-    char* name;
-    char* source;
+    uint8_t* n = strtok(envelope, delim);
+    uint8_t* s = strtok(NULL, delim);
+    uint8_t* name;
+    uint8_t* source;
     if (s==NULL) {
-        name = malloc(sizeof(char)*5);    
-        source = malloc(sizeof(char)*strlen(n)+1);
+        name = malloc(sizeof(uint8_t)*5);    
+        source = malloc(sizeof(uint8_t)*strlen(n)+1);
         strcpy(name, "none\0");
         strcpy(source, n);
     } else {
-        name = malloc(sizeof(char)*strlen(n)+1);
-        source = malloc(sizeof(char)*strlen(s)+1);
+        name = malloc(sizeof(uint8_t)*strlen(n)+1);
+        source = malloc(sizeof(uint8_t)*strlen(s)+1);
         strcpy(name, n);
         strcpy(source, s);
     }
@@ -172,9 +172,9 @@ void envelope_print(envelope_t*env)
             env->source);
 }
 
-void envelope_writeout(envelope_t* env, char* path, int* error)
+void envelope_writeout(envelope_t* env, uint8_t* path, int* error)
 {
-    char *name = malloc(sizeof(char)*(strlen(path)+strlen(env->name))+2);
+    uint8_t *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen(env->name))+2);
     strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
@@ -214,12 +214,12 @@ void transmit_destroy(transmit_t* transm)
     }
 }
 
-void transmit_add(transmit_t* transm, unsigned int num, char* buffer, size_t buffer_len)
+void transmit_add(transmit_t* transm, unsigned int num, uint8_t* buffer, size_t buffer_len)
 {
     if (num >= transm->max)
         return;
     if (!transm->chunks[num].data) {
-        transm->chunks[num].data = malloc(sizeof(char)*buffer_len+1);
+        transm->chunks[num].data = malloc(sizeof(uint8_t)*buffer_len+1);
         memcpy(transm->chunks[num].data, buffer, buffer_len); 
         transm->chunks[num].len = buffer_len;
     }    
@@ -237,16 +237,16 @@ bool transmit_is_complete(transmit_t* transm)
     return retv;
 }
 
-void transmit_concatenate(transmit_t* transm, char** arg)
+void transmit_concatenate(transmit_t* transm, uint8_t** arg)
 {
     size_t concat_size=0;
     for (size_t k=0; k<transm->max; k++)
         concat_size += transm->chunks[k].len+1;
-    *arg = malloc(sizeof(char)*1);
+    *arg = malloc(sizeof(uint8_t)*1);
     strcpy(*arg, "\0");
     if (!transmit_is_complete(transm))
         return ;
-    *arg = realloc(*arg, sizeof(char)*concat_size);
+    *arg = realloc(*arg, sizeof(uint8_t)*concat_size);
     if (*arg==NULL)
         return ;
     for (unsigned int k=0; k<transm->max; k++) {
@@ -266,7 +266,7 @@ void transmit_print(transmit_t* transm)
 
 void transmit_get_envelope(transmit_t* transm, envelope_t** arg)
 {
-    char* envstr;
+    uint8_t* envstr;
     transmit_concatenate(transm, &envstr);
     envelope_unpack(envstr, &*arg);
     free(envstr);
@@ -340,14 +340,14 @@ void rxhandler_destroy(rxhandler_t* rxm)
 }
 
 #define KEY_FROM_HASH(hash) \
-    char key[RXMAP_KEY_LEN]; \
+    uint8_t key[RXMAP_KEY_LEN]; \
     memset(key, '\0', RXMAP_KEY_LEN); \
-    snprintf((char*)key,\
+    snprintf((uint8_t*)key,\
                     RXMAP_KEY_LEN,\
                     RXMAP_KEY_FORMAT,\
                     hash);
 
-void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, char* buffer, size_t buffer_len)
+void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);

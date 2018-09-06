@@ -150,9 +150,9 @@ size_t grtModemRX_consume(
 }
 
 static int mrx_framesync_callback(
-                unsigned char *header, 
+                uint8_t *header, 
                 int header_valid, 
-                unsigned char *payload,
+                uint8_t *payload,
                 unsigned int payload_len, 
                 int payload_valid,
                 framesyncstats_s _stats,
@@ -173,7 +173,7 @@ static int mrx_framesync_callback(
         return 1;
     unsigned long hash; 
     unsigned int frame_num, frame_nummax;
-    sscanf((char *)header,
+    sscanf((uint8_t *)header,
            MODEM_HEADER_FORMAT, 
            &hash, 
            &frame_num,

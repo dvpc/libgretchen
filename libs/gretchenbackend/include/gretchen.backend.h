@@ -1,8 +1,8 @@
 /*
  * Gretchen Backend
  */
-#ifndef GRT_BACKEND
-#define GRT_BACKEND
+
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,7 +78,7 @@ void grtBackend_startstream(grtBackend_t* back, int* error);
 
 bool grtBackend_isstreamactive(grtBackend_t* back);
 
-const char* grtBackend_getstatustext(grtBackend_t* back);
+const uint8_t* grtBackend_getstatustext(grtBackend_t* back);
 
 void grtBackend_stopstream(grtBackend_t* back, int* error);
 
@@ -88,4 +88,3 @@ size_t grtBackend_push(grtBackend_t* back, float* buffer, size_t len);
 
 void grtBackend_poll(grtBackend_t* back, size_t ask, float** buffer, size_t* len);
         
-#endif

@@ -16,8 +16,8 @@ void progress_callback(
 
 
 void filecomplete_callback(
-                char* filename, 
-                char* source, 
+                uint8_t* filename, 
+                uint8_t* source, 
                 size_t sourcelen, 
                 void* user) {
     (void) source;
@@ -25,8 +25,8 @@ void filecomplete_callback(
     printf("rx file complete: name %s len %zu \n", 
                     filename, sourcelen);
 
-    char *path = "test/\0";
-    char *name = malloc(sizeof(char)*(strlen(path)+strlen(filename))+2);
+    uint8_t *path = "test/\0";
+    uint8_t *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen(filename))+2);
     strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out

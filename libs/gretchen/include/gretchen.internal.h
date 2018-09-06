@@ -1,8 +1,8 @@
 /*
  * Gretchen internal
  */
-#ifndef ___GRETCHEN_INTERNAL_H___
-#define ___GRETCHEN_INTERNAL_H___
+
+#pragma once
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,8 +15,6 @@
  * not thread safe!
  * ugly and simple :D
  */
-#ifndef ___RINGBUFFER_U___
-#define ___RINGBUFFER_U___
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -89,8 +87,6 @@ void rbufuPrintBuffer(const rbufu_t* cb);
  */
 void rbufuReset(rbufu_t* cb);
 
-#endif
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // hashmap
@@ -105,8 +101,6 @@ void rbufuReset(rbufu_t* cb);
  * Modified by Pete Warden to fix a serious performance problem, support strings as keys
  * and removed thread synchronization - http://petewarden.typepad.com
  */
-#ifndef __HASHMAP_H__
-#define __HASHMAP_H__
 
 #define MAP_MISSING -3  /* No such element */
 #define MAP_FULL -2 	/* Hashmap is full */
@@ -149,17 +143,17 @@ extern int hashmap_iterate(map_t in, PFany f, any_t item);
 /*
  * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
  */
-extern int hashmap_put(map_t in, char* key, any_t value);
+extern int hashmap_put(map_t in, uint8_t* key, any_t value);
 
 /*
  * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_get(map_t in, char* key, any_t *arg);
+extern int hashmap_get(map_t in, uint8_t* key, any_t *arg);
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_remove(map_t in, char* key);
+extern int hashmap_remove(map_t in, uint8_t* key);
 
 /*
  * Get any element. Return MAP_OK or MAP_MISSING.
@@ -177,8 +171,6 @@ extern void hashmap_free(map_t in);
  */
 extern int hashmap_length(map_t in);
 
-//#endif __HASHMAP_H__
-#endif
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -186,9 +178,6 @@ extern int hashmap_length(map_t in);
 // aux
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#ifndef ___GRT_AUX___
-#define ___GRT_AUX___
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -199,15 +188,15 @@ extern int hashmap_length(map_t in);
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // binary file and related methods
 
-unsigned long hash_djb2(unsigned char *str);
+unsigned long hash_djb2(uint8_t *str);
 
-char* read_binary_file(char* filename, long* size, int* error);
+uint8_t* read_binary_file(uint8_t* filename, long* size, int* error);
 
-void read_binary_file_size(char* filename, long* size, int* error);
+void read_binary_file_size(uint8_t* filename, long* size, int* error);
 
-void write_binary_file(char* filename, char* source, int* error);
+void write_binary_file(uint8_t* filename, uint8_t* source, int* error);
 
-void write_raw_file(char* filename, float* source, size_t len, int* error);
+void write_raw_file(uint8_t* filename, float* source, size_t len, int* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // envelope methods
@@ -216,28 +205,28 @@ void write_raw_file(char* filename, float* source, size_t len, int* error);
 #define ENVELOPE_FORMAT_DELIMITER "\07"
 
 typedef struct {
-    char *name;
-    char *source;
+    uint8_t *name;
+    uint8_t *source;
 } envelope_t;
 
-envelope_t* envelope_create(char* name, char* source);
+envelope_t* envelope_create(uint8_t* name, uint8_t* source);
 
 void envelope_destroy(envelope_t* env);
 
-void envelope_pack(envelope_t* envelope, char** arg);
+void envelope_pack(envelope_t* envelope, uint8_t** arg);
 
-void envelope_unpack(char* envelope, envelope_t** arg);
+void envelope_unpack(uint8_t* envelope, envelope_t** arg);
 
 void envelope_print(envelope_t* env);
 
-void envelope_writeout(envelope_t* env, char* path, int* error);
+void envelope_writeout(envelope_t* env, uint8_t* path, int* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // rx frame handling: chunks, transmits
 
 typedef struct {
     unsigned int num;
-    char* data;
+    uint8_t* data;
     size_t len;
 } chunk_t;
 
@@ -251,11 +240,11 @@ transmit_t* transmit_create(unsigned long hash, unsigned int max);
 
 void transmit_destroy(transmit_t* transm);
 
-void transmit_add(transmit_t* transm, unsigned int num, char* buffer, size_t buffer_len);
+void transmit_add(transmit_t* transm, unsigned int num, uint8_t* buffer, size_t buffer_len);
 
 bool transmit_is_complete(transmit_t* transm);
 
-void transmit_concatenate(transmit_t* transm, char** arg);
+void transmit_concatenate(transmit_t* transm, uint8_t** arg);
 
 void transmit_print(transmit_t* transm);
 
@@ -275,7 +264,7 @@ rxhandler_t* rxhandler_create();
 
 void rxhandler_destroy(rxhandler_t* rxm);
 
-void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, char* buffer, size_t buffer_len);
+void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len);
 
 void rxhandler_remove(rxhandler_t* rxm, unsigned long hash);
 
@@ -287,18 +276,12 @@ typedef void list_cb_t(transmit_t* transm, void* user);
 
 void rxhandler_list(rxhandler_t* rxm, list_cb_t* callback, void* user);
 
-#endif
-
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // modem
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-
-#ifndef ___GRT_INTERNAL___
-#define ___GRT_INTERNAL___
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -361,7 +344,7 @@ typedef struct {
 
 grtModemOpt_t* grtModemOpt_create_default(unsigned int samplerate);
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx, unsigned int samplerate); 
+grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, unsigned int samplerate); 
 
 grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, unsigned int samplerate);
 
@@ -536,9 +519,5 @@ size_t grtModemTX_consume(grtModemTX_t *mtx, const void *buffer, size_t buflen);
 
 size_t framegen_estimate_num_symbols(grtModemTX_t *mtx, size_t len);
 
-#endif
 
 
-
-
-#endif

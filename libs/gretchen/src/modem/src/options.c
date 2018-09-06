@@ -107,12 +107,12 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
             free(res_tokens[i]); \
         free(res_tokens); \
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(char* filename, bool is_tx, unsigned int samplerate)
+grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, unsigned int samplerate)
 {
     // 1 load the options file
     int error;
     long filesize;
-    char* optchar = read_binary_file(filename, &filesize, &error);
+    uint8_t* optchar = read_binary_file(filename, &filesize, &error);
     if (error!=0) {
         printf("cannot read opt file.\n");
         return NULL;

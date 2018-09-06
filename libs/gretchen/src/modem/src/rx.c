@@ -16,7 +16,7 @@ static void _modemrx_callback(
                 hash, 
                 frame_num, 
                 frame_nummax, 
-                (char*)buffer, 
+                buffer, 
                 buffer_len);
     // if complete (ripe) transmits exist
     transmit_t* ripe;

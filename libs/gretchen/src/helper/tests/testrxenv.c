@@ -8,10 +8,10 @@ int main(int argc, char **argv) {
         printf("Usage: %s inputfile\n", argv[0]); 
         return 1;
     }
-    char *name = argv[1];
+    uint8_t *name = argv[1];
     long filesize;
     int error;
-    char *source = read_binary_file(name, &filesize, &error);
+    uint8_t *source = read_binary_file(name, &filesize, &error);
     if (error!=0 || source==NULL) {
         printf("File could not be read.\n");  
         return 1;
@@ -26,12 +26,12 @@ int main(int argc, char **argv) {
 
     envelope_t *env = envelope_create(name, source);
     
-    unsigned long hash = hash_djb2((unsigned char*) env->source);
+    unsigned long hash = hash_djb2(env->source);
     printf("hash: %zu\n", hash);
     
     printf("\npacking envelope...\n");
 
-    char *envstr;
+    uint8_t *envstr;
     envelope_pack(env, &envstr); 
     printf("envelope: %p size: %zu\n", envstr, strlen(envstr));
 
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     printf("\nunpacking envelope yields....\n");
     envelope_print(uenv);
 
-    unsigned long hash2 = hash_djb2((unsigned char*) uenv->source);
+    unsigned long hash2 = hash_djb2(uenv->source);
     printf("uhash: %zu\n", hash2);
 
     printf("\nis source and envelope sourece equal?: %d\n", 

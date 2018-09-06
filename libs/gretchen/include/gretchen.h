@@ -5,9 +5,8 @@
 // PUT the following in the documentation:
 // All internal raw sample data is assumed to be 
 // float 16 bit le with a now variable samplerate.
-//
-#ifndef ___GRETCHEN_H___
-#define ___GRETCHEN_H___
+
+#pragma once
 
 #define gretchen_VERSION_MAJOR 0
 #define gretchen_VERSION_MINOR 1
@@ -19,7 +18,7 @@
 
 typedef struct {
     grtModemTX_t* modem_tx;
-    char* packed_env;
+    uint8_t* packed_env;
     float* samples;
     size_t samples_len;
 } gretchenTX_t;
@@ -34,16 +33,16 @@ typedef struct {
     size_t est_transfer_sec;
 } gretchenTX_inspect_t;
 
-void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX_inspect_t** info);
+void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretchenTX_inspect_t** info);
 
-void gretchenTX_prepare(gretchenTX_t* tx, char* filename, int* error);
+void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int* error);
 
 void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RX
 
-typedef void gretchenRX_filecomplete_callback(char* filename, char* source, size_t sourcelen, void* user);
+typedef void gretchenRX_filecomplete_callback(uint8_t* filename, uint8_t* source, size_t sourcelen, void* user);
 
 typedef void gretchenRX_progress_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void* user);
 
@@ -61,7 +60,5 @@ void gretchenRX_destroy(gretchenRX_t* rx);
 
 void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int* error);
 
-
-#endif
 
 

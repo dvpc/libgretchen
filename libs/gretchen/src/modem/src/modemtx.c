@@ -201,7 +201,7 @@ static void framegen_assemble(
 {
     uint8_t header[MODEM_HEADER_LEN];
     memset(header, '\0', MODEM_HEADER_LEN);
-    snprintf((char*)header, 
+    snprintf((uint8_t*)header, 
                     MODEM_HEADER_LEN, 
                     MODEM_HEADER_FORMAT, 
                     mtx->hash, 

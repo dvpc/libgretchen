@@ -36,7 +36,7 @@ void gretchenTX_destroy(gretchenTX_t* tx)
     free(tx);
 }
 
-void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX_inspect_t** info)
+void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretchenTX_inspect_t** info)
 {
     *info = malloc(sizeof(gretchenTX_inspect_t));
     if (!*info)
@@ -61,23 +61,23 @@ void gretchenTX_inspect(gretchenTX_t* tx, char* filename, int* error, gretchenTX
     (*info)->est_transfer_sec = samples_est / tx->modem_tx->opt.samplerate;
 }
 
-void gretchenTX_prepare(gretchenTX_t* tx, char* filename, int* error)
+void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int* error)
 {
     // load the file
     long filesize;
-    char *source = read_binary_file(filename, &filesize, *&error);
+    uint8_t *source = read_binary_file(filename, &filesize, *&error);
     if (*error!=0)
         return ;
 
     // create and pack envelope 
     envelope_t* env = envelope_create(filename, source);
-    char *envstr;
+    uint8_t *envstr;
     envelope_pack(env, &envstr); 
     tx->packed_env = envstr;
 
     // set modem header info
     size_t packlen = strlen(tx->packed_env);
-    unsigned long hash = hash_djb2((unsigned char*) env->source);    
+    unsigned long hash = hash_djb2(env->source);    
     grtModemTX_setheaderinfo(tx->modem_tx, hash, packlen);
 
     // modulate packed env

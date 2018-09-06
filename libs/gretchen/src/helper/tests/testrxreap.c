@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     // dummy data
     unsigned long hash;
     size_t buflen = 50;
-    char buffer[buflen];
+    uint8_t buffer[buflen];
     memset(buffer, '\0', 50);
 
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     get_and_print_ripe_transmit(rxm);
 
     strcpy(buffer, "somedatawhateverkjahsdjkhsad\0");
-    hash = hash_djb2((unsigned char*)buffer);
+    hash = hash_djb2(buffer);
 
 
     printf("\n>   inserting chunk\n");

@@ -12,7 +12,7 @@
 
 /* We need to keep keys and values */
 typedef struct _hashmap_element{
-	char* key;
+	uint8_t* key;
 	int in_use;
 	any_t data;
 } hashmap_element;
@@ -68,7 +68,7 @@ map_t hashmap_new() {
   /*  implementation, that means shifting towards the right.  Why do we     */
   /*  do it this way?  Because the calculated CRC must be transmitted in    */
   /*  order from highest-order term to lowest-order term.  UARTs transmit   */
-  /*  characters in order from LSB to MSB.  By storing the CRC this way,    */
+  /*  uint8_tacters in order from LSB to MSB.  By storing the CRC this way,    */
   /*  we hand it to the UART in the order low-byte to high-byte; the UART   */
   /*  sends each low-bit to hight-bit; and the result is transmission bit   */
   /*  by bit from highest- to lowest-order term without requiring any bit   */
@@ -146,7 +146,7 @@ static unsigned long crc32_tab[] = {
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-unsigned long crc32(const unsigned char *s, unsigned int len)
+unsigned long crc32(const uint8_t *s, unsigned int len)
 {
   unsigned int i;
   unsigned long crc32val;
@@ -164,9 +164,9 @@ unsigned long crc32(const unsigned char *s, unsigned int len)
 /*
  * Hashing function for a string
  */
-unsigned int hashmap_hash_int(hashmap_map * m, char* keystring){
+unsigned int hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
 
-    unsigned long key = crc32((unsigned char*)(keystring), strlen(keystring));
+    unsigned long key = crc32((uint8_t*)(keystring), strlen(keystring));
 
 	/* Robert Jenkins' 32 bit Mix Function */
 	key += (key << 12);
@@ -188,7 +188,7 @@ unsigned int hashmap_hash_int(hashmap_map * m, char* keystring){
  * Return the integer of the location in data
  * to store the point to the item, or MAP_FULL.
  */
-int hashmap_hash(map_t in, char* key){
+int hashmap_hash(map_t in, uint8_t* key){
 	int curr;
 	int i;
 
@@ -258,7 +258,7 @@ int hashmap_rehash(map_t in){
 /*
  * Add a pointer to the hashmap with some key
  */
-int hashmap_put(map_t in, char* key, any_t value){
+int hashmap_put(map_t in, uint8_t* key, any_t value){
 	int index;
 	hashmap_map* m;
 
@@ -286,7 +286,7 @@ int hashmap_put(map_t in, char* key, any_t value){
 /*
  * Get your pointer out of the hashmap with a key
  */
-int hashmap_get(map_t in, char* key, any_t *arg){
+int hashmap_get(map_t in, uint8_t* key, any_t *arg){
 	int curr;
 	int i;
 	hashmap_map* m;
@@ -348,7 +348,7 @@ int hashmap_iterate(map_t in, PFany f, any_t item) {
 /*
  * Remove an element with that key from the map
  */
-int hashmap_remove(map_t in, char* key){
+int hashmap_remove(map_t in, uint8_t* key){
 	int i;
 	int curr;
 	hashmap_map* m;

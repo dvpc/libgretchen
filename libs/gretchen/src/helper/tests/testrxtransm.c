@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     // dummy data
     unsigned long hash;
     size_t buflen = 50;
-    char buffer[buflen];
+    uint8_t buffer[buflen];
     memset(buffer, '\0', 50);
 
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     // 1st transmit
     // just get a hash...
     strcpy(buffer, "somedatawhatever\0");
-    hash = hash_djb2((unsigned char*)buffer);
+    hash = hash_djb2(buffer);
     // 1st transmit some chunks
     strcpy(buffer, "anotherfile.txt\07__a0123456789\0");
     rxhandler_add(rxm, hash, 0, 3, buffer, buflen);
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     // 2nd transmit
     // just get a hash...
     strcpy(buffer, "somethingelseisthishere\0");
-    unsigned long hash2 = hash_djb2((unsigned char*)buffer);
+    unsigned long hash2 = hash_djb2(buffer);
     // 2nd transmit some chunks
     strcpy(buffer, "alltest.txt\07__aabcdefghijklmnopqrstuvwx\0");
     rxhandler_add(rxm, hash2, 0, 2, buffer, buflen);
