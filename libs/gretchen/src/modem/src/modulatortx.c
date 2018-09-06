@@ -1,18 +1,18 @@
 #include "gretchen.internal.h"
 
 grtModulatorTX_t *grtModulatorTX_create(
-                unsigned int shape,  
-                unsigned int samples_per_symbol,
-                unsigned int symbol_delay,
+                uint32_t shape,  
+                uint32_t samples_per_symbol,
+                uint32_t symbol_delay,
                 float excess_bw,
                 float center_rads,
                 float gain,
-                unsigned int flt_order,
+                uint32_t flt_order,
                 float flt_cutoff_frq,
                 float flt_center_frq,
                 float flt_passband_ripple,
                 float flt_stopband_ripple,
-                unsigned int flushlen_mod)
+                uint32_t flushlen_mod)
 {
     grtModulatorTX_t *mod = malloc(sizeof(grtModulatorTX_t));
 

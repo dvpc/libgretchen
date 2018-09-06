@@ -11,11 +11,11 @@ static int _record_callback();
 // which indicates a virtual channel.
 static int _estimator_num_input_channels_callback();
 typedef struct {
-    unsigned int num_channels;
+    uint32_t num_channels;
     bool chlimit_reached;
 } _estimator_num_input_channels_data_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, unsigned int samplerate)
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, uint32_t samplerate)
 {
     *error = 0;
     *result_num_channel = 0;
@@ -64,7 +64,7 @@ while_exit:
 }
 
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int samplerate)
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, uint32_t samplerate)
 {
     grtBackend_t* back = malloc(sizeof(grtBackend_t));
     if (!back)
@@ -181,7 +181,7 @@ void grtBackend_poll(grtBackend_t* back, size_t ask, float** buffer, size_t* len
     *buffer = NULL;
     if (back->err!=paNoError)
         return ;
-    unsigned int nread;
+    uint32_t nread;
     cbufferf_read(back->samplebuffer, ask, buffer, &nread);
     cbufferf_release(back->samplebuffer, nread);
     *len = nread;
@@ -212,14 +212,14 @@ static int _play_callback(
     grtBackend_t* back = (grtBackend_t*)user;
     float *outp = (float*)outbuf;
     float *samples;
-    unsigned int nread;
+    uint32_t nread;
     cbufferf_read(back->samplebuffer, frmsPerBuf, &samples, &nread);
     cbufferf_release(back->samplebuffer, nread);
     for (size_t k=0; k<nread; k++)
         outp[k] = samples[k];
     // FIXME testing
     // discarding all but the 1st channel 
-    /*unsigned int channels = back->strParams.channelCount;*/
+    /*uint32_t channels = back->strParams.channelCount;*/
     /*size_t idx=0;*/
     /*for (size_t k=0; k<nread; k+=channels) {*/
         /*outp[idx++] = samples[k];*/
@@ -243,7 +243,7 @@ static int _record_callback(
     const float *inp = (const float*)inbuf;
     size_t avail = _buffer_available(back);
 
-    unsigned int channels = back->strParams.channelCount;
+    uint32_t channels = back->strParams.channelCount;
     if (avail < frmsPerBuf*channels) {
         back->err = paInputOverflowed;
         return paComplete;
@@ -252,12 +252,12 @@ static int _record_callback(
     float *wptr = (float*)tmprecbuf;
     if (inp==NULL) {
         for (size_t k=0; k<frmsPerBuf; k++) {
-            for (unsigned int j=0; j<channels; j++)
+            for (uint32_t j=0; j<channels; j++)
                 *wptr++ = 0.0f;
         }
     } else {
         for (size_t k=0; k<frmsPerBuf; k++) {
-            for (unsigned int j=0; j<channels; j++)
+            for (uint32_t j=0; j<channels; j++)
                 *wptr++ = *inp++;
         }
     }
@@ -283,7 +283,7 @@ static int _estimator_num_input_channels_callback(
     else {
         size_t chlen = frmsPerBuf / data->num_channels;
         float* interlv = (float*) inbuf;
-        for (unsigned int j=0; j<data->num_channels; j++) {
+        for (uint32_t j=0; j<data->num_channels; j++) {
 /*fprintf(stderr,"c%u: ", j); */
             bool all_zero = true;
             float* chp = ((float**) interlv)[j];

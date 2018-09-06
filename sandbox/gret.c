@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
         size_t asklen = 1<<14;//8192
         float* buffer = NULL;
         size_t nread;
-        unsigned int num_channels = back->strParams.channelCount;
+        uint32_t num_channels = back->strParams.channelCount;
         float* monobuf = malloc(sizeof(float)*asklen);
         while(!grtSigcatcher_ShouldTerminate()) {
             if (!grtBackend_isstreamactive(back)) {
@@ -218,18 +218,18 @@ static void print_transm(transmit_t* t, void* user) {
 
     (void) user;
     printf("[hash %lu chnks ", t->hash);
-    for (unsigned int k=0; k<t->max; k++) {
+    for (uint32_t k=0; k<t->max; k++) {
         printf("%s", t->chunks[k].data==NULL?".":"O"); 
     }
     printf("] ");
     fflush(stdout);
 }
 
-static unsigned int print_count = 0;
+static uint32_t print_count = 0;
 static void rxprogress_callback(
                 uint64_t hash,
-                unsigned int frame_num,
-                unsigned int frame_nummax,
+                uint32_t frame_num,
+                uint32_t frame_nummax,
                 int payload_valid, 
                 void* user) {
     (void) hash;

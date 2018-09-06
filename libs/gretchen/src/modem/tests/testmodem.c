@@ -63,15 +63,15 @@ int main(int argc, char** argv) {
     float complex *testvals = calloc(num, sizeof(float complex));
     generate_test_cf_symbols(950, 5, testvals, num);
 
-    /*unsigned int shape = liquid_getopt_str2firfilt("rrcos");  */
-    unsigned int shape = liquid_getopt_str2firfilt("arkaiser");
-    unsigned int samples_per_symbol = 5;
-    unsigned int symbol_delay = 17;
+    /*uint32_t shape = liquid_getopt_str2firfilt("rrcos");  */
+    uint32_t shape = liquid_getopt_str2firfilt("arkaiser");
+    uint32_t samples_per_symbol = 5;
+    uint32_t symbol_delay = 17;
     float excess_bw = 0.15;
     float center_rads = (18500.0f/44110.0f) * 2*M_PI;
     /*float center_rads = 0.4f * 2*M_PI;//18200;*/
     float gain = 0.15;
-    unsigned int flushlen_mod = 5;
+    uint32_t flushlen_mod = 5;
     grtModulatorTX_t *mod = grtModulatorTX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, gain, 6, .25f, .45f, 1.0f, 60.0f, flushlen_mod);
     grtModulatorRX_t *dem = grtModulatorRX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, 7, .3f, .36f, 1.0f, 60.0f);
 

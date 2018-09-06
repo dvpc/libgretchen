@@ -106,7 +106,7 @@ size_t grtModemRX_consume(
 
     size_t stride = mrx->framelen * mrx->dem->samples_per_symbol;
     float *samples;
-    unsigned int nread;
+    uint32_t nread;
 
     while(true) {
         size_t count = cbufferf_size(mrx->consume_cb);
@@ -153,7 +153,7 @@ static int mrx_framesync_callback(
                 uint8_t *header, 
                 int header_valid, 
                 uint8_t *payload,
-                unsigned int payload_len, 
+                uint32_t payload_len, 
                 int payload_valid,
                 framesyncstats_s _stats,
                 void *dvoid)
@@ -172,7 +172,7 @@ static int mrx_framesync_callback(
     if (!header_valid)
         return 1;
     uint64_t hash; 
-    unsigned int frame_num, frame_nummax;
+    uint32_t frame_num, frame_nummax;
     sscanf((uint8_t *)header,
            MODEM_HEADER_FORMAT, 
            &hash, 

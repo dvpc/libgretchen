@@ -1,12 +1,12 @@
 #include "gretchen.internal.h"
 
 grtModulatorRX_t *grtModulatorRX_create(
-                unsigned int shape,  
-                unsigned int samples_per_symbol,
-                unsigned int symbol_delay,
+                uint32_t shape,  
+                uint32_t samples_per_symbol,
+                uint32_t symbol_delay,
                 float excess_bw,
                 float center_rads,
-                unsigned int flt_order,
+                uint32_t flt_order,
                 float flt_cutoff_frq,
                 float flt_center_frq,
                 float flt_passband_ripple,

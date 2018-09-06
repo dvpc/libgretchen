@@ -65,12 +65,12 @@ typedef struct {
     PaStream* stream;
     PaStreamParameters strParams;
     cbufferf samplebuffer;
-    unsigned int samplerate;
+    uint32_t samplerate;
 } grtBackend_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, unsigned int samplerate);
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, uint32_t samplerate);
 
-grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, unsigned int samplerate);
+grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, uint32_t samplerate);
 
 void grtBackend_destroy(grtBackend_t* back);
 

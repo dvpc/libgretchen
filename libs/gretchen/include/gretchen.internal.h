@@ -225,22 +225,22 @@ void envelope_writeout(envelope_t* env, uint8_t* path, int* error);
 // rx frame handling: chunks, transmits
 
 typedef struct {
-    unsigned int num;
+    uint32_t num;
     uint8_t* data;
     size_t len;
 } chunk_t;
 
 typedef struct {
     uint64_t hash;
-    unsigned int max;
+    uint32_t max;
     chunk_t* chunks;
 } transmit_t;
 
-transmit_t* transmit_create(uint64_t hash, unsigned int max);
+transmit_t* transmit_create(uint64_t hash, uint32_t max);
 
 void transmit_destroy(transmit_t* transm);
 
-void transmit_add(transmit_t* transm, unsigned int num, uint8_t* buffer, size_t buffer_len);
+void transmit_add(transmit_t* transm, uint32_t num, uint8_t* buffer, size_t buffer_len);
 
 bool transmit_is_complete(transmit_t* transm);
 
@@ -264,7 +264,7 @@ rxhandler_t* rxhandler_create();
 
 void rxhandler_destroy(rxhandler_t* rxm);
 
-void rxhandler_add(rxhandler_t* rxm, uint64_t hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len);
+void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, uint8_t* buffer, size_t buffer_len);
 
 void rxhandler_remove(rxhandler_t* rxm, uint64_t hash);
 
@@ -307,29 +307,29 @@ typedef struct {
     fec_scheme inner_fec_scheme;
     fec_scheme outer_fec_scheme;
     modulation_scheme mod_scheme;
-    unsigned int _bits_per_symbol;
+    uint32_t _bits_per_symbol;
 } grtFrameOpt_t;
 
 typedef struct {
-    unsigned int shape;  
-    unsigned int samples_per_symbol;
-    unsigned int symbol_delay;
+    uint32_t shape;  
+    uint32_t samples_per_symbol;
+    uint32_t symbol_delay;
     float excess_bw;
     float center_rads;
     float gain;
-    unsigned int flushlen_mod;
-    unsigned int txflt_order;
+    uint32_t flushlen_mod;
+    uint32_t txflt_order;
     float txflt_cutoff_frq;
     float txflt_center_frq;
-    unsigned int rxflt_order;
+    uint32_t rxflt_order;
     float rxflt_cutoff_frq;
     float rxflt_center_frq;
 } grtModulatorOpt_t;
 
 typedef struct {
-    unsigned int num_subcarriers;
-    unsigned int cyclic_prefix_len;
-    unsigned int taper_len;
+    uint32_t num_subcarriers;
+    uint32_t cyclic_prefix_len;
+    uint32_t taper_len;
     size_t left_band;
     size_t right_band;
 } grtOfdmOpt_t;
@@ -339,14 +339,14 @@ typedef struct {
     grtFrameOpt_t *frameopt;
     grtModulatorOpt_t *modopt;
     grtOfdmOpt_t *ofdmopt;
-    unsigned int samplerate;
+    uint32_t samplerate;
 } grtModemOpt_t;
 
-grtModemOpt_t* grtModemOpt_create_default(unsigned int samplerate);
+grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate);
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, unsigned int samplerate); 
+grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate); 
 
-grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, unsigned int samplerate);
+grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_t samplerate);
 
 void grtModemOpt_destroy(grtModemOpt_t* opt);
 
@@ -365,12 +365,12 @@ typedef struct {
     nco_crcf nco;
     firdecim_crcf decim;
     iirfilt_rrrf filter_rx;
-    unsigned int samples_per_symbol;
+    uint32_t samples_per_symbol;
     agc_rrrf agc;
     iirfilt_crcf dcfilter; 
 } grtModulatorRX_t;
 
-grtModulatorRX_t *grtModulatorRX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
+grtModulatorRX_t *grtModulatorRX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
 
 void grtModulatorRX_destroy(grtModulatorRX_t *dem);
 
@@ -379,11 +379,11 @@ size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ModemRX (Decoder)
 
-typedef void grtModemRX_emit_callback(uint64_t hash, unsigned int frame_num, unsigned int frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
+typedef void grtModemRX_emit_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
 
-typedef void grtModemRX_emit_progress_callback(uint64_t hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void *user);
+typedef void grtModemRX_emit_progress_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, int payload_valid, void *user);
 
-typedef void grtModemRX_emit_debug_callback(int header_valid, int payload_valid, unsigned int payload_len, framesyncstats_s stats);
+typedef void grtModemRX_emit_debug_callback(int header_valid, int payload_valid, uint32_t payload_len, framesyncstats_s stats);
 
 typedef struct { 
     flexframesync framesync; 
@@ -441,12 +441,12 @@ typedef struct {
     nco_crcf nco;
     firinterp_crcf interp;
     //iirfilt_crcf filter_tx;
-    unsigned int samples_per_symbol;
+    uint32_t samples_per_symbol;
     float gain;
     size_t flushlen;
 } grtModulatorTX_t;
 
-grtModulatorTX_t *grtModulatorTX_create(unsigned int shape, unsigned int samples_per_symbol, unsigned int symbol_delay, float excess_bw, float center_rads, float gain, unsigned int flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, unsigned int flushlen_mod);
+grtModulatorTX_t *grtModulatorTX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, float gain, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, uint32_t flushlen_mod);
 
 void grtModulatorTX_destroy(grtModulatorTX_t *mod);
 
@@ -501,8 +501,8 @@ typedef struct {
     void *emit_callback_userdata;
 
     uint64_t hash;
-    unsigned int frame_num;
-    unsigned int frame_nummax;
+    uint32_t frame_num;
+    uint32_t frame_nummax;
 } grtModemTX_t;
 
 grtModemTX_t *grtModemTX_create(const grtModemOpt_t *opt, size_t internal_bufsize);

@@ -146,9 +146,9 @@ static uint64_t crc32_tab[] = {
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-uint64_t crc32(const uint8_t *s, unsigned int len)
+uint64_t crc32(const uint8_t *s, uint32_t len)
 {
-  unsigned int i;
+  uint32_t i;
   uint64_t crc32val;
   
   crc32val = 0;
@@ -164,7 +164,7 @@ uint64_t crc32(const uint8_t *s, unsigned int len)
 /*
  * Hashing function for a string
  */
-unsigned int hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
+uint32_t hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
 
     uint64_t key = crc32((uint8_t*)(keystring), strlen(keystring));
 

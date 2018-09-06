@@ -4,7 +4,7 @@
 
 #include "gretchen.internal.h"
 
-void emit_callback(uint64_t hash, unsigned int header_num, unsigned int header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
+void emit_callback(uint64_t hash, uint32_t header_num, uint32_t header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
 {
     (void) userdata;
     fprintf(stderr,"_dec_emit header-id: %lu frame-num %u max %u\n", hash, header_num, header_nummax);
@@ -13,7 +13,7 @@ void emit_callback(uint64_t hash, unsigned int header_num, unsigned int header_n
     }
 }
 
-void debug_callback(int header_valid, int payload_valid, unsigned int payload_len, framesyncstats_s stats)
+void debug_callback(int header_valid, int payload_valid, uint32_t payload_len, framesyncstats_s stats)
 {
     fprintf(stderr, "__callback h-valid:%i p-valid:%i len:%i\n", header_valid, payload_valid, payload_len);
     fprintf(stderr, "    EVM                 :   %12.8f dB\n", stats.evm);

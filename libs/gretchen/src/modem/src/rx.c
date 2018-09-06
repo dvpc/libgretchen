@@ -2,8 +2,8 @@
 
 static void _modemrx_callback(
                 uint64_t hash,
-                unsigned int frame_num,
-                unsigned int frame_nummax,
+                uint32_t frame_num,
+                uint32_t frame_nummax,
                 size_t buffer_len,
                 uint8_t *buffer,
                 void *user)
@@ -41,8 +41,8 @@ static void _modemrx_callback(
 
 static void _modemrx_progress_callback(
                 uint64_t hash, 
-                unsigned int frame_num, 
-                unsigned int frame_nummax, 
+                uint32_t frame_num, 
+                uint32_t frame_nummax, 
                 int payload_valid,
                 void *user)
 {

@@ -1,12 +1,12 @@
 #include "gretchen.internal.h"
 
 
-static float _convert_freq2rad(int frequency, unsigned int samplerate) 
+static float _convert_freq2rad(int frequency, uint32_t samplerate) 
 {
     return ((float)frequency/(float)samplerate) * M_PI * 2.0;
 }
 
-static grtModemOpt_t* _create_empty(unsigned int samplerate)
+static grtModemOpt_t* _create_empty(uint32_t samplerate)
 {
     grtModemOpt_t *opt = calloc(1, sizeof(grtModemOpt_t));
     grtFrameOpt_t *frame = calloc(1, sizeof(grtFrameOpt_t));
@@ -57,7 +57,7 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
     return true;
 }
 
-grtModemOpt_t* grtModemOpt_create_default(unsigned int samplerate)
+grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
 {
     grtModemOpt_t* opt = _create_empty(samplerate);
     opt->frametype = frametype_modem;
@@ -107,7 +107,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
             free(res_tokens[i]); \
         free(res_tokens); \
 
-grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, unsigned int samplerate)
+grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate)
 {
     // 1 load the options file
     int error;
@@ -161,7 +161,7 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
     return opt;
 }
 
-grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, unsigned int samplerate) 
+grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_t samplerate) 
 {
     if (argc==1)
         return NULL;

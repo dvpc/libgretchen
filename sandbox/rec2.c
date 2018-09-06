@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
     }
     // FIXME
     // getting number of input channels temporarily
-    unsigned int num_channels = back->strParams.channelCount;
+    uint32_t num_channels = back->strParams.channelCount;
     fprintf(stderr, "using %u imput channels...\n", num_channels);
 
     grtSigcatcher_Init();

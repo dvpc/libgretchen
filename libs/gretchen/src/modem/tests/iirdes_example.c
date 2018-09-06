@@ -37,7 +37,7 @@ void usage()
 
 int main(int argc, char*argv[]) {
     // options
-    unsigned int order=5;   // filter order
+    uint32_t order=5;   // filter order
     float fc = 0.20f;       // cutoff frequency (low-pass prototype)
     float f0 = 0.25f;       // center frequency (band-pass, band-stop)
     float As = 60.0f;       // stopband attenuation [dB]
@@ -132,7 +132,7 @@ int main(int argc, char*argv[]) {
     }
 
     // derived values : compute filter length
-    unsigned int N = order; // effective order
+    uint32_t N = order; // effective order
     // filter order effectively doubles for band-pass, band-stop
     // filters due to doubling the number of poles and zeros as
     // a result of filter transformation
@@ -141,11 +141,11 @@ int main(int argc, char*argv[]) {
     {
         N *= 2;
     }
-    unsigned int r = N % 2;     // odd/even order
-    unsigned int L = (N-r)/2;   // filter semi-length
+    uint32_t r = N % 2;     // odd/even order
+    uint32_t L = (N-r)/2;   // filter semi-length
 
     // allocate memory for filter coefficients
-    unsigned int h_len = (format == LIQUID_IIRDES_SOS) ? 3*(L+r) : N+1;
+    uint32_t h_len = (format == LIQUID_IIRDES_SOS) ? 3*(L+r) : N+1;
     float b[h_len];
     float a[h_len];
 
@@ -163,7 +163,7 @@ int main(int argc, char*argv[]) {
     fprintf(fid,"L=%u;\n", L);
     fprintf(fid,"nfft=1024;\n");
 
-    unsigned int i;
+    uint32_t i;
     if (format == LIQUID_IIRDES_TF) {
         // print coefficients
         for (i=0; i<=N; i++) printf("a[%3u] = %12.8f;\n", i, a[i]);
@@ -199,7 +199,7 @@ int main(int argc, char*argv[]) {
         for (i=0; i<L+r; i++)
             printf("  %12.8f %12.8f %12.8f\n", A[3*i+0], A[3*i+1], A[3*i+2]);
 
-        unsigned int j;
+        uint32_t j;
         for (i=0; i<L+r; i++) {
             for (j=0; j<3; j++) {
                 fprintf(fid,"B(%3u,%3u) = %16.8e;\n", i+1, j+1, B[3*i+j]);
