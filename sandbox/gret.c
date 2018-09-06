@@ -227,7 +227,7 @@ static void print_transm(transmit_t* t, void* user) {
 
 static unsigned int print_count = 0;
 static void rxprogress_callback(
-                unsigned long hash,
+                uint64_t hash,
                 unsigned int frame_num,
                 unsigned int frame_nummax,
                 int payload_valid, 

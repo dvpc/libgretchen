@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     // -> later change also in modem...
 
     // dummy data
-    unsigned long hash;
+    uint64_t hash;
     size_t buflen = 50;
     uint8_t buffer[buflen];
     memset(buffer, '\0', 50);

@@ -4,9 +4,9 @@
 // binary file and related methods
 
 // http://www.cse.yorku.ca/~oz/hash.html
-unsigned long hash_djb2(uint8_t *str)
+uint64_t hash_djb2(uint8_t *str)
 { 
-    unsigned long hash = 5381;
+    uint64_t hash = 5381;
     int c;
     while ((c = *str++))
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -188,7 +188,7 @@ void envelope_writeout(envelope_t* env, uint8_t* path, int* error)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // rx frame handling methods, chunks, transmits
 
-transmit_t* transmit_create(unsigned long hash, unsigned int max)
+transmit_t* transmit_create(uint64_t hash, unsigned int max)
 {
     transmit_t* transm = malloc(sizeof(transmit_t));
     transm->hash = hash;
@@ -347,7 +347,7 @@ void rxhandler_destroy(rxhandler_t* rxm)
                     RXMAP_KEY_FORMAT,\
                     hash);
 
-void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len)
+void rxhandler_add(rxhandler_t* rxm, uint64_t hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
@@ -359,7 +359,7 @@ void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsig
     transmit_add(transm, num, buffer, buffer_len);
 }
 
-void rxhandler_get(rxhandler_t* rxm, unsigned long hash, transmit_t** arg)
+void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
@@ -370,7 +370,7 @@ void rxhandler_get(rxhandler_t* rxm, unsigned long hash, transmit_t** arg)
         *arg = NULL;
 }
 
-void rxhandler_remove(rxhandler_t* rxm, unsigned long hash)
+void rxhandler_remove(rxhandler_t* rxm, uint64_t hash)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);

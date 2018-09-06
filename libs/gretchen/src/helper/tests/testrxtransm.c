@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     (void) argc;
 
     // dummy data
-    unsigned long hash;
+    uint64_t hash;
     size_t buflen = 50;
     uint8_t buffer[buflen];
     memset(buffer, '\0', 50);
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     // 2nd transmit
     // just get a hash...
     strcpy(buffer, "somethingelseisthishere\0");
-    unsigned long hash2 = hash_djb2(buffer);
+    uint64_t hash2 = hash_djb2(buffer);
     // 2nd transmit some chunks
     strcpy(buffer, "alltest.txt\07__aabcdefghijklmnopqrstuvwx\0");
     rxhandler_add(rxm, hash2, 0, 2, buffer, buflen);

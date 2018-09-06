@@ -201,7 +201,7 @@ static size_t _buffer_available(grtBackend_t* back)
 static int _play_callback(
                 const void *inbuf, 
                 void *outbuf,
-                unsigned long frmsPerBuf, 
+                uint64_t frmsPerBuf, 
                 const PaStreamCallbackTimeInfo* timeInfo,
                 PaStreamCallbackFlags statFlags,
                 void *user)
@@ -231,7 +231,7 @@ static int _play_callback(
 static int _record_callback(
                 const void *inbuf, 
                 void *outbuf,
-                unsigned long frmsPerBuf, 
+                uint64_t frmsPerBuf, 
                 const PaStreamCallbackTimeInfo* timeInfo,
                 PaStreamCallbackFlags statFlags,
                 void *user)
@@ -268,7 +268,7 @@ static int _record_callback(
 static int _estimator_num_input_channels_callback(
                 const void *inbuf, 
                 void *outbuf,
-                unsigned long frmsPerBuf, 
+                uint64_t frmsPerBuf, 
                 const PaStreamCallbackTimeInfo* timeInfo,
                 PaStreamCallbackFlags statFlags,
                 void *user)

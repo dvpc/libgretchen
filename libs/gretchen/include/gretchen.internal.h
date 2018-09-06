@@ -188,7 +188,7 @@ extern int hashmap_length(map_t in);
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // binary file and related methods
 
-unsigned long hash_djb2(uint8_t *str);
+uint64_t hash_djb2(uint8_t *str);
 
 uint8_t* read_binary_file(uint8_t* filename, long* size, int* error);
 
@@ -231,12 +231,12 @@ typedef struct {
 } chunk_t;
 
 typedef struct {
-    unsigned long hash;
+    uint64_t hash;
     unsigned int max;
     chunk_t* chunks;
 } transmit_t;
 
-transmit_t* transmit_create(unsigned long hash, unsigned int max);
+transmit_t* transmit_create(uint64_t hash, unsigned int max);
 
 void transmit_destroy(transmit_t* transm);
 
@@ -264,11 +264,11 @@ rxhandler_t* rxhandler_create();
 
 void rxhandler_destroy(rxhandler_t* rxm);
 
-void rxhandler_add(rxhandler_t* rxm, unsigned long hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len);
+void rxhandler_add(rxhandler_t* rxm, uint64_t hash, unsigned int num, unsigned int max, uint8_t* buffer, size_t buffer_len);
 
-void rxhandler_remove(rxhandler_t* rxm, unsigned long hash);
+void rxhandler_remove(rxhandler_t* rxm, uint64_t hash);
 
-void rxhandler_get(rxhandler_t* rxm, unsigned long hash, transmit_t** arg);
+void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg);
 
 void rxhandler_reap(rxhandler_t* rxm, transmit_t** ripe);
 
@@ -355,7 +355,7 @@ void grtModemOpt_print(grtModemOpt_t* opt);
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Modem 
 
-#define MODEM_HEADER_LEN 2+sizeof(unsigned long)*3 
+#define MODEM_HEADER_LEN 2+sizeof(uint64_t)*3 
 #define MODEM_HEADER_FORMAT "%lu,%d,%d"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -379,9 +379,9 @@ size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ModemRX (Decoder)
 
-typedef void grtModemRX_emit_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
+typedef void grtModemRX_emit_callback(uint64_t hash, unsigned int frame_num, unsigned int frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
 
-typedef void grtModemRX_emit_progress_callback(unsigned long hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void *user);
+typedef void grtModemRX_emit_progress_callback(uint64_t hash, unsigned int frame_num, unsigned int frame_nummax, int payload_valid, void *user);
 
 typedef void grtModemRX_emit_debug_callback(int header_valid, int payload_valid, unsigned int payload_len, framesyncstats_s stats);
 
@@ -500,7 +500,7 @@ typedef struct {
     grtModemTX_emit_callback *emit_callback;
     void *emit_callback_userdata;
 
-    unsigned long hash;
+    uint64_t hash;
     unsigned int frame_num;
     unsigned int frame_nummax;
 } grtModemTX_t;
@@ -509,7 +509,7 @@ grtModemTX_t *grtModemTX_create(const grtModemOpt_t *opt, size_t internal_bufsiz
 
 void grtModemTX_destroy(grtModemTX_t *mtx);
 
-void grtModemTX_setheaderinfo(grtModemTX_t *mtx, unsigned long filehash, size_t filesize); 
+void grtModemTX_setheaderinfo(grtModemTX_t *mtx, uint64_t filehash, size_t filesize); 
 
 void grtModemTX_enable_flush(grtModemTX_t *mtx);
 

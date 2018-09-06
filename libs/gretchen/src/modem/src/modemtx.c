@@ -91,7 +91,7 @@ void grtModemTX_destroy(grtModemTX_t *mtx)
 
 void grtModemTX_setheaderinfo(
                 grtModemTX_t *mtx,
-                unsigned long filehash, 
+                uint64_t filehash, 
                 size_t filesize) 
 {
     mtx->hash = filehash;

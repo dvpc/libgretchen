@@ -4,7 +4,7 @@
 #include "gretchen.h"
 
 void progress_callback(
-                unsigned long hash,
+                uint64_t hash,
                 unsigned int frame_num,
                 unsigned int frame_nummax,
                 int payload_valid, 
