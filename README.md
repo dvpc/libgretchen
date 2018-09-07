@@ -5,7 +5,7 @@ ____          _       _
  \____|_|  \___|\__\___|_| |_|\___|_| |_|
 
 ### Dependencies
-cmake           https://cmake.org
+cmake           https://cmake.org  
 autoconf        sudo apt-get install autoconf
 #### Audio backend
 portaudio       http://www.portaudio.com/
