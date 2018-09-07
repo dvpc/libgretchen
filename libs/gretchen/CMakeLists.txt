@@ -26,7 +26,7 @@ target_include_directories(gretchen PUBLIC
         PRIAVTE 
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_target_properties(gretchen PROPERTIES PUBLIC_HEADER "gretchen.h")
-target_link_libraries(gretchen liquid fec)
+target_link_libraries(gretchen liquid fec m)
 
 
 # from cmake tutorial install headers and .a

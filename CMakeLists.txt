@@ -42,7 +42,7 @@ add_executable(dec sandbox/dec.c)
 target_link_libraries(dec gretchen)
 
 add_executable(noise sandbox/noise.c) 
-target_link_libraries(noise gretchenbackend gretchen) 
+target_link_libraries(noise gretchenbackend gretchen m) 
 
 add_executable(rec sandbox/rec2.c) 
 target_link_libraries(rec gretchenbackend gretchen)
