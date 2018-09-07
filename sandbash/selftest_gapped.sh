@@ -29,7 +29,7 @@ cat $2 | build/enc $opt | tee $OUTPUT_filewav2 | build/play
 # stop the recording process (moved to the background)
 #jobs
 sleep 1
-kill %%
+kill $! #kill %%
 
 wait
 # now compare the original and the generated file
