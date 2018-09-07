@@ -1,11 +1,16 @@
+```
   ____          _       _                
  / ___|_ __ ___| |_ ___| |__   ___ _ __  
 | |  _| '__/ _ \ __/ __| '_ \ / _ \ '_ \ 
 | |_| | | |  __/ || (__| | | |  __/ | | |
  \____|_|  \___|\__\___|_| |_|\___|_| |_|
-
+```
 ### Dependencies
 cmake           https://cmake.org  
+ODER:  
+```sudo apt-get install cmake```  
+autoconf:  
+```sudo apt-get install autoconf```
 #### Audio backend
 portaudio       http://www.portaudio.com/
 #### Static dependencies
@@ -71,8 +76,3 @@ $ brew install portaudio
 ```
 
 ### windows
-
-
-
-
-
