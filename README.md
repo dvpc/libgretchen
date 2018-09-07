@@ -6,7 +6,10 @@ ____          _       _
 
 ### Dependencies
 cmake           https://cmake.org  
-autoconf        sudo apt-get install autoconf
+ODER:  
+```sudo apt-get install cmake```  
+autoconf:  
+```sudo apt-get install autoconf```
 #### Audio backend
 portaudio       http://www.portaudio.com/
 #### Static dependencies
