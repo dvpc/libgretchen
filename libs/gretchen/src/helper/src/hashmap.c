@@ -13,15 +13,15 @@
 /* We need to keep keys and values */
 typedef struct _hashmap_element{
 	uint8_t* key;
-	int in_use;
+	uint8_t in_use;
 	any_t data;
 } hashmap_element;
 
 /* A hashmap has some maximum size and current size,
  * as well as the data to hold. */
 typedef struct _hashmap_map{
-	int table_size;
-	int size;
+	uint32_t table_size;
+	uint32_t size;
 	hashmap_element *data;
 } hashmap_map;
 
@@ -188,7 +188,7 @@ uint32_t hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
  * Return the integer of the location in data
  * to store the point to the item, or MAP_FULL.
  */
-int hashmap_hash(map_t in, uint8_t* key){
+int32_t hashmap_hash(map_t in, uint8_t* key){
 	int curr;
 	int i;
 
@@ -218,9 +218,9 @@ int hashmap_hash(map_t in, uint8_t* key){
 /*
  * Doubles the size of the hashmap, and rehashes all the elements
  */
-int hashmap_rehash(map_t in){
-	int i;
-	int old_size;
+int32_t hashmap_rehash(map_t in){
+    int32_t i;
+	int32_t old_size;
 	hashmap_element* curr;
 
 	/* Setup the new elements */
@@ -240,7 +240,7 @@ int hashmap_rehash(map_t in){
 
 	/* Rehash the elements */
 	for(i = 0; i < old_size; i++){
-        int status;
+        int8_t status;
 
         if (curr[i].in_use == 0)
             continue;
@@ -258,8 +258,8 @@ int hashmap_rehash(map_t in){
 /*
  * Add a pointer to the hashmap with some key
  */
-int hashmap_put(map_t in, uint8_t* key, any_t value){
-	int index;
+int8_t hashmap_put(map_t in, uint8_t* key, any_t value){
+	int32_t index;
 	hashmap_map* m;
 
 	/* Cast the hashmap */
@@ -286,9 +286,9 @@ int hashmap_put(map_t in, uint8_t* key, any_t value){
 /*
  * Get your pointer out of the hashmap with a key
  */
-int hashmap_get(map_t in, uint8_t* key, any_t *arg){
-	int curr;
-	int i;
+int8_t hashmap_get(map_t in, uint8_t* key, any_t *arg){
+	int32_t curr;
+	int32_t i;
 	hashmap_map* m;
 
 	/* Cast the hashmap */
@@ -300,7 +300,7 @@ int hashmap_get(map_t in, uint8_t* key, any_t *arg){
 	/* Linear probing, if necessary */
 	for(i = 0; i<MAX_CHAIN_LENGTH; i++){
 
-        int in_use = m->data[curr].in_use;
+        uint8_t in_use = m->data[curr].in_use;
         if (in_use == 1){
             if (strcmp(m->data[curr].key,key)==0){
                 *arg = (m->data[curr].data);
@@ -322,8 +322,8 @@ int hashmap_get(map_t in, uint8_t* key, any_t *arg){
  * additional any_t argument is passed to the function as its first
  * argument and the hashmap element is the second.
  */
-int hashmap_iterate(map_t in, PFany f, any_t item) {
-	int i;
+int8_t hashmap_iterate(map_t in, PFany f, any_t item) {
+	int32_t i;
 
 	/* Cast the hashmap */
 	hashmap_map* m = (hashmap_map*) in;
@@ -348,7 +348,7 @@ int hashmap_iterate(map_t in, PFany f, any_t item) {
 /*
  * Remove an element with that key from the map
  */
-int hashmap_remove(map_t in, uint8_t* key){
+int8_t hashmap_remove(map_t in, uint8_t* key){
 	int i;
 	int curr;
 	hashmap_map* m;
@@ -362,7 +362,7 @@ int hashmap_remove(map_t in, uint8_t* key){
 	/* Linear probing, if necessary */
 	for(i = 0; i<MAX_CHAIN_LENGTH; i++){
 
-        int in_use = m->data[curr].in_use;
+        uint8_t in_use = m->data[curr].in_use;
         if (in_use == 1){
             if (strcmp(m->data[curr].key,key)==0){
                 /* Blank out the fields */
@@ -390,7 +390,7 @@ void hashmap_free(map_t in){
 }
 
 /* Return the length of the hashmap */
-int hashmap_length(map_t in){
+int32_t hashmap_length(map_t in){
 	hashmap_map* m = (hashmap_map *) in;
 	if(m != NULL) return m->size;
 	else return 0;

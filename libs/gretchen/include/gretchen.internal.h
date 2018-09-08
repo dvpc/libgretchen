@@ -138,28 +138,28 @@ extern map_t hashmap_new();
  * than MAP_OK the traversal is terminated. f must
  * not reenter any hashmap functions, or deadlock may arise.
  */
-extern int hashmap_iterate(map_t in, PFany f, any_t item);
+extern int8_t hashmap_iterate(map_t in, PFany f, any_t item);
 
 /*
  * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
  */
-extern int hashmap_put(map_t in, uint8_t* key, any_t value);
+extern int8_t hashmap_put(map_t in, uint8_t* key, any_t value);
 
 /*
  * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_get(map_t in, uint8_t* key, any_t *arg);
+extern int8_t hashmap_get(map_t in, uint8_t* key, any_t *arg);
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_remove(map_t in, uint8_t* key);
+extern int8_t hashmap_remove(map_t in, uint8_t* key);
 
 /*
  * Get any element. Return MAP_OK or MAP_MISSING.
  * remove - should the element be removed from the hashmap
  */
-extern int hashmap_get_one(map_t in, any_t *arg, int remove);
+extern int8_t hashmap_get_one(map_t in, any_t *arg, uint8_t remove);
 
 /*
  * Free the hashmap
@@ -169,7 +169,7 @@ extern void hashmap_free(map_t in);
 /*
  * Get the current size of a hashmap
  */
-extern int hashmap_length(map_t in);
+extern int32_t hashmap_length(map_t in);
 
 
 
