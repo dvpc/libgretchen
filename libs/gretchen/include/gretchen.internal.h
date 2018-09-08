@@ -37,8 +37,8 @@ typedef struct {
     RBUF_U_TYPE *tail;
     size_t maxlen;
     size_t count;
-    int haslockpop;
-    int haslockpush;
+    uint8_t haslockpop;
+    uint8_t haslockpush;
 } rbufu_t;
 
 /*

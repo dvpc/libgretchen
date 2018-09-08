@@ -58,7 +58,7 @@ static void _modemrx_progress_callback(
                 rx->callbackuser);
 }
 
-gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, int internal_bufsize)
+gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, size_t internal_bufsize)
 {
     gretchenRX_t* rx = malloc(sizeof(gretchenRX_t));
     rx->modem_rx = grtModemRX_create(opt, internal_bufsize);

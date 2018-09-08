@@ -23,7 +23,7 @@ typedef struct {
     size_t samples_len;
 } gretchenTX_t;
 
-gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, int internal_bufsize);
+gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internal_bufsize);
 
 void gretchenTX_destroy(gretchenTX_t* tx);
 
@@ -54,7 +54,7 @@ typedef struct {
     void* callbackuser;
 } gretchenRX_t;
 
-gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, int internal_bufsize);
+gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, size_t internal_bufsize);
 
 void gretchenRX_destroy(gretchenRX_t* rx);
 

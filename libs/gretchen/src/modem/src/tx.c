@@ -14,7 +14,7 @@ static void _modemtx_callback(
     tx->samples_len = wantlen;
 }
 
-gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, int internalbufsize)
+gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internalbufsize)
 {
     gretchenTX_t* tx = malloc(sizeof(gretchenTX_t));
     tx->packed_env = NULL;
