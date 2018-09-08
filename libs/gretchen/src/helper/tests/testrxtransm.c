@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     envelope_print(env);
 
 
-    int error;
+    int8_t error;
     envelope_writeout(env, "test/", &error);
     if (error==0)
         printf("File written: %s error:%i\n", env->name, error);

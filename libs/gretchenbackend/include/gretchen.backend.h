@@ -68,19 +68,19 @@ typedef struct {
     uint32_t samplerate;
 } grtBackend_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, uint32_t samplerate);
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int8_t* error, uint32_t samplerate);
 
 grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, uint32_t samplerate);
 
 void grtBackend_destroy(grtBackend_t* back);
 
-void grtBackend_startstream(grtBackend_t* back, int* error);
+void grtBackend_startstream(grtBackend_t* back, int8_t* error);
 
 bool grtBackend_isstreamactive(grtBackend_t* back);
 
 const uint8_t* grtBackend_getstatustext(grtBackend_t* back);
 
-void grtBackend_stopstream(grtBackend_t* back, int* error);
+void grtBackend_stopstream(grtBackend_t* back, int8_t* error);
 
 size_t grtBackend_push_available(grtBackend_t* back);
 

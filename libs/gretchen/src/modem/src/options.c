@@ -110,7 +110,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
 grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate)
 {
     // 1 load the options file
-    int error;
+    int8_t error;
     int64_t filesize;
     uint8_t* optchar = read_binary_file(filename, &filesize, &error);
     if (error!=0) {

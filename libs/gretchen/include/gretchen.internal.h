@@ -190,13 +190,13 @@ extern int hashmap_length(map_t in);
 
 uint64_t hash_djb2(uint8_t *str);
 
-uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int* error);
+uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int8_t* error);
 
-void read_binary_file_size(uint8_t* filename, int64_t* size, int* error);
+void read_binary_file_size(uint8_t* filename, int64_t* size, int8_t* error);
 
-void write_binary_file(uint8_t* filename, uint8_t* source, int* error);
+void write_binary_file(uint8_t* filename, uint8_t* source, int8_t* error);
 
-void write_raw_file(uint8_t* filename, float* source, size_t len, int* error);
+void write_raw_file(uint8_t* filename, float* source, size_t len, int8_t* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // envelope methods
@@ -219,7 +219,7 @@ void envelope_unpack(uint8_t* envelope, envelope_t** arg);
 
 void envelope_print(envelope_t* env);
 
-void envelope_writeout(envelope_t* env, uint8_t* path, int* error);
+void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // rx frame handling: chunks, transmits

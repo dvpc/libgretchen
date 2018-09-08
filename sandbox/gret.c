@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
         // load file from txfilepath
         gretchenTX_inspect_t* info;
-        int error;
+        int8_t error;
         gretchenTX_inspect(modem, txfilepath, &error, &info);
         if (info==NULL || error!=0) {
             fprintf(stderr, ".. Error cannot process file. %s\n", argv[1]);
@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
         ((gretchenRX_t*) modem)->callbackuser = modem;
 
         // start recording
-        int error;
+        int8_t error;
         grtBackend_startstream(back, &error);
         if (error != 0) {
             fprintf(stderr, ".. Error backend cannot start stream. \n");
@@ -288,7 +288,7 @@ static void rxfilecomplete_callback(
     strcpy(name, outpath);
     strcat(name, filename);
 
-    int error;
+    int8_t error;
     write_binary_file(name, source, &error);
     printf("   File written with %s (%i)\n", error?"error":"no error", error);
     free(name);

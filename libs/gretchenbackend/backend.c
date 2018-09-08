@@ -15,7 +15,7 @@ typedef struct {
     bool chlimit_reached;
 } _estimator_num_input_channels_data_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int* error, uint32_t samplerate)
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int8_t* error, uint32_t samplerate)
 {
     *error = 0;
     *result_num_channel = 0;
@@ -87,7 +87,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, uint32_t sam
         back->strParams.device = Pa_GetDefaultInputDevice();
         if (back->strParams.device==paNoDevice)
             goto error_create; 
-        int error;
+        int8_t error;
         int num_input_channels;
         grtBackend_estimate_inputdecive_numchannels(
                         back->strParams.device,
@@ -118,7 +118,7 @@ void grtBackend_destroy(grtBackend_t* back)
     }
 }
 
-void grtBackend_startstream(grtBackend_t* back, int* error)
+void grtBackend_startstream(grtBackend_t* back, int8_t* error)
 {
     *error = 0;
     if (back->is_tx) {
@@ -151,7 +151,7 @@ const uint8_t* grtBackend_getstatustext(grtBackend_t* back)
     return Pa_GetErrorText(back->err);
 }
 
-void grtBackend_stopstream(grtBackend_t* back, int* error)
+void grtBackend_stopstream(grtBackend_t* back, int8_t* error)
 {
     *error = 0;
     back->err = Pa_StopStream(back->stream);

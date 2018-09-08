@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 
     fprintf(stderr, "Estimating the actual number of input channels...\n");
 
-    int error;
+    int8_t error;
     int num_channel;
     grtBackend_estimate_inputdecive_numchannels(
                     Pa_GetDefaultInputDevice(), 

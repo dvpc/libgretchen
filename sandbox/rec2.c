@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     // (e.g. playback and record at the same time) is used.
     // FIXME investigate is it still needed??
     Pa_Sleep(150);
-    int error;
+    int8_t error;
     grtBackend_startstream(back, &error);
     if (error != 0) {
         fprintf(stderr, "backend (rec): cannot start stream. \n");

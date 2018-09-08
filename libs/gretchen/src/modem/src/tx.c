@@ -36,7 +36,7 @@ void gretchenTX_destroy(gretchenTX_t* tx)
     free(tx);
 }
 
-void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretchenTX_inspect_t** info)
+void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int8_t* error, gretchenTX_inspect_t** info)
 {
     *info = malloc(sizeof(gretchenTX_inspect_t));
     if (!*info)
@@ -61,7 +61,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int* error, gretche
     (*info)->est_transfer_sec = samples_est / tx->modem_tx->opt.samplerate;
 }
 
-void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int* error)
+void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error)
 {
     // load the file
     int64_t filesize;

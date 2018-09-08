@@ -33,7 +33,7 @@ void filecomplete_callback(
     /*strcat(name, "_");*/
     // i could require that path ends with '/' or (see above) legel delim
     strcat(name, filename);
-    int error;
+    int8_t error;
     write_binary_file(name, source, &error);
     printf("File written with error %i \n", error);
     free(name);
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     if (fp==NULL)
         goto cleanup;
 
-    int error;
+    int8_t error;
     size_t k=0;
     while(true) {    
         size_t rlen = fread(chunkbuf, sizeof(float), chunk_want, fp);  

@@ -14,7 +14,7 @@ uint64_t hash_djb2(uint8_t *str)
 }
 
 //https://stackoverflow.com/questions/2029103/correct-way-to-read-a-text-file-into-a-buffer-in-c#2029227
-uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int* error)
+uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int8_t* error)
 {
     *size = -1;
     *error = 0;
@@ -48,7 +48,7 @@ uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int* error)
     return source;
 }
 
-void read_binary_file_size(uint8_t* filename, int64_t* size, int* error)
+void read_binary_file_size(uint8_t* filename, int64_t* size, int8_t* error)
 {
     *size = -1;
     *error = 0;
@@ -67,7 +67,7 @@ void read_binary_file_size(uint8_t* filename, int64_t* size, int* error)
 }
 
 // https://stackoverflow.com/questions/17598572/read-write-to-binary-files-in-c#17598785
-void write_binary_file(uint8_t* filename, uint8_t* source, int* error)
+void write_binary_file(uint8_t* filename, uint8_t* source, int8_t* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -81,7 +81,7 @@ void write_binary_file(uint8_t* filename, uint8_t* source, int* error)
     fclose(wf);
 }
 
-void write_raw_file(uint8_t* filename, float* source, size_t len, int* error)
+void write_raw_file(uint8_t* filename, float* source, size_t len, int8_t* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -172,7 +172,7 @@ void envelope_print(envelope_t*env)
             env->source);
 }
 
-void envelope_writeout(envelope_t* env, uint8_t* path, int* error)
+void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error)
 {
     uint8_t *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen(env->name))+2);
     strcpy(name, path);
@@ -314,7 +314,7 @@ void rxhandler_list(rxhandler_t* rxm, list_cb_t callback, void *user)
     itr_helper->map = rxm->transmits;
     itr_helper->itrnum = 0;
     itr_helper->user = list_helper;
-    int error;
+    int8_t error;
     while(true) {
         error = hashmap_iterate(rxm->transmits, list_iterator, itr_helper);
         if (error!=MAP_OK)
@@ -351,7 +351,7 @@ void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, 
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
-    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    int8_t error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
     if (error==MAP_MISSING) {
         transm = transmit_create(hash, max);
         hashmap_put(rxm->transmits, key, (any_t*)transm); 
@@ -363,7 +363,7 @@ void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
-    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    int8_t error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
     if (error==MAP_OK)
         *arg = transm;
     else
@@ -374,7 +374,7 @@ void rxhandler_remove(rxhandler_t* rxm, uint64_t hash)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
-    int error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
+    int8_t error = hashmap_get(rxm->transmits, key, (any_t*)&transm);
     if (error==MAP_MISSING)
         return;
     transmit_destroy(transm);

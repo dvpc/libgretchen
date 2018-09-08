@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     // TODO buffersizes... and internal chunk sizes...
     gretchenTX_t* tx = gretchenTX_create(opt, 1<<12);
-    int error;
+    int8_t error;
 
     gretchenTX_inspect_t* info;
     gretchenTX_inspect(tx, argv[1], &error, &info);

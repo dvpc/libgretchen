@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     }
     uint8_t *name = argv[1];
     int64_t filesize;
-    int error;
+    int8_t error;
     uint8_t *source = read_binary_file(name, &filesize, &error);
     if (error!=0 || source==NULL) {
         printf("File could not be read.\n");  
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     printf("\nis source and envelope sourece equal?: %d\n", 
                     (strcmp(env->source, uenv->source)==0));
 
-    int error2;
+    int8_t error2;
     envelope_writeout(uenv, "test/", &error2);
     if (error==0)
         printf("File written: %s error:%i\n", uenv->name, error2);
