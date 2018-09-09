@@ -190,13 +190,13 @@ extern int32_t hashmap_length(map_t in);
 
 uint64_t hash_djb2(uint8_t *str);
 
-uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int8_t* error);
+uint8_t* read_binaryfile(uint8_t* filename, int64_t* size, int8_t* error);
 
-void read_binary_file_size(uint8_t* filename, int64_t* size, int8_t* error);
+void optain_binaryfile_size(uint8_t* filename, int64_t* size, int8_t* error);
 
-void write_binary_file(uint8_t* filename, uint8_t* source, int8_t* error);
+void write_binaryfile(uint8_t* filename, uint8_t* source, int8_t* error);
 
-void write_raw_file(uint8_t* filename, float* source, size_t len, int8_t* error);
+void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // envelope methods

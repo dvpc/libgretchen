@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     if (samplebuf==NULL)
         goto label_cleanup;
     
-    write_raw_file("test/output.raw\0", samplebuf, samplebuflen, &error);
+    write_rawfile("test/output.raw\0", samplebuf, samplebuflen, &error);
     fprintf(stderr, "Output written as test/output.raw with error %i \n", error);
 
     free(samplebuf); 

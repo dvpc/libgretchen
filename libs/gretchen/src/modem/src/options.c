@@ -112,7 +112,7 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
     // 1 load the options file
     int8_t error;
     int64_t filesize;
-    uint8_t* optchar = read_binary_file(filename, &filesize, &error);
+    uint8_t* optchar = read_binaryfile(filename, &filesize, &error);
     if (error!=0) {
         printf("cannot read opt file.\n");
         return NULL;

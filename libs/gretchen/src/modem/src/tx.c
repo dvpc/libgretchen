@@ -42,7 +42,7 @@ void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int8_t* error, gret
     if (!*info)
         return ;
     int64_t filesize;
-    read_binary_file_size(filename, &filesize, *&error);
+    optain_binaryfile_size(filename, &filesize, *&error);
     if (*error!=0)
         return ;
     (*info)->filesize_bytes = filesize;
@@ -65,7 +65,7 @@ void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error)
 {
     // load the file
     int64_t filesize;
-    uint8_t *source = read_binary_file(filename, &filesize, *&error);
+    uint8_t *source = read_binaryfile(filename, &filesize, *&error);
     if (*error!=0)
         return ;
 

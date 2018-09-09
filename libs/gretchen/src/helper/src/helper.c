@@ -14,7 +14,7 @@ uint64_t hash_djb2(uint8_t *str)
 }
 
 //https://stackoverflow.com/questions/2029103/correct-way-to-read-a-text-file-into-a-buffer-in-c#2029227
-uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int8_t* error)
+uint8_t* read_binaryfile(uint8_t* filename, int64_t* size, int8_t* error)
 {
     *size = -1;
     *error = 0;
@@ -48,7 +48,7 @@ uint8_t* read_binary_file(uint8_t* filename, int64_t* size, int8_t* error)
     return source;
 }
 
-void read_binary_file_size(uint8_t* filename, int64_t* size, int8_t* error)
+void optain_binaryfile_size(uint8_t* filename, int64_t* size, int8_t* error)
 {
     *size = -1;
     *error = 0;
@@ -67,7 +67,7 @@ void read_binary_file_size(uint8_t* filename, int64_t* size, int8_t* error)
 }
 
 // https://stackoverflow.com/questions/17598572/read-write-to-binary-files-in-c#17598785
-void write_binary_file(uint8_t* filename, uint8_t* source, int8_t* error)
+void write_binaryfile(uint8_t* filename, uint8_t* source, int8_t* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -81,7 +81,7 @@ void write_binary_file(uint8_t* filename, uint8_t* source, int8_t* error)
     fclose(wf);
 }
 
-void write_raw_file(uint8_t* filename, float* source, size_t len, int8_t* error)
+void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error)
 {
     *error = 0;
     FILE *wf = fopen(filename, "wb");
@@ -180,7 +180,7 @@ void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error)
     // solve or factor out
     // i could require that path ends with '/' or (see above) legel delim
     strcat(name, env->name);
-    write_binary_file(name, env->source, &*error);
+    write_binaryfile(name, env->source, &*error);
     /*printf("File written: %s error:%i\n", name, *error);*/
     free(name);
 }

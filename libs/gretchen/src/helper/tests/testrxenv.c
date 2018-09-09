@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     uint8_t *name = argv[1];
     int64_t filesize;
     int8_t error;
-    uint8_t *source = read_binary_file(name, &filesize, &error);
+    uint8_t *source = read_binaryfile(name, &filesize, &error);
     if (error!=0 || source==NULL) {
         printf("File could not be read.\n");  
         return 1;

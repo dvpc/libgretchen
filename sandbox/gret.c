@@ -289,7 +289,7 @@ static void rxfilecomplete_callback(
     strcat(name, filename);
 
     int8_t error;
-    write_binary_file(name, source, &error);
+    write_binaryfile(name, source, &error);
     printf("   File written with %s (%i)\n", error?"error":"no error", error);
     free(name);
 }

@@ -34,7 +34,7 @@ void filecomplete_callback(
     // i could require that path ends with '/' or (see above) legel delim
     strcat(name, filename);
     int8_t error;
-    write_binary_file(name, source, &error);
+    write_binaryfile(name, source, &error);
     printf("File written with error %i \n", error);
     free(name);
 }
