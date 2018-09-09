@@ -1,7 +1,7 @@
 #include "gretchen.internal.h"
 
 
-static float _convert_freq2rad(int frequency, uint32_t samplerate) 
+static float _convert_freq2rad(uint32_t frequency, uint32_t samplerate) 
 {
     return ((float)frequency/(float)samplerate) * M_PI * 2.0;
 }
@@ -90,7 +90,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
 }
 
 #define TOKENLIST_CREATE() \
-    int num_token = 0; \
+    uint32_t num_token = 0; \
     char** res_tokens  = NULL; \
 
 #define TOKENLIST_ADD(token, len) \
@@ -103,7 +103,7 @@ void grtModemOpt_destroy(grtModemOpt_t* opt)
 
 #define TOKENLIST_DESTROY() \
     tokenlist_free: \
-        for(int i = 0; i < num_token; i++) \
+        for(uint32_t i = 0; i < num_token; i++) \
             free(res_tokens[i]); \
         free(res_tokens); \
 
@@ -135,14 +135,14 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
         const char* pidx = strchr(dup, ' ');
         if (pidx) {
             // get the actual index of the pointer
-            int index = pidx - dup;
+            uint32_t index = pidx - dup;
             // substring arg
-            int lenA = index;
+            uint32_t lenA = index;
             char arg[lenA+1];
             memcpy(arg, &dup[0], lenA);
             arg[lenA] = '\0';
             // substring val
-            int lenB = strlen(dup)-index-1;
+            uint32_t lenB = strlen(dup)-index-1;
             char val[lenB];
             memcpy(val, &dup[lenA+1], lenB);
             val[lenB] = '\0';

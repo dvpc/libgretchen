@@ -14,7 +14,7 @@ static void supported_samplerates(const PaStreamParameters *inp,
             16000.0, 22050.0, 24000.0, 32000.0, 44100.0, 48000.0, 88200.0, 
             96000.0, 192000.0, -1 };
     PaError err; 
-    for (int i=0; stdsamplerates[i]>0; i++) {
+    for (int32_t i=0; stdsamplerates[i]>0; i++) {
         err = Pa_IsFormatSupported(inp, out, stdsamplerates[i]);
         if (err==paFormatIsSupported)
             printf("%8.2f \n", stdsamplerates[i]);
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     }
     printf("Number of devices = %d\n", numDevices);
     const PaDeviceInfo *deviceInfo;
-    for (int i=0; i<numDevices; i++) {
+    for (int32_t i=0; i<numDevices; i++) {
         deviceInfo = Pa_GetDeviceInfo(i); 
         printf("device #%d --------------------------------------------\n",i);
         printf("Name                        = %s\n", deviceInfo->name );

@@ -22,7 +22,7 @@ static size_t generate_test_cf_symbols(int num_elements,
     int maxidx = num_elements/2;
     float values[num_elements];
     int idx = 0;
-    for(int i=-maxidx; i<=maxidx; i++) {
+    for(int32_t i=-maxidx; i<=maxidx; i++) {
         values[idx] = delta_val*i;
         /*printf("%12.4e \n", values[idx]);*/
         idx ++;

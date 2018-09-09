@@ -1,6 +1,6 @@
 #include "gretchen.internal.h"
 
-static int framegen_is_assembled();
+static uint8_t framegen_is_assembled();
 static void framegen_assemble();
 static size_t framegen_write_symbols();
 static void process_frames();
@@ -180,7 +180,7 @@ size_t framegen_estimate_num_symbols(
     return num_symbols;
 }
 
-static int framegen_is_assembled(grtModemTX_t *mtx)
+static uint8_t framegen_is_assembled(grtModemTX_t *mtx)
 {
     switch(mtx->frametype) {
         case frametype_ofdm:
@@ -246,7 +246,7 @@ static size_t framegen_write_symbols(
                 size_t len)
 {
     size_t written = 0;
-    int gmsk_rem = 0;
+    uint32_t gmsk_rem = 0;
     switch(mtx->frametype) {
         case frametype_ofdm:
             ofdmflexframegen_write(
@@ -273,7 +273,7 @@ static size_t framegen_write_symbols(
                 written = len;
             size_t idx;
             for (idx=0; idx < written; idx+=mtx->frame.gmsk.stride) {
-                int done = gmskframegen_write_samples(
+                uint8_t done = gmskframegen_write_samples(
                                 mtx->frame.gmsk.framegen,
                                 symbols + idx);
                 if (done)

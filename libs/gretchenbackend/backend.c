@@ -15,7 +15,7 @@ typedef struct {
     bool chlimit_reached;
 } _estimator_num_input_channels_data_t;
 
-void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, int* result_num_channel, int8_t* error, uint32_t samplerate)
+void grtBackend_estimate_inputdecive_numchannels(PaDeviceIndex device, uint32_t* result_num_channel, int8_t* error, uint32_t samplerate)
 {
     *error = 0;
     *result_num_channel = 0;
@@ -88,7 +88,7 @@ grtBackend_t* grtBackend_create(size_t internalbufsize, bool is_tx, uint32_t sam
         if (back->strParams.device==paNoDevice)
             goto error_create; 
         int8_t error;
-        int num_input_channels;
+        uint32_t num_input_channels;
         grtBackend_estimate_inputdecive_numchannels(
                         back->strParams.device,
                         &num_input_channels, 

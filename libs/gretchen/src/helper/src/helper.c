@@ -7,7 +7,7 @@
 uint64_t hash_djb2(uint8_t *str)
 { 
     uint64_t hash = 5381;
-    int c;
+    uint64_t c;
     while ((c = *str++))
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     return hash;
@@ -284,7 +284,7 @@ rxhandler_t* rxhandler_create()
 
 typedef struct {
     map_t* map;
-    int itrnum;
+    int32_t itrnum;
     void* user;
 } _itr_helper_t;
 
