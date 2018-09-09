@@ -19,7 +19,8 @@ if(LINUX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lm")
 endif()
 
-
+# use local header files
+include_directories(libs/external/)
 
 
 add_subdirectory(libs/gretchen)
