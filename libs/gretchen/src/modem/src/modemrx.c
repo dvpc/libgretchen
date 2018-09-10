@@ -81,7 +81,7 @@ void grtModemRX_destroy(grtModemRX_t *mrx)
     free(mrx);
 }
 
-void grtModemRX_flush(grtModemRX_t *mrx)
+void grtModemRX_enable_flush(grtModemRX_t *mrx)
 {
     mrx->flush = true;
 }

@@ -237,7 +237,7 @@ bool transmit_is_complete(transmit_t* transm)
     return retv;
 }
 
-void transmit_concatenate(transmit_t* transm, uint8_t** arg)
+static void transmit_concatenate(transmit_t* transm, uint8_t** arg)
 {
     size_t concat_size=0;
     for (size_t k=0; k<transm->max; k++)
@@ -263,7 +263,8 @@ void transmit_print(transmit_t* transm)
         printf(" chunk %i %p \n", k, transm->chunks[k].data); 
     }
 }
-
+// FIXME
+// no checking the envelope is complete...
 void transmit_get_envelope(transmit_t* transm, envelope_t** arg)
 {
     uint8_t* envstr;

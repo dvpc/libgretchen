@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
         if (nread == 0) {
             // FIXME needs to be called like the following
             // if its just internal that might be ok...
-            grtModemRX_flush(dec);
+            grtModemRX_enable_flush(dec);
             grtModemRX_consume(dec, samplebuf, 0);
         } else { 
             size_t chnklen; 

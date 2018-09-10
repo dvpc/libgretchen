@@ -12,8 +12,7 @@
 
 /* 
  * Simple ring buffer with memcpy
- * not thread safe!
- * ugly and simple :D
+ * not thread safe! Ugly and simple :D
  */
 
 #include <stdlib.h>
@@ -188,14 +187,32 @@ extern int32_t hashmap_length(map_t in);
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // binary file and related methods
 
+/*
+ * A hashfunction by Daniel Bernstein.
+ * http://www.cse.yorku.ca/~oz/hash.html
+ */
 uint64_t hash_djb2(uint8_t *str);
 
+/*
+ * Reads a file and returns the location of the file contents as bytes.
+ * The parameter `size` will be set to the actual number of bytes read. 
+ */
 uint8_t* read_binaryfile(uint8_t* filename, int64_t* size, int8_t* error);
 
+/*
+ * Optains the size of the given file (which is NOT loaded in memory).
+ * The parameter `size` will be set to the actual number of bytes obtained.
+ */
 void optain_binaryfile_size(uint8_t* filename, int64_t* size, int8_t* error);
 
+/*
+ * Writes `size` bytes from `source` into given file.
+ */
 void write_binaryfile(uint8_t* filename, uint8_t* source, int8_t* error);
 
+/*
+ * Writes a pcm coded raw audio file (without header).
+ */
 void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,16 +226,40 @@ typedef struct {
     uint8_t *source;
 } envelope_t;
 
+/*
+ * Creates an envelope with `name` and bytes from `source`.
+ * The size to store `source` is derived by strlen! 
+ * So the data at `source` needs to be \0 terminated. 
+ * This is ensured by the `read_binaryfile` method.
+ */
 envelope_t* envelope_create(uint8_t* name, uint8_t* source);
 
+/*
+ * Destroys the envelope.
+ */
 void envelope_destroy(envelope_t* env);
 
+/*
+ * Packs the envelope aka - writes a combined string into the `arg`
+ * location, which cointains the envelopes (file)name and its (file)data.
+ */
 void envelope_pack(envelope_t* envelope, uint8_t** arg);
 
+/*
+ * Unpacks a combined string into an envelope which is written to 
+ * location of `arg`.
+ */
 void envelope_unpack(uint8_t* envelope, envelope_t** arg);
 
+/*
+ * Prints the envelope to stdout (printf).
+ */
 void envelope_print(envelope_t* env);
 
+/*
+ * Writes the contents of the envelope as a file into given `path` using
+ * the name of the envelope as filename and the contents as data.
+ */
 void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -236,18 +277,34 @@ typedef struct {
     chunk_t* chunks;
 } transmit_t;
 
+/*
+ * Creates a transmit. A transmit object holds all recieved frames together.
+ */
 transmit_t* transmit_create(uint64_t hash, uint32_t max);
 
+/*
+ * Destroys the transmit.
+ */
 void transmit_destroy(transmit_t* transm);
 
+/*
+ * Add the payload of a frame (the `buffer`) to the transmit.
+ */
 void transmit_add(transmit_t* transm, uint32_t num, uint8_t* buffer, size_t buffer_len);
 
+/*
+ * Returns true if all chunks have been added to the transmit. False otherwise.
+ */
 bool transmit_is_complete(transmit_t* transm);
 
-void transmit_concatenate(transmit_t* transm, uint8_t** arg);
-
+/*
+ * Prints the transmit to stdout.
+ */
 void transmit_print(transmit_t* transm);
 
+/*
+ * Creates an envelope object from the chunks in the location of `arg`.
+ */
 void transmit_get_envelope(transmit_t* transm, envelope_t** arg);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -260,20 +317,47 @@ typedef struct {
     map_t* transmits;
 } rxhandler_t;
 
-rxhandler_t* rxhandler_create();
-
-void rxhandler_destroy(rxhandler_t* rxm);
-
-void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, uint8_t* buffer, size_t buffer_len);
-
-void rxhandler_remove(rxhandler_t* rxm, uint64_t hash);
-
-void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg);
-
-void rxhandler_reap(rxhandler_t* rxm, transmit_t** ripe);
-
 typedef void list_cb_t(transmit_t* transm, void* user);
 
+/*
+ * Creates a receive (==rx) handler, which takes care of transmit objects.
+ */
+rxhandler_t* rxhandler_create();
+
+/*
+ * Destroy the rxhandler.
+ */
+void rxhandler_destroy(rxhandler_t* rxm);
+
+/*
+ * Adds the extracted payload and hash of a frame to the rxhandler.
+ * Note, if no transmit exists for given hash a new transmit object is 
+ * created. 
+ */
+void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, uint8_t* buffer, size_t buffer_len);
+
+/*
+ * Removes transmit with given `hash` from handlers internal hashmap.
+ */
+void rxhandler_remove(rxhandler_t* rxm, uint64_t hash);
+
+/*
+ * Gives access to transmit object of given `hash` at location `arg`.
+ */
+void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg);
+
+/*
+ * Gives access to first complete transmit of the handler located in `ripe`.
+ * `ripe` is NULL if there is no complete transmit or any at all.
+ * It is assumed to later remove the complete transmit from the handler.
+ */
+void rxhandler_reap(rxhandler_t* rxm, transmit_t** ripe);
+
+/*
+ * Gives a `callback` method which is called for each transmit object in the handler.
+ * An additional `user` pointer my be given to access other parts in the 
+ * callbackfunction.
+ */
 void rxhandler_list(rxhandler_t* rxm, list_cb_t* callback, void* user);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,14 +426,31 @@ typedef struct {
     uint32_t samplerate;
 } grtModemOpt_t;
 
+/*
+ * Creates a modem option object containing all possible parameters.
+ * Heavily uses methods from liquid sdr to parse the actual string parameters.
+ * The `samplerate` is given seperately here. 
+ */
 grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate);
 
+/*
+ * Creates a modem option object from a file.
+ */
 grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate); 
 
+/*
+ * Creates a modem option object from command line arguments.
+ */
 grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_t samplerate);
 
+/*
+ * Destroys the modem option object.
+ */
 void grtModemOpt_destroy(grtModemOpt_t* opt);
 
+/*
+ * Prints the contents of the modem option object.
+ */
 void grtModemOpt_print(grtModemOpt_t* opt);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -370,19 +471,43 @@ typedef struct {
     iirfilt_crcf dcfilter; 
 } grtModulatorRX_t;
 
+/*
+ * Creates the demodulator object, which is demodulating real valued streams 
+ * to complex ones.
+ */
 grtModulatorRX_t *grtModulatorRX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
 
+/*
+ * Destroys the demodulator.
+ */
 void grtModulatorRX_destroy(grtModulatorRX_t *dem);
 
+/*
+ * Receives a real valued chunk `samples` and writes a complex chunk into 
+ * `symbols`, the number of symbols written is returned.
+ */
 size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples_len, float complex *symbols);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ModemRX (Decoder)
 
+/*
+ * Frame successfully received callback - if a frame has been sucessfully 
+ * decoded this callback is called with the data of the frame and additional
+ * header info. 
+ */
 typedef void grtModemRX_emit_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
 
+/*
+ * Progress callback is called when a frame is decoded (at least the header has 
+ * to be successful decoded), no matter if the payload is valid or not.
+ */
 typedef void grtModemRX_emit_progress_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, int payload_valid, void *user);
 
+/*
+ * Debug callback fires always and gives additional detailed statistics 
+ * from liquid sdr.
+ */
 typedef void grtModemRX_emit_debug_callback(int header_valid, int payload_valid, uint32_t payload_len, framesyncstats_s stats);
 
 typedef struct { 
@@ -424,14 +549,34 @@ typedef struct {
     void *emit_callback_userdata;
 } grtModemRX_t;
 
+/*
+ * Creates a receiving modem object from options `opt` with an internal
+ * ringbuffer of size `internal_bufsize`.
+ */
 grtModemRX_t *grtModemRX_create(const grtModemOpt_t *opt, size_t internal_bufsize);
 
+/*
+ * Destroys the receiving modem object.
+ */
 void grtModemRX_destroy(grtModemRX_t *mrx);
 
-void grtModemRX_flush(grtModemRX_t *mrx);
+/*
+ * Sets the modem in `flush` mode, which causes the modem to create a new 
+ * frame each time new data is consumed. Normal behavior is to wait until 
+ * the given frame length is reached to create a new frame.
+ */
+void grtModemRX_enable_flush(grtModemRX_t *mrx);
 
+/*
+ * Resets the modem. If the modem in flush mode it is set to normal 
+ * operation mode. Also the internal ringbuffer is reset. 
+ */
 void grtModemRX_reset(grtModemRX_t *mrx);
 
+/*
+ * Consumes (read) a given chunk of real valued samples in `buffer` of 
+ * given size in `buflen`.
+ */
 size_t grtModemRX_consume(grtModemRX_t *mrx, float *buffer, size_t buflen);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -446,19 +591,40 @@ typedef struct {
     size_t flushlen;
 } grtModulatorTX_t;
 
+/*
+ * Creates a modulator object which is modulating complex symbols into real 
+ * valued samples. 
+ */
 grtModulatorTX_t *grtModulatorTX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, float gain, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, uint32_t flushlen_mod);
 
+/*
+ * Destroys the modulator object.
+ */
 void grtModulatorTX_destroy(grtModulatorTX_t *mod);
 
+/*
+ * Receives a complex valued chunk `symbols` and writes a real valued chunk into 
+ * `samples`, the number of samples written is returned.
+ */
 size_t grtModulatorTX_recv(grtModulatorTX_t *mod, float complex *symbols, size_t symbols_len, float *samples);
 
+/*
+ * Creates an empty chunk of sample data to write gaps between frames.
+ */
 size_t grtModulatorTX_flush(grtModulatorTX_t *mod, float *samples);
 
+/*
+ * Resets the modulators interpolation filter.
+ */
 void grtModulatorTX_reset(grtModulatorTX_t *mod);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ModemTX (Encoder) 
 
+/*
+ * Successful frame generated callback.
+ * Is called when a new frame samples has been generated.
+ */
 typedef void grtModemTX_emit_callback(size_t buffer_len, float *buffer, void *user);
 
 typedef struct {
@@ -505,18 +671,45 @@ typedef struct {
     uint32_t frame_nummax;
 } grtModemTX_t;
 
+/*
+ * Creates a sending modem object.
+ */ 
 grtModemTX_t *grtModemTX_create(const grtModemOpt_t *opt, size_t internal_bufsize);
 
+/*
+ * Destroys the sending modem object.
+ */
 void grtModemTX_destroy(grtModemTX_t *mtx);
 
+/*
+ * Sets the header information: `hash` and the `filesize`.
+ * These will be written as additional header information.
+ */
 void grtModemTX_setheaderinfo(grtModemTX_t *mtx, uint64_t filehash, size_t filesize); 
 
+/*
+ * Sets the modem in `flush` mode, which causes the modem to create a new 
+ * frame each time new data is consumed. Normal behavior is to wait until 
+ * the given frame length is reached to create a new frame.
+ */
 void grtModemTX_enable_flush(grtModemTX_t *mtx);
 
+/*
+ * Resets the modem. If the modem in flush mode it is set to normal 
+ * operation mode. Also the internal ringbuffer is reset. 
+ */
 void grtModemTX_reset(grtModemTX_t *mtx);
 
+/*
+ * Consumes (read) a given chunk of bytes in `buffer` of 
+ * given size in `buflen`.
+ */
 size_t grtModemTX_consume(grtModemTX_t *mtx, const void *buffer, size_t buflen);
 
+/*
+ * Calculate the number of symbols needed for a given number of 
+ * bytes.
+ */
 size_t framegen_estimate_num_symbols(grtModemTX_t *mtx, size_t len);
 
 

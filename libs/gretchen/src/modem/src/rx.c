@@ -83,7 +83,7 @@ void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int8_t* 
     *error = 0;
     size_t consumed;
     if (len==0) {
-        grtModemRX_flush(rx->modem_rx);
+        grtModemRX_enable_flush(rx->modem_rx);
         consumed = grtModemRX_consume(rx->modem_rx, buffer, 0);
     } else {
         consumed = grtModemRX_consume(rx->modem_rx, buffer, len);
