@@ -32,39 +32,39 @@ int main(int argc, char **argv) {
     // 1st transmit
     // just get a hash...
     strcpy(buffer, "somedatawhatever\0");
-    hash = hash_djb2(buffer);
+    hash = hash_djb2((uint8_t*)buffer);
     // 1st transmit some chunks
     strcpy(buffer, "anotherfile.txt\07__a0123456789\0");
-    rxhandler_add(rxm, hash, 0, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 0, 3, (uint8_t*)buffer, buflen);
     strcpy(buffer, "__c0123456789\0");
-    rxhandler_add(rxm, hash, 2, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 2, 3, (uint8_t*)buffer, buflen);
     strcpy(buffer, "__d0123456789\0");
-    rxhandler_add(rxm, hash, 3, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 3, 3, (uint8_t*)buffer, buflen);
 
     // 2nd transmit
     // just get a hash...
     strcpy(buffer, "somethingelseisthishere\0");
-    uint64_t hash2 = hash_djb2(buffer);
+    uint64_t hash2 = hash_djb2((uint8_t*)buffer);
     // 2nd transmit some chunks
     strcpy(buffer, "alltest.txt\07__aabcdefghijklmnopqrstuvwx\0");
-    rxhandler_add(rxm, hash2, 0, 2, buffer, buflen);
+    rxhandler_add(rxm, hash2, 0, 2, (uint8_t*)buffer, buflen);
     strcpy(buffer, "babcdefghijklmnopqrstuvwx\0");
-    rxhandler_add(rxm, hash2, 1, 2, buffer, buflen);
+    rxhandler_add(rxm, hash2, 1, 2, (uint8_t*)buffer, buflen);
     strcpy(buffer, "cabcdefghijklmnopqrstuvwx\0");
-    rxhandler_add(rxm, hash2, 2, 2, buffer, buflen);
+    rxhandler_add(rxm, hash2, 2, 2, (uint8_t*)buffer, buflen);
 
     printf("\n>   after one incomplete and one complete insertions\n");
     rxhandler_list(rxm, print_transm, NULL);
 
 
     strcpy(buffer, "a0123456789\0");
-    rxhandler_add(rxm, hash, 0, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 0, 3, (uint8_t*)buffer, buflen);
     printf("\n>   after inserting the next wrong buffer\n");
     rxhandler_list(rxm, print_transm, NULL);
     
 
     strcpy(buffer, "__b0123456789\0");
-    rxhandler_add(rxm, hash, 1, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 1, 3, (uint8_t*)buffer, buflen);
     printf("\n>   after inserting the next right buffer\n");
     rxhandler_list(rxm, print_transm, NULL);
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 
     int8_t error;
-    envelope_writeout(env, (char*)"test/", &error);
+    envelope_writeout(env, (uint8_t*)"test/0", &error);
     if (error==0)
         printf("File written: %s error:%i\n", env->name, error);
     else

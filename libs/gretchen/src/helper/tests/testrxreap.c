@@ -46,24 +46,24 @@ int main(int argc, char **argv) {
     get_and_print_ripe_transmit(rxm);
 
     strcpy(buffer, "somedatawhateverkjahsdjkhsad\0");
-    hash = hash_djb2(buffer);
+    hash = hash_djb2((uint8_t*)buffer);
 
 
     printf("\n>   inserting chunk\n");
     strcpy(buffer, "BBBBBBBBBBBBBBB\0");
-    rxhandler_add(rxm, hash, 1, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 1, 3, (uint8_t*)buffer, buflen);
 
     get_and_print_ripe_transmit(rxm);
 
     printf("\n>   inserting chunk\n");
     strcpy(buffer, "somefile.txt\07__AAAAAAAAA\0");
-    rxhandler_add(rxm, hash, 0, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 0, 3, (uint8_t*)buffer, buflen);
 
     get_and_print_ripe_transmit(rxm);
 
     printf("\n>   inserting chunk\n");
     strcpy(buffer, "CCCCCCCC\0");
-    rxhandler_add(rxm, hash, 2, 3, buffer, buflen);
+    rxhandler_add(rxm, hash, 2, 3, (uint8_t*)buffer, buflen);
 
     get_and_print_ripe_transmit(rxm);
 

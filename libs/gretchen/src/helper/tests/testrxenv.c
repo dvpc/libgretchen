@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     char *name = argv[1];
     int64_t filesize;
     int8_t error;
-    uint8_t *source = read_binaryfile(name, &filesize, &error);
+    uint8_t *source = read_binaryfile((uint8_t*)name, &filesize, &error);
     if (error!=0 || source==NULL) {
         printf("File could not be read.\n");  
         return 1;
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
                     source);
 
 
-    envelope_t *env = envelope_create(name, source);
+    envelope_t *env = envelope_create((uint8_t*)name, source);
     
     uint64_t hash = hash_djb2(env->source);
     printf("hash: %llu\n", hash);
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
                     (strcmp((char*)env->source, (char*)uenv->source)==0));
 
     int8_t error2;
-    envelope_writeout(uenv, "test/", &error2);
+    envelope_writeout(uenv, (uint8_t*)"test/0", &error2);
     if (error==0)
         printf("File written: %s error:%i\n", uenv->name, error2);
     else
