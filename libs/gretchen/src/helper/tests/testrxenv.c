@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
         printf("Usage: %s inputfile\n", argv[0]); 
         return 1;
     }
-    uint8_t *name = argv[1];
+    char *name = argv[1];
     int64_t filesize;
     int8_t error;
     uint8_t *source = read_binaryfile(name, &filesize, &error);
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     printf("\n");
-    printf("file read: %s\nsize: %zu\nerror: %d\np: %p \n", 
+    printf("file read: %s\nsize: %llu\nerror: %d\np: %p \n", 
                     name, 
                     filesize, 
                     error,
@@ -27,13 +27,13 @@ int main(int argc, char **argv) {
     envelope_t *env = envelope_create(name, source);
     
     uint64_t hash = hash_djb2(env->source);
-    printf("hash: %zu\n", hash);
+    printf("hash: %llu\n", hash);
     
     printf("\npacking envelope...\n");
 
     uint8_t *envstr;
     envelope_pack(env, &envstr); 
-    printf("envelope: %p size: %zu\n", envstr, strlen(envstr));
+    printf("envelope: %p size: %zu\n", envstr, strlen((char*)envstr));
 
     envelope_t *uenv;
     envelope_unpack(envstr, &uenv);
@@ -42,10 +42,10 @@ int main(int argc, char **argv) {
     envelope_print(uenv);
 
     uint64_t hash2 = hash_djb2(uenv->source);
-    printf("uhash: %zu\n", hash2);
+    printf("uhash: %llu\n", hash2);
 
     printf("\nis source and envelope sourece equal?: %d\n", 
-                    (strcmp(env->source, uenv->source)==0));
+                    (strcmp((char*)env->source, (char*)uenv->source)==0));
 
     int8_t error2;
     envelope_writeout(uenv, "test/", &error2);

@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     // dummy data
     uint64_t hash;
     size_t buflen = 50;
-    uint8_t buffer[buflen];
+    char buffer[buflen];
     memset(buffer, '\0', 50);
 
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
     transmit_t* t1 = NULL;
     rxhandler_get(rxm, hash, &t1);
-    printf("\n>   the 1st hash is %lu\n", t1->hash);
+    printf("\n>   the 1st hash is %llu\n", t1->hash);
 
     printf("\n>   getting the envelope of %p\n", t1);
     envelope_t* env;
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 
     int8_t error;
-    envelope_writeout(env, "test/", &error);
+    envelope_writeout(env, (char*)"test/", &error);
     if (error==0)
         printf("File written: %s error:%i\n", env->name, error);
     else

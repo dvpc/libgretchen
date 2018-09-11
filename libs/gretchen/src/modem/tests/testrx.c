@@ -25,16 +25,16 @@ void filecomplete_callback(
     printf("rx file complete: name %s len %zu \n", 
                     filename, sourcelen);
 
-    uint8_t *path = "test/\0";
-    uint8_t *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen(filename))+2);
+    char *path = "test/\0";
+    char *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen((char*)filename))+2);
     strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
     /*strcat(name, "_");*/
     // i could require that path ends with '/' or (see above) legel delim
-    strcat(name, filename);
+    strcat(name, (char*)filename);
     int8_t error;
-    write_binaryfile(name, source, &error);
+    write_binaryfile((uint8_t*)name, source, &error);
     printf("File written with error %i \n", error);
     free(name);
 }
