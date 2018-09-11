@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     int8_t error;
 
     gretchenTX_inspect_t* info;
-    gretchenTX_inspect(tx, argv[1], &error, &info);
+    gretchenTX_inspect(tx, (uint8_t*)argv[1], &error, &info);
     if (info==NULL)
         goto label_cleanup;
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
                     is_toolarge, info->filesize_bytes, info->est_encodedsize_samples, info->est_transfer_sec);
 
 
-    gretchenTX_prepare(tx, argv[1], &error);
+    gretchenTX_prepare(tx, (uint8_t*)argv[1], &error);
     fprintf(stderr, "\n");
     fprintf(stderr, "file prepared: %i error \n", error);
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     if (samplebuf==NULL)
         goto label_cleanup;
     
-    write_rawfile("test/output.raw\0", samplebuf, samplebuflen, &error);
+    write_rawfile((uint8_t*)"test/output.raw\0", samplebuf, samplebuflen, &error);
     fprintf(stderr, "Output written as test/output.raw with error %i \n", error);
 
     free(samplebuf); 

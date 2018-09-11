@@ -148,7 +148,7 @@ bool grtBackend_isstreamactive(grtBackend_t* back)
 
 const uint8_t* grtBackend_getstatustext(grtBackend_t* back)
 {
-    return Pa_GetErrorText(back->err);
+    return (uint8_t*) Pa_GetErrorText(back->err);
 }
 
 void grtBackend_stopstream(grtBackend_t* back, int8_t* error)

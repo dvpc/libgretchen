@@ -19,7 +19,7 @@ uint8_t* read_binaryfile(uint8_t* filename, int64_t* size, int8_t* error)
     *size = -1;
     *error = 0;
     uint8_t* source = NULL;
-    FILE *fp = fopen(filename, "rb");
+    FILE *fp = fopen((char*) filename, "rb");
     if (fp==NULL) {
         *error = -1;
     } else {
@@ -52,7 +52,7 @@ void optain_binaryfile_size(uint8_t* filename, int64_t* size, int8_t* error)
 {
     *size = -1;
     *error = 0;
-    FILE *fp = fopen(filename, "rb");
+    FILE *fp = fopen((char*) filename, "rb");
     if (fp==NULL) {
         *error = -1;
     } else {
@@ -70,12 +70,12 @@ void optain_binaryfile_size(uint8_t* filename, int64_t* size, int8_t* error)
 void write_binaryfile(uint8_t* filename, uint8_t* source, int8_t* error)
 {
     *error = 0;
-    FILE *wf = fopen(filename, "wb");
+    FILE *wf = fopen((char*) filename, "wb");
     if (wf==NULL) {
         *error = -1;
         return ;
     }
-    fwrite(source, sizeof(uint8_t), strlen(source)+1, wf);
+    fwrite(source, sizeof(uint8_t), strlen((char*) source)+1, wf);
     if (ferror(wf)!=0)
         *error = ferror(wf);
     fclose(wf);
@@ -84,7 +84,7 @@ void write_binaryfile(uint8_t* filename, uint8_t* source, int8_t* error)
 void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error)
 {
     *error = 0;
-    FILE *wf = fopen(filename, "wb");
+    FILE *wf = fopen((char*) filename, "wb");
     if (wf==NULL) {
         *error = -1;
         return ;
@@ -107,10 +107,10 @@ envelope_t* envelope_create(uint8_t* name, uint8_t* source)
     // see https://stackoverflow.com/questions/7180293/how-to-extract-filename-from-path
     // a hint for a self implemented version of basename could be
     // see: https://stackoverflow.com/a/41949246 
-    uint8_t *base = basename(name);
+    char *base = basename((char*)name);
     envelope_t *env = malloc(sizeof(envelope_t));
-    uint8_t* name2 = malloc(sizeof(uint8_t)*strlen(base)+1);
-    uint8_t* source2 = malloc(sizeof(uint8_t)*strlen(source)+1);
+    char* name2 = malloc(sizeof(char)*strlen(base)+1);
+    char* source2 = malloc(sizeof(char)*strlen(source)+1);
     strcpy(name2, base);
     strcpy(source2, source);
     env->name = name2;
@@ -132,7 +132,7 @@ void envelope_pack(envelope_t* envelope, uint8_t** arg)
     size_t env_pack_size = strlen(envelope->name) + 
             strlen(envelope->source) + 2;
     *arg = malloc(sizeof(uint8_t)*env_pack_size);
-    strcpy(*arg, "\0");
+    strcpy((char*) *arg, "\0");
     snprintf(*arg, 
              env_pack_size,
              ENVELOPE_FORMAT, 
@@ -145,23 +145,23 @@ void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
     const uint8_t delim[1] = ENVELOPE_FORMAT_DELIMITER;
     *arg = malloc(sizeof(envelope_t));
-    uint8_t* n = strtok(envelope, delim);
-    uint8_t* s = strtok(NULL, delim);
-    uint8_t* name;
-    uint8_t* source;
+    char* n = strtok(envelope, delim);
+    char* s = strtok(NULL, delim);
+    char* name;
+    char* source;
     if (s==NULL) {
-        name = malloc(sizeof(uint8_t)*5);    
-        source = malloc(sizeof(uint8_t)*strlen(n)+1);
+        name = malloc(sizeof(char)*5);    
+        source = malloc(sizeof(char)*strlen(n)+1);
         strcpy(name, "none\0");
         strcpy(source, n);
     } else {
-        name = malloc(sizeof(uint8_t)*strlen(n)+1);
-        source = malloc(sizeof(uint8_t)*strlen(s)+1);
+        name = malloc(sizeof(char)*strlen(n)+1);
+        source = malloc(sizeof(char)*strlen(s)+1);
         strcpy(name, n);
         strcpy(source, s);
     }
-    (*arg)->name = name;
-    (*arg)->source = source;
+    (*arg)->name = (uint8_t*) name;
+    (*arg)->source = (uint8_t*) source;
 }
 
 void envelope_print(envelope_t*env) 
@@ -174,13 +174,13 @@ void envelope_print(envelope_t*env)
 
 void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error)
 {
-    uint8_t *name = malloc(sizeof(uint8_t)*(strlen(path)+strlen(env->name))+2);
+    char *name = malloc(sizeof(uint8_t)*(strlen((char*)path)+strlen((char*)env->name))+2);
     strcpy(name, path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
     // i could require that path ends with '/' or (see above) legel delim
-    strcat(name, env->name);
-    write_binaryfile(name, env->source, &*error);
+    strcat(name, (char*)env->name);
+    write_binaryfile((uint8_t*)name, env->source, &*error);
     /*printf("File written: %s error:%i\n", name, *error);*/
     free(name);
 }
