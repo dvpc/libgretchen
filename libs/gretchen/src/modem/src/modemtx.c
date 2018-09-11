@@ -123,10 +123,10 @@ size_t grtModemTX_consume(
         return 0;
     if (avail<buflen)
         buflen = avail;
-    mtx->cons_rbuf_err = rbufuPush(mtx->cons_rbuf, 
+    int8_t err = rbufuPush(mtx->cons_rbuf, 
                                    buffer, 
                                    buflen);
-    if (mtx->cons_rbuf_err != rbufNoError) {
+    if (err!=RBUF_OK) {
         return 0;
     }
 
@@ -300,10 +300,10 @@ static void process_frames(grtModemTX_t *mtx)
         }
         // 1 assemble frame
         if (!framegen_is_assembled(mtx)) {
-            mtx->cons_rbuf_err = rbufuPop(mtx->cons_rbuf, 
+            int8_t err = rbufuPop(mtx->cons_rbuf, 
                                           mtx->buf_readframe, 
                                           cons_want);
-            if (mtx->cons_rbuf_err!=rbufNoError) {
+            if (err!=RBUF_OK) {
                 break;
             }
             framegen_assemble(mtx, mtx->buf_readframe, cons_want); 

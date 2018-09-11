@@ -30,12 +30,10 @@ typedef struct {
  * of size of `internal_bufsize`. 
  */
 gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internal_bufsize);
-
 /*
  * Destroys the sender modem. 
  */
 void gretchenTX_destroy(gretchenTX_t* tx);
-
 /*
  * Inspects the given file in `filename` and estimates the duration and size
  * of the resulting transmission. The generated information can be accessed 
@@ -43,14 +41,12 @@ void gretchenTX_destroy(gretchenTX_t* tx);
  * NOTE the file is not loaded in memory.
  */
 void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int8_t* error, gretchenTX_inspect_t** info);
-
 /*
  * Prepares aka encodes the file in `filename` for transmission. The coded
  * data (a long audio sample) is stored by the sender modem internally and 
  * is accessible by calling the `get` method.
  */
 void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error);
-
 /*
  * Copies the coded data (audio sample) into given `samplebuffer` location. Its size is 
  * written into parameter `len`.
@@ -65,7 +61,6 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len);
  * extracted from the audio stream (all frames have been received).
  */
 typedef void gretchenRX_filecomplete_callback(uint8_t* filename, uint8_t* source, size_t sourcelen, void* user);
-
 /*
  * The progress callback is called each time a frame is decoded with at 
  * least its header intact.
@@ -85,12 +80,10 @@ typedef struct {
  * of size of `internal_bufsize`. 
  */
 gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, size_t internal_bufsize);
-
 /*
  * Destroys the reciever modem.
  */
 void gretchenRX_destroy(gretchenRX_t* rx);
-
 /*
  * Pushes a chunk of (recorded) samples in `buffer` of size `len` into the 
  * modem. The assumed format is little endian, 16 bit, float (le16f).

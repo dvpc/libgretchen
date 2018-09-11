@@ -5,7 +5,7 @@ rbufu_t* rbufuCreate(size_t len) {
 	if (!cb)
         goto err;
     cb->maxlen = len;
-    cb->buffer = calloc(len+2,sizeof(RBUF_U_TYPE));
+    cb->buffer = calloc(len+2,sizeof(RBUF_TYPE));
 	if (!cb->buffer)
         goto err;
     cb->head = cb->buffer;
@@ -25,9 +25,9 @@ void rbufuDestroy(rbufu_t *cb) {
     free(cb);
 }
 
-RBUF_U_TYPE* rbufuNext(const rbufu_t* cb, RBUF_U_TYPE* ptr,  size_t len) {
-    RBUF_U_TYPE *next = ptr + len;
-    RBUF_U_TYPE *wrap = cb->buffer+cb->maxlen;
+RBUF_TYPE* rbufuNext(const rbufu_t* cb, RBUF_TYPE* ptr,  size_t len) {
+    RBUF_TYPE *next = ptr + len;
+    RBUF_TYPE *wrap = cb->buffer+cb->maxlen;
     if (next > wrap)
         next -= cb->maxlen; 
     return next;
@@ -46,7 +46,7 @@ size_t rbufuAvailable(const rbufu_t* cb) {
         return tail - head;       
     } 
     else if (cb->head > cb->tail) {
-        RBUF_U_TYPE *wrap = cb->buffer + cb->maxlen;
+        RBUF_TYPE *wrap = cb->buffer + cb->maxlen;
         size_t untlwrap = wrap - cb->head;
         size_t untltail = cb->tail - cb->buffer;
         return untlwrap + untltail;
@@ -54,72 +54,71 @@ size_t rbufuAvailable(const rbufu_t* cb) {
     return 0; 
 }
 
-rbufError rbufuPush(rbufu_t* cb, const RBUF_U_TYPE* ibuf, size_t len) {
+int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len) {
     if (cb->haslockpush==1)
-        return rbufErrorBusy;
+        return RBUF_BUSY;
     size_t avail = rbufuAvailable(cb);
     if (avail==0) {
-        return rbufErrorFull;
+        return RBUF_FULL;
     }
     if (len > avail) {
-        return rbufErrorRequestTooLarge;
+        return RBUF_TOOLARGE;
     }
     cb->haslockpush = 1;
     if (cb->head <= cb->tail) { 
-        memmove(cb->head, ibuf, len*sizeof(RBUF_U_TYPE));    
+        memmove(cb->head, ibuf, len*sizeof(RBUF_TYPE));    
     } 
     else 
     {
         size_t untlwrap = cb->buffer+cb->maxlen - cb->head;
         if (untlwrap > len) {
-            memmove(cb->head, ibuf, len*sizeof(RBUF_U_TYPE));
+            memmove(cb->head, ibuf, len*sizeof(RBUF_TYPE));
         }
         else {
-            memmove(cb->head, ibuf, untlwrap*sizeof(RBUF_U_TYPE));
-            memmove(cb->buffer, ibuf+untlwrap, (len-untlwrap)*sizeof(RBUF_U_TYPE));
+            memmove(cb->head, ibuf, untlwrap*sizeof(RBUF_TYPE));
+            memmove(cb->buffer, ibuf+untlwrap, (len-untlwrap)*sizeof(RBUF_TYPE));
         }
     }
     cb->head = rbufuNext(cb, cb->head, len); 
     cb->count += len;
     cb->haslockpush = 0;
-    return rbufNoError;
+    return RBUF_OK;
 }
 
-
-rbufError rbufuPop(rbufu_t* cb, RBUF_U_TYPE* obuf, size_t len) {
+int8_t rbufuPop(rbufu_t* cb, RBUF_TYPE* obuf, size_t len) {
     if (cb->haslockpop==1)
-        return rbufErrorBusy;
+        return RBUF_BUSY;
     if (cb->count==0) {
-        return rbufErrorEmpty;
+        return RBUF_EMPTY;
     }     
     if (len > cb->count) {
-        return rbufErrorRequestTooLarge;   
+        return RBUF_TOOLARGE;
     }
     cb->haslockpop = 1;
     if (cb->head > cb->tail) {
-        memmove(obuf, cb->tail, len*sizeof(RBUF_U_TYPE)); 
+        memmove(obuf, cb->tail, len*sizeof(RBUF_TYPE)); 
     }
     else
     {
         size_t untlwrap = cb->buffer+cb->maxlen - cb->tail;
         if (untlwrap > len) {
-            memmove(obuf, cb->tail, len*sizeof(RBUF_U_TYPE));
+            memmove(obuf, cb->tail, len*sizeof(RBUF_TYPE));
         }
         else {
-            memmove(obuf, cb->tail, untlwrap*sizeof(RBUF_U_TYPE));
+            memmove(obuf, cb->tail, untlwrap*sizeof(RBUF_TYPE));
             size_t left = len - untlwrap;
-            memmove(obuf+untlwrap, cb->buffer, left*sizeof(RBUF_U_TYPE));
+            memmove(obuf+untlwrap, cb->buffer, left*sizeof(RBUF_TYPE));
         }
     }
     cb->tail = rbufuNext(cb, cb->tail, len);
     cb->count -= len;
     cb->haslockpop = 0;
-    return rbufNoError;
+    return RBUF_OK;
 }
 
 void rbufuPrintBuffer(const rbufu_t* cb) {
     printf("maxlen:%lu; usedEntries:%lu; typesize:%lu\n",
-        cb->maxlen, cb->count, sizeof(RBUF_U_TYPE));
+        cb->maxlen, cb->count, sizeof(RBUF_TYPE));
     for (size_t i=0; i<cb->maxlen; i++) {
         printf("pos:%lu value:%i \n", i, *(cb->buffer + i));
     }
