@@ -401,7 +401,6 @@ typedef struct {
     iirfilt_rrrf filter_rx;
     uint32_t samples_per_symbol;
     agc_rrrf agc;
-    iirfilt_crcf dcfilter; 
 } grtModulatorRX_t;
 /*
  * Creates the demodulator object, which is demodulating real valued streams 
