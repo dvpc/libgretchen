@@ -168,14 +168,14 @@ void envelope_print(envelope_t*env)
 {
     printf("envelope filename: %s\nsize: %zu\np: %p \n", 
             env->name, 
-            strlen(env->source), 
+            strlen((char*)env->source), 
             env->source);
 }
 
 void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error)
 {
     char *name = malloc(sizeof(uint8_t)*(strlen((char*)path)+strlen((char*)env->name))+2);
-    strcpy(name, path);
+    strcpy(name, (char*)path);
     // FIXME this filesystemdelimiterstuff is hardly platform independent
     // solve or factor out
     // i could require that path ends with '/' or (see above) legel delim
@@ -243,20 +243,20 @@ static void transmit_concatenate(transmit_t* transm, uint8_t** arg)
     for (size_t k=0; k<transm->max; k++)
         concat_size += transm->chunks[k].len+1;
     *arg = malloc(sizeof(uint8_t)*1);
-    strcpy(*arg, "\0");
+    strcpy((char*) *arg, "\0");
     if (!transmit_is_complete(transm))
         return ;
     *arg = realloc(*arg, sizeof(uint8_t)*concat_size);
     if (*arg==NULL)
         return ;
     for (uint32_t k=0; k<transm->max; k++) {
-        strncat(*arg, transm->chunks[k].data, transm->chunks[k].len);
+        strncat((char*) *arg, transm->chunks[k].data, transm->chunks[k].len);
     }
 }
 
 void transmit_print(transmit_t* transm)
 {
-    printf("hash %lu ", transm->hash);
+    printf("hash %llu ", transm->hash);
     printf("max %u \n", transm->max);
     printf(" is complete %i\n", transmit_is_complete(transm));
     for (uint32_t k=0; k<transm->max; k++) {
@@ -343,7 +343,7 @@ void rxhandler_destroy(rxhandler_t* rxm)
 #define KEY_FROM_HASH(hash) \
     uint8_t key[RXMAP_KEY_LEN]; \
     memset(key, '\0', RXMAP_KEY_LEN); \
-    snprintf((uint8_t*)key,\
+    snprintf((char*)key,\
                     RXMAP_KEY_LEN,\
                     RXMAP_KEY_FORMAT,\
                     hash);
