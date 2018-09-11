@@ -128,7 +128,7 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
     TOKENLIST_ADD("\0",1);
     TOKENLIST_ADD("\0",1);
     // walk all tokens (lines of the options data)
-    for (char* p=strtok(optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
+    for (char* p=strtok((char*)optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
         // copy the token first
         char* dup = strdup(p);
         // find the pointer to the ' ' char of the token

@@ -166,7 +166,7 @@ uint64_t crc32(const uint8_t *s, uint32_t len)
  */
 uint32_t hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
 
-    uint64_t key = crc32((uint8_t*)(keystring), strlen(keystring));
+    uint64_t key = crc32((uint8_t*)(keystring), strlen((char*)keystring));
 
 	/* Robert Jenkins' 32 bit Mix Function */
 	key += (key << 12);
@@ -206,7 +206,7 @@ int32_t hashmap_hash(map_t in, uint8_t* key){
 		if(m->data[curr].in_use == 0)
 			return curr;
 
-		if(m->data[curr].in_use == 1 && (strcmp(m->data[curr].key,key)==0))
+		if(m->data[curr].in_use == 1 && (strcmp((char*)m->data[curr].key,(char*)key)==0))
 			return curr;
 
 		curr = (curr + 1) % m->table_size;
@@ -302,7 +302,7 @@ int8_t hashmap_get(map_t in, uint8_t* key, any_t *arg){
 
         uint8_t in_use = m->data[curr].in_use;
         if (in_use == 1){
-            if (strcmp(m->data[curr].key,key)==0){
+            if (strcmp((char*)m->data[curr].key,(char*)key)==0){
                 *arg = (m->data[curr].data);
                 return MAP_OK;
             }
@@ -364,7 +364,7 @@ int8_t hashmap_remove(map_t in, uint8_t* key){
 
         uint8_t in_use = m->data[curr].in_use;
         if (in_use == 1){
-            if (strcmp(m->data[curr].key,key)==0){
+            if (strcmp((char*)m->data[curr].key,(char*)key)==0){
                 /* Blank out the fields */
                 m->data[curr].in_use = 0;
                 m->data[curr].data = NULL;

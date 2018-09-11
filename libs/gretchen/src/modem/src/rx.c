@@ -32,7 +32,7 @@ static void _modemrx_callback(
         rx->callback(
                 env->name, 
                 env->source, 
-                strlen(env->source), 
+                strlen((char*)env->source), 
                 rx->callbackuser);
     envelope_destroy(env);
     // and remove it afterwards

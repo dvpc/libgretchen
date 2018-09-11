@@ -393,7 +393,7 @@ void grtModemOpt_print(grtModemOpt_t* opt);
  *
  */
 #define MODEM_HEADER_LEN 2+sizeof(uint64_t)*3 
-#define MODEM_HEADER_FORMAT "%lu,%d,%d"
+#define MODEM_HEADER_FORMAT "%llu,%d,%d"
 
 typedef struct {
     nco_crcf nco;

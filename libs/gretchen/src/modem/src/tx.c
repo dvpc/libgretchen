@@ -76,7 +76,7 @@ void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error)
     tx->packed_env = envstr;
 
     // set modem header info
-    size_t packlen = strlen(tx->packed_env);
+    size_t packlen = strlen((char*)tx->packed_env);
     uint64_t hash = hash_djb2(env->source);    
     grtModemTX_setheaderinfo(tx->modem_tx, hash, packlen);
 

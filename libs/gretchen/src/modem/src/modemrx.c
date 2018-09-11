@@ -173,7 +173,7 @@ static int mrx_framesync_callback(
         return 1;
     uint64_t hash; 
     uint32_t frame_num, frame_nummax;
-    sscanf((uint8_t *)header,
+    sscanf((char*)header,
            MODEM_HEADER_FORMAT, 
            &hash, 
            &frame_num,
