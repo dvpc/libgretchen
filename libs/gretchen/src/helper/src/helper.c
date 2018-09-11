@@ -113,7 +113,7 @@ envelope_t* envelope_create(uint8_t* name, uint8_t* source)
     char* source2 = malloc(sizeof(char)*strlen((char*)source)+1);
     strcpy(name2, base);
     strcpy(source2, (char*)source);
-    env->name = (uint8_t)name2;
+    env->name = (uint8_t*)name2;
     env->source = (uint8_t*)source2;
     return env;
 }
@@ -143,9 +143,9 @@ void envelope_pack(envelope_t* envelope, uint8_t** arg)
 // https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
 void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
-    const uint8_t delim[1] = ENVELOPE_FORMAT_DELIMITER;
+    const char delim[1] = ENVELOPE_FORMAT_DELIMITER;
     *arg = malloc(sizeof(envelope_t));
-    char* n = strtok(envelope, delim);
+    char* n = strtok((char*)envelope, delim);
     char* s = strtok(NULL, delim);
     char* name;
     char* source;
