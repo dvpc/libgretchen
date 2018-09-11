@@ -110,11 +110,11 @@ envelope_t* envelope_create(uint8_t* name, uint8_t* source)
     char *base = basename((char*)name);
     envelope_t *env = malloc(sizeof(envelope_t));
     char* name2 = malloc(sizeof(char)*strlen(base)+1);
-    char* source2 = malloc(sizeof(char)*strlen(source)+1);
+    char* source2 = malloc(sizeof(char)*strlen((char*)source)+1);
     strcpy(name2, base);
-    strcpy(source2, source);
-    env->name = name2;
-    env->source = source2;
+    strcpy(source2, (char*)source);
+    env->name = (uint8_t)name2;
+    env->source = (uint8_t*)source2;
     return env;
 }
 
@@ -129,11 +129,11 @@ void envelope_destroy(envelope_t* env)
 
 void envelope_pack(envelope_t* envelope, uint8_t** arg)
 {
-    size_t env_pack_size = strlen(envelope->name) + 
-            strlen(envelope->source) + 2;
+    size_t env_pack_size = strlen((char*)envelope->name) + 
+            strlen((char*)envelope->source) + 2;
     *arg = malloc(sizeof(uint8_t)*env_pack_size);
     strcpy((char*) *arg, "\0");
-    snprintf(*arg, 
+    snprintf((char*) *arg, 
              env_pack_size,
              ENVELOPE_FORMAT, 
              envelope->name,
