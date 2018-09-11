@@ -250,7 +250,7 @@ static void transmit_concatenate(transmit_t* transm, uint8_t** arg)
     if (*arg==NULL)
         return ;
     for (uint32_t k=0; k<transm->max; k++) {
-        strncat((char*) *arg, transm->chunks[k].data, transm->chunks[k].len);
+        strncat((char*) *arg, (char*) transm->chunks[k].data, transm->chunks[k].len);
     }
 }
 

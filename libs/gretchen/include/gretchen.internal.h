@@ -268,7 +268,7 @@ void transmit_get_envelope(transmit_t* transm, envelope_t** arg);
  *
  */
 #define RXMAP_KEY_LEN 64
-#define RXMAP_KEY_FORMAT "%lu"
+#define RXMAP_KEY_FORMAT "%llu"
 
 typedef struct {
     map_t* transmits;
