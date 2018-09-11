@@ -623,7 +623,8 @@ void grtModulatorTX_reset(grtModulatorTX_t *mod);
 
 /*
  * Successful frame generated callback.
- * Is called when a new frame samples has been generated.
+ * Is called when a new frame of samples has been generated of
+ * the consumed input.
  */
 typedef void grtModemTX_emit_callback(size_t buffer_len, float *buffer, void *user);
 

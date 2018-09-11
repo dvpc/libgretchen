@@ -300,7 +300,6 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_
                     printf("arg: error modulation center frequency == 0!\n");
                     inputvalid = false;
                 } else {
-                    // FIXME parameter samplingrate??
                     opt->modopt->center_rads = _convert_freq2rad(atoi(optarg), samplerate);
                 }
                 break;
@@ -393,6 +392,7 @@ void grtModemOpt_print(grtModemOpt_t* opt)
     bool ok = _are_all_values_set(opt);
     printf("are all values set?: %i\n", ok);
     printf("\n");
+    printf("samplerate %u \n", opt->samplerate);
     printf("frametype %u \n", opt->frametype);
     printf("framelen %zu \n", opt->frameopt->payload_len);
     printf("framecrc %u \n", opt->frameopt->checksum_scheme);
