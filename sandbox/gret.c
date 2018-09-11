@@ -16,12 +16,12 @@ static void rxfilecomplete_callback();
 
 // if listening (rx) or transmitting (tx).
 static bool is_tx = false;
-static uint8_t* txfilepath = NULL;
+static char* txfilepath = NULL;
 // if using default options.
 static bool use_defaultoption = true;
-static uint8_t* optionfilepath = NULL;
+static char* optionfilepath = NULL;
 // directory path for storing incoming files.
-static uint8_t* outpath = "incoming/\0";
+static char* outpath = "incoming/\0";
 
 
 int main(int argc, char **argv) {
@@ -217,7 +217,7 @@ static void print_banner() {
 static void print_transm(transmit_t* t, void* user) {
 
     (void) user;
-    printf("[hash %lu chnks ", t->hash);
+    printf("[hash %llu chnks ", t->hash);
     for (uint32_t k=0; k<t->max; k++) {
         printf("%s", t->chunks[k].data==NULL?".":"O"); 
     }
@@ -237,7 +237,7 @@ static void rxprogress_callback(
     (void) frame_nummax;
     (void) payload_valid;
     gretchenRX_t* rx = (gretchenRX_t*)user;
-    uint8_t* prgr;
+    char* prgr;
     switch(print_count%8) {
         case 0: prgr = ". \0"; break; 
         case 1: prgr = "..\0"; break; 
@@ -284,7 +284,7 @@ static void rxfilecomplete_callback(
         direrror = 1; 
     }
 
-    uint8_t *name = malloc(sizeof(uint8_t)*(strlen(outpath)+strlen(filename))+2);
+    char* name = malloc(sizeof(uint8_t)*(strlen(outpath)+strlen(filename))+2);
     strcpy(name, outpath);
     strcat(name, filename);
 
