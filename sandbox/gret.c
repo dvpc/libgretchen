@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     if (use_defaultoption) {
         opt = grtModemOpt_create_default(48000);
     } else {
-        opt = grtModemOpt_parse_args_from_file(optionfilepath, is_tx, 48000);
+        opt = grtModemOpt_parse_args_from_file((uint8_t*)optionfilepath, is_tx, 48000);
     }
     if (!opt)
         goto cleanup_opt;
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
         // load file from txfilepath
         gretchenTX_inspect_t* info;
         int8_t error;
-        gretchenTX_inspect(modem, txfilepath, &error, &info);
+        gretchenTX_inspect(modem, (uint8_t*)txfilepath, &error, &info);
         if (info==NULL || error!=0) {
             fprintf(stderr, ".. Error cannot process file. %s\n", argv[1]);
             goto cleanup_modem;
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         free(info); 
 
         // encode the file
-        gretchenTX_prepare(modem, txfilepath, &error);
+        gretchenTX_prepare(modem, (uint8_t*)txfilepath, &error);
         // get the sample
         float* samplebuf;
         size_t samplebuflen;
@@ -284,12 +284,12 @@ static void rxfilecomplete_callback(
         direrror = 1; 
     }
 
-    char* name = malloc(sizeof(uint8_t)*(strlen(outpath)+strlen(filename))+2);
+    char* name = malloc(sizeof(uint8_t)*(strlen(outpath)+strlen((char*)filename))+2);
     strcpy(name, outpath);
-    strcat(name, filename);
+    strcat(name, (char*)filename);
 
     int8_t error;
-    write_binaryfile(name, source, &error);
+    write_binaryfile((uint8_t*)name, source, &error);
     printf("   File written with %s (%i)\n", error?"error":"no error", error);
     free(name);
 }
