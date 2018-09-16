@@ -50,7 +50,7 @@ grtModemRX_t *grtModemRX_create(
     mrx->symbolbuf = malloc(symbolbuf_len*sizeof(float complex));
     mrx->symbolbuf_len = symbolbuf_len;
    
-    mrx->consume_cb = cbufferf_create(mrx->internal_bufsize);
+    mrx->consume_cb = cbufferf_create((int)mrx->internal_bufsize);
     grtModemRX_reset(mrx); 
     mrx->emit_callback = NULL;
     mrx->emit_callback_userdata = NULL;
@@ -102,7 +102,7 @@ size_t grtModemRX_consume(
     if (avail < buflen) {
         return 0;
     }
-    cbufferf_write(mrx->consume_cb, buffer, buflen); 
+    cbufferf_write(mrx->consume_cb, buffer, (int)buflen);
 
     size_t stride = mrx->framelen * mrx->dem->samples_per_symbol;
     float *samples;
@@ -115,7 +115,7 @@ size_t grtModemRX_consume(
                 break;
             }
         }
-        cbufferf_read(mrx->consume_cb, stride, &samples, &nread);
+        cbufferf_read(mrx->consume_cb, (int)stride, &samples, &nread);
         cbufferf_release(mrx->consume_cb, nread);
 
         size_t symbols = grtModulatorRX_recv(mrx->dem,
@@ -129,17 +129,17 @@ size_t grtModemRX_consume(
             case frametype_ofdm:
                 ofdmflexframesync_execute(mrx->frame.ofdm.framesync,
                                           mrx->symbolbuf,
-                                          symbols);
+                                          (int)symbols);
                 break;
             case frametype_modem:
                 flexframesync_execute(mrx->frame.modem.framesync,
                                       mrx->symbolbuf,
-                                      symbols);
+                                      (int)symbols);
                 break;
             case frametype_gmsk:
                 gmskframesync_execute(mrx->frame.gmsk.framesync,
                                       mrx->symbolbuf,
-                                      symbols);
+                                      (int)symbols);
                 break;
             case frametype_unset:
                 break;

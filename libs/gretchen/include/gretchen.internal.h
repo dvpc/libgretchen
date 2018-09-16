@@ -109,7 +109,7 @@ typedef any_t map_t;
 /*
  * Return an empty hashmap. Returns NULL if empty.
 */
-extern map_t hashmap_new();
+extern map_t hashmap_new(void);
 /*
  * Iteratively call f with argument (item, data) for
  * each element data in the hashmap. The function must
@@ -278,7 +278,7 @@ typedef void list_cb_t(transmit_t* transm, void* user);
 /*
  * Creates a receive (==rx) handler, which takes care of transmit objects.
  */
-rxhandler_t* rxhandler_create();
+rxhandler_t* rxhandler_create(void);
 /*
  * Destroy the rxhandler.
  */

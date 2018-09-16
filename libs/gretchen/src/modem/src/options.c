@@ -135,14 +135,14 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
         const char* pidx = strchr(dup, ' ');
         if (pidx) {
             // get the actual index of the pointer
-            uint32_t index = pidx - dup;
+            size_t index = pidx - dup;
             // substring arg
-            uint32_t lenA = index;
+            size_t lenA = index;
             char arg[lenA+1];
             memcpy(arg, &dup[0], lenA);
             arg[lenA] = '\0';
             // substring val
-            uint32_t lenB = strlen(dup)-index-1;
+            size_t lenB = strlen(dup)-index-1;
             char val[lenB];
             memcpy(val, &dup[lenA+1], lenB);
             val[lenB] = '\0';

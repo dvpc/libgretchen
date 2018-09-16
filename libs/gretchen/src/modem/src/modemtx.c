@@ -95,7 +95,7 @@ void grtModemTX_setheaderinfo(
                 size_t filesize) 
 {
     mtx->hash = filehash;
-    mtx->frame_nummax = filesize/mtx->framelen+1;
+    mtx->frame_nummax = (int)(filesize/mtx->framelen+1);
 } 
 
 void grtModemTX_enable_flush(grtModemTX_t *mtx)
@@ -148,7 +148,7 @@ size_t framegen_estimate_num_symbols(
             ofdmflexframegen_assemble(mtx->frame.ofdm.framegen, 
                                       header,
                                       empty,
-                                      len);
+                                      (int)len);
             size_t blocks = ofdmflexframegen_getframelen(mtx->frame.ofdm.framegen);
             num_symbols = blocks * mtx->opt.ofdmopt->num_subcarriers + 
                     mtx->opt.ofdmopt->cyclic_prefix_len; 
@@ -158,7 +158,7 @@ size_t framegen_estimate_num_symbols(
             flexframegen_assemble(mtx->frame.modem.framegen, 
                                   header, 
                                   empty, 
-                                  len);
+                                  (int)len);
             num_symbols = flexframegen_getframelen(mtx->frame.modem.framegen);
             flexframegen_reset(mtx->frame.modem.framegen);
             break;
@@ -166,7 +166,7 @@ size_t framegen_estimate_num_symbols(
             gmskframegen_assemble(mtx->frame.gmsk.framegen, 
                                   header, 
                                   empty, 
-                                  len,
+                                  (int)len,
                                   mtx->fgprops.check,
                                   mtx->fgprops.fec0,
                                   mtx->fgprops.fec1);
@@ -212,14 +212,14 @@ static void framegen_assemble(
             ofdmflexframegen_assemble(mtx->frame.ofdm.framegen,
                                       header,
                                       readframe,
-                                      len);
+                                      (int)len);
             mtx->frame_num ++;
             break; 
         case frametype_modem:
             flexframegen_assemble(mtx->frame.modem.framegen, 
                                   header, 
                                   readframe,
-                                  len);
+                                  (int)len);
             mtx->frame.modem.symbols_remaining = 
                     flexframegen_getframelen(mtx->frame.modem.framegen);
             mtx->frame_num ++;
@@ -229,7 +229,7 @@ static void framegen_assemble(
             gmskframegen_assemble(mtx->frame.gmsk.framegen, 
                                   header, 
                                   readframe,
-                                  len, 
+                                  (int)len,
                                   mtx->fgprops.check,
                                   mtx->fgprops.fec0,
                                   mtx->fgprops.fec1);
@@ -252,7 +252,7 @@ static size_t framegen_write_symbols(
             ofdmflexframegen_write(
                                 mtx->frame.ofdm.framegen,
                                 symbols,
-                                len);
+                                (int)len);
             return len;
         case frametype_modem:
             if (len > mtx->frame.modem.symbols_remaining)
@@ -262,11 +262,11 @@ static size_t framegen_write_symbols(
             flexframegen_write_samples(
                             mtx->frame.modem.framegen,
                             symbols,
-                            written);
+                            (int)written);
             mtx->frame.modem.symbols_remaining -= written;
             return written;
         case frametype_gmsk:
-            gmsk_rem = len % mtx->frame.gmsk.stride;
+            gmsk_rem = len % (int)mtx->frame.gmsk.stride;
             if (gmsk_rem != 0)
                 written = len + mtx->frame.gmsk.stride - gmsk_rem;
             else

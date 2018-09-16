@@ -74,7 +74,7 @@ size_t grtModulatorRX_recv(
                             &mixer_out[j]);
             nco_crcf_step(dem->nco);
         } 
-        uint32_t idx = i/dem->samples_per_symbol;
+        uint32_t idx = (int)(i/dem->samples_per_symbol);
         firdecim_crcf_execute(
                             dem->decim,
                             &mixer_out[0],

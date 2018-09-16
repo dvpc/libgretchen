@@ -166,7 +166,7 @@ uint64_t crc32(const uint8_t *s, uint32_t len)
  */
 uint32_t hashmap_hash_int(hashmap_map * m, uint8_t* keystring){
 
-    uint64_t key = crc32((uint8_t*)(keystring), strlen((char*)keystring));
+    uint64_t key = crc32((uint8_t*)(keystring), (int)strlen((char*)keystring));
 
 	/* Robert Jenkins' 32 bit Mix Function */
 	key += (key << 12);
