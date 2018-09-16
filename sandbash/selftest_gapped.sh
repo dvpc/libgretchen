@@ -21,6 +21,7 @@ OUTPUT_filewav2="$OUTPUTDIR/tmp.output2.raw"
 #build/rec | tee $OUTPUT_filewav | build/dec $opt > $OUTPUT_file &
 #build/rec | tee $OUTPUT_filewav | build/denoisema -p 1 -l 64 | build/dec $opt &
 build/rec | tee $OUTPUT_filewav | build/dec $opt &
+# TODO keep process number to kill in a propper manner later (kill $!)
 
 # encoding and playing the file
 sleep 1
