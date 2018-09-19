@@ -13,8 +13,10 @@
 // TX
 
 /*
- * The progress callback is called each time a frame is decoded with at 
- * least its header intact.
+ * The progress callback is called each time a frame is encoded. 
+ * The number of encoded samples so far is reportet.
+ * Its role is only to notify a usier interface. 
+ * So its ok to leave the field `prog_callback` NULL.
  */
 typedef void gretchenTX_progress_callback(size_t currentbuflen, void* user);
 
