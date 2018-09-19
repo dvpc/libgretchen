@@ -12,11 +12,19 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TX
 
+/*
+ * The progress callback is called each time a frame is decoded with at 
+ * least its header intact.
+ */
+typedef void gretchenTX_progress_callback(size_t currentbuflen, void* user);
+
 typedef struct {
     grtModemTX_t* modem_tx;
     uint8_t* packed_env;
     float* samples;
     size_t samples_len;
+    gretchenTX_progress_callback* prog_callback;
+    void* callbackuser;
 } gretchenTX_t;
 
 typedef struct {

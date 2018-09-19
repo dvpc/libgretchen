@@ -12,6 +12,8 @@ static void _modemtx_callback(
         return ;
     memcpy(tx->samples+tx->samples_len, buffer, buffer_len*sizeof(float));
     tx->samples_len = wantlen;
+    if (tx->prog_callback)
+        tx->prog_callback(wantlen, tx->callbackuser);
 }
 
 gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internalbufsize)
@@ -23,6 +25,8 @@ gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internalbufsize)
     tx->modem_tx = grtModemTX_create(opt, internalbufsize);
     tx->modem_tx->emit_callback = _modemtx_callback;
     tx->modem_tx->emit_callback_userdata = tx;
+    tx->prog_callback = NULL;
+    tx->callbackuser = NULL;
     return tx;
 }
 

@@ -10,6 +10,7 @@
 
 static void print_usage();
 static void print_banner();
+static void txprogress_callback();
 static void rxprogress_callback();
 static void rxfilecomplete_callback();
 
@@ -83,6 +84,7 @@ int main(int argc, char **argv) {
     if (is_tx) {
         printf(".. TX (transfer) mode\n");
         modem = (gretchenTX_t*) gretchenTX_create(opt, 1<<13);//8192
+        ((gretchenTX_t*) modem)->prog_callback = txprogress_callback; 
 
         // load file from txfilepath
         gretchenTX_inspect_t* info;
@@ -294,3 +296,7 @@ static void rxfilecomplete_callback(
     free(name);
 }
 
+static void txprogress_callback(size_t currentbuflen, void* user)
+{
+    printf("%zu\n", currentbuflen);
+}
