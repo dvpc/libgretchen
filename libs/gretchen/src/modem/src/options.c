@@ -1,7 +1,13 @@
 #include "gretchen.internal.h"
 
+// since i get a clang warning: `Variable 'opt' may be uninitialized when
+// used here` and since clang is known to generate false positives i
+// just added a pragma to ignore these warnings here in this file.
+// see: https://stackoverflow.com/questions/52194930
+#pragma clang diagnostic ignored "-Wconditional-uninitialized"
+// i have to see whether this line should get into libgretchen or not.
 
-static float _convert_freq2rad(uint32_t frequency, uint32_t samplerate) 
+static float _convert_freq2rad(uint32_t frequency, uint32_t samplerate)
 {
     return ((float)frequency/(float)samplerate) * M_PI * 2.0;
 }
@@ -381,7 +387,7 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_
         printf("\nError! Incorrect options\n");
         grtModemOpt_print(opt);
         grtModemOpt_destroy(opt);
-        return NULL;    
+        return NULL;
     }
 }
 
