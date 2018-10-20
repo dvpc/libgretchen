@@ -14,8 +14,8 @@ if [ ! -d "$OUTPUTDIR" ]; then
     mkdir "$OUTPUTDIR"
 fi
 OUTPUT_file="$OUTPUTDIR/tmp.output.bin"
-OUTPUT_filewav="$OUTPUTDIR/tmp.output.raw"
-OUTPUT_filewav2="$OUTPUTDIR/tmp.output2.raw"
+OUTPUT_filewav="$OUTPUTDIR/tmp.recorded.raw"
+OUTPUT_filewav2="$OUTPUTDIR/tmp.generated.raw"
 
 cat $3 | build/enc $opt | tee $OUTPUT_filewav | build/noise $noiseopt | tee $OUTPUT_filewav2 | build/dec $opt > $OUTPUT_file
 

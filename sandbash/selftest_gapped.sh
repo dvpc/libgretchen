@@ -13,14 +13,13 @@ if [ ! -d "$OUTPUTDIR" ]; then
     mkdir "$OUTPUTDIR"
 fi
 OUTPUT_file="$OUTPUTDIR/tmp.output.bin"
-OUTPUT_filewav="$OUTPUTDIR/tmp.output.raw"
-OUTPUT_filewav2="$OUTPUTDIR/tmp.output2.raw"
+OUTPUT_filewav="$OUTPUTDIR/tmp.recorded.raw"
+OUTPUT_filewav2="$OUTPUTDIR/tmp.generated.raw"
 
 # TODO output is not written to file...
 # did not succeed in digging this out.
-#build/rec | tee $OUTPUT_filewav | build/dec $opt > $OUTPUT_file &
-#build/rec | tee $OUTPUT_filewav | build/denoisema -p 1 -l 64 | build/dec $opt &
-build/rec | tee $OUTPUT_filewav | build/dec $opt &
+build/rec | tee $OUTPUT_filewav | build/dec $opt > $OUTPUT_file &
+#build/rec | tee $OUTPUT_filewav | build/dec $opt &
 # TODO keep process number to kill in a propper manner later (kill $!)
 
 # encoding and playing the file

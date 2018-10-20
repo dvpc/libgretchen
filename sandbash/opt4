@@ -1,5 +1,5 @@
 --frmtype modem
---frmlen 800
+--frmlen 600
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
