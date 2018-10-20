@@ -3,5 +3,8 @@ build/
 *.wav
 *.bin
 *.raw
+allparams.txt
+# at Tomek
+incoming/
 libs/external/
 .DS_Store
