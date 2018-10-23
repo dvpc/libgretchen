@@ -5,7 +5,7 @@
 #pragma once
 
 #define gretchen_VERSION_MAJOR 0
-#define gretchen_VERSION_MINOR 2
+#define gretchen_VERSION_MINOR 3
 
 #include "gretchen.internal.h"
 
@@ -62,6 +62,14 @@ void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error);
  * written into parameter `len`.
  */
 void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len);
+/*
+ * Sets the progress callback function pointer.
+ */
+void gretchenTX_set_progress_cb(gretchenTX_t* tx, gretchenTX_progress_callback* cb);
+/*
+ * Sets the userdara pointer for the callback functions.
+ */
+void gretchenTX_set_callback_userdata(gretchenTX_t* rx, void* user);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RX
@@ -99,6 +107,20 @@ void gretchenRX_destroy(gretchenRX_t* rx);
  * modem. The assumed format is little endian, 16 bit, float (le16f).
  */
 void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int8_t* error);
-
-
-
+/*
+ * Sets the filecomplete callback function pointer.
+ */
+void gretchenRX_set_filecomplete_cb(gretchenRX_t* rx, gretchenRX_filecomplete_callback* cb);
+/*
+ * Sets the progress callback function pointer.
+ */
+void gretchenRX_set_progress_cb(gretchenRX_t* rx, gretchenRX_progress_callback* cb);
+/*
+ * Sets the userdara pointer for the callback functionss.
+ */
+void gretchenRX_set_callback_userdata(gretchenRX_t* rx, void* user);
+/*
+ * Sets the modemRX debug callback function pointer.
+ * See gretchen.internal.h
+ */
+void gretchenRX_set_debug_cb(gretchenRX_t* rx, grtModemRX_emit_debug_callback* cb);

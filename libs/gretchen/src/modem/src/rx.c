@@ -98,3 +98,22 @@ void gretchenRX_push_le16f(gretchenRX_t* rx, float* buffer, size_t len, int8_t* 
 
 
 
+void gretchenRX_set_filecomplete_cb(gretchenRX_t* rx, gretchenRX_filecomplete_callback* cb)
+{
+    rx->callback = cb;
+}
+
+void gretchenRX_set_progress_cb(gretchenRX_t* rx, gretchenRX_progress_callback* cb)
+{
+    rx->prog_callback = cb;
+}
+
+void gretchenRX_set_callback_userdata(gretchenRX_t* rx, void* user)
+{
+    rx->callbackuser = user;
+}
+
+void gretchenRX_set_debug_cb(gretchenRX_t* rx, grtModemRX_emit_debug_callback* cb)
+{
+    rx->modem_rx->emit_debug_callback = cb;
+}

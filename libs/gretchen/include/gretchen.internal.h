@@ -388,7 +388,7 @@ void grtModemOpt_print(grtModemOpt_t* opt);
 
 
 /*
- * Demodulator ----------------------------------------------------------------
+ * Demodulator RX ----------------------------------------------------------------
  *
  *
  */
@@ -419,7 +419,7 @@ size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples
 
 
 /*
- * Modem reciever  ------------------------------------------------------------
+ * Modem reciever RX ------------------------------------------------------------
  *
  *
  */
@@ -506,7 +506,7 @@ size_t grtModemRX_consume(grtModemRX_t *mrx, float *buffer, size_t buflen);
 
 
 /*
- * Modulator ------------------------------------------------------------------
+ * Modulator TX ------------------------------------------------------------------
  *
  *
  */
@@ -543,7 +543,7 @@ void grtModulatorTX_reset(grtModulatorTX_t *mod);
 
 
 /*
- * Modem sender  --------------------------------------------------------------
+ * Modem sender TX --------------------------------------------------------------
  *
  *
  */

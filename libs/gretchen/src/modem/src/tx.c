@@ -118,5 +118,12 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     memcpy(*samplebuffer+11025, tx->samples, tx->samples_len*sizeof(float));
 }
 
+void gretchenTX_set_progress_cb(gretchenTX_t* tx, gretchenTX_progress_callback* cb)
+{
+    tx->prog_callback = cb;
+}
 
+void gretchenTX_set_callback_userdata(gretchenTX_t* rx, void* user){
+    rx->callbackuser = user;
+}
 
