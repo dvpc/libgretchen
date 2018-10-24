@@ -150,7 +150,7 @@ void envelope_unpack(uint8_t* envelope, envelope_t** arg)
     char* name;
     char* source;
     if (s==NULL) {
-        name = malloc(sizeof(char)*5);    
+        name = malloc(sizeof(char)*6);
         source = malloc(sizeof(char)*strlen(n)+1);
         strcpy(name, "none\0");
         strcpy(source, n);
@@ -242,13 +242,11 @@ static void transmit_concatenate(transmit_t* transm, uint8_t** arg)
     size_t concat_size=0;
     for (size_t k=0; k<transm->max; k++)
         concat_size += transm->chunks[k].len+1;
-    *arg = malloc(sizeof(uint8_t)*1);
+    *arg = malloc(sizeof(uint8_t)*2);
     strcpy((char*) *arg, "\0");
     if (!transmit_is_complete(transm))
         return ;
     *arg = realloc(*arg, sizeof(uint8_t)*concat_size);
-    if (*arg==NULL)
-        return ;
     for (uint32_t k=0; k<transm->max; k++) {
         strncat((char*) *arg, (char*) transm->chunks[k].data, transm->chunks[k].len);
     }
