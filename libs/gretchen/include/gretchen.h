@@ -52,11 +52,23 @@ void gretchenTX_destroy(gretchenTX_t* tx);
  */
 void gretchenTX_inspect(gretchenTX_t* tx, uint8_t* filename, int8_t* error, gretchenTX_inspect_t** info);
 /*
+ * Inspects the given buffer and estimates the duration and size
+ * of the resulting transmission. The generated information can be accessed
+ * via the parameter `info`.
+ */
+void gretchenTX_inspect_buffer(gretchenTX_t* tx, uint8_t* buffer, gretchenTX_inspect_t** info);
+/*
  * Prepares aka encodes the file in `filename` for transmission. The coded
  * data (a long audio sample) is stored by the sender modem internally and 
  * is accessible by calling the `get` method.
  */
 void gretchenTX_prepare(gretchenTX_t* tx, uint8_t* filename, int8_t* error);
+/*
+ * Prepares aka encodes the given buffer for transmission. The coded data
+ * (a long audio sample) is stored by the sender modem internally and
+ * is accessible by calling the `get` method.
+ */
+void gretchenTX_prepare_buffer(gretchenTX_t* tx, uint8_t* buffer);
 /*
  * Copies the coded data (audio sample) into given `samplebuffer` location. Its size is 
  * written into parameter `len`.
