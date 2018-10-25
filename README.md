@@ -1,3 +1,11 @@
+### open bugs
+1  on osx: using 
+        `$ sh sandbash/selftest_gapped2.sh runcmake_debug.sh` 
+        the filenames of the received files are truncated
+2 on all platforms
+    some paramter combinations result in crash of the modem
+    TODO list them
+    
 ```
   ____          _       _                
  / ___|_ __ ___| |_ ___| |__   ___ _ __  

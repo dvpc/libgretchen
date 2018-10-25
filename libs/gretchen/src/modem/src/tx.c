@@ -132,12 +132,17 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     *samplebuffer = NULL;
     if (!tx->samples)
         return ;
+    // TODO
+    // think of amplifying the sample better to
+    // do here istead of chunkwise in the modem?
+    // idk
+    // NOTE
     // append and prepend .25 seconds of silence
     // to avoid clicks when playing the sample back
-    // TODO has to be updated when having variable samplerate...
+    size_t samples_quarter_sec = tx->modem_tx->opt.samplerate/4;
     *len = tx->samples_len+22050;
-    *samplebuffer = calloc(sizeof(float), tx->samples_len+22050);
-    memcpy(*samplebuffer+11025, tx->samples, tx->samples_len*sizeof(float));
+    *samplebuffer = calloc(sizeof(float), tx->samples_len+2*samples_quarter_sec);
+    memcpy(*samplebuffer+samples_quarter_sec, tx->samples, tx->samples_len*sizeof(float));
 }
 
 void gretchenTX_set_progress_cb(gretchenTX_t* tx, gretchenTX_progress_callback* cb)
