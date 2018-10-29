@@ -145,12 +145,12 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
             // substring arg
             size_t lenA = index;
             char arg[lenA+1];
-            memcpy(arg, &dup[0], lenA);
+            memmove(arg, &dup[0], lenA);
             arg[lenA] = '\0';
             // substring val
             size_t lenB = strlen(dup)-index-1;
             char val[lenB];
-            memcpy(val, &dup[lenA+1], lenB);
+            memmove(val, &dup[lenA+1], lenB);
             val[lenB] = '\0';
             /*printf("%s %s\n",arg, val);*/
             // add first token

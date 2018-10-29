@@ -220,7 +220,7 @@ void transmit_add(transmit_t* transm, uint32_t num, uint8_t* buffer, size_t buff
         return;
     if (!transm->chunks[num].data) {
         transm->chunks[num].data = malloc(sizeof(uint8_t)*buffer_len+1);
-        memcpy(transm->chunks[num].data, buffer, buffer_len); 
+        memmove(transm->chunks[num].data, buffer, buffer_len); 
         transm->chunks[num].len = buffer_len;
     }    
 }

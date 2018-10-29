@@ -61,7 +61,7 @@ static void _modemtx_callback(size_t buffer_len, float *buffer, void *user)
     tx->samples = realloc(tx->samples, wantlen*sizeof(float));
     if (!tx->samples)
         return ;
-    memcpy(tx->samples+tx->samples_len, buffer, buffer_len*sizeof(float));
+    memmove(tx->samples+tx->samples_len, buffer, buffer_len*sizeof(float));
     tx->samples_len = wantlen;
     if (tx->prog_callback)
         tx->prog_callback(wantlen, tx->callbackuser);
@@ -139,10 +139,11 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     // NOTE
     // append and prepend .25 seconds of silence
     // to avoid clicks when playing the sample back
+    // agc with lookahead??
     size_t samples_quarter_sec = tx->modem_tx->opt.samplerate/4;
     *len = tx->samples_len+22050;
     *samplebuffer = calloc(sizeof(float), tx->samples_len+2*samples_quarter_sec);
-    memcpy(*samplebuffer+samples_quarter_sec, tx->samples, tx->samples_len*sizeof(float));
+    memmove(*samplebuffer+samples_quarter_sec, tx->samples, tx->samples_len*sizeof(float));
 }
 
 void gretchenTX_set_progress_cb(gretchenTX_t* tx, gretchenTX_progress_callback* cb)

@@ -17,7 +17,7 @@
 
 /* 
  * Ringbuffer -----------------------------------------------------------------
- * Very simple ring buffer with memcpy.
+ * Very simple ring buffer.
  *
  */
 #define RBUF_OK 0
