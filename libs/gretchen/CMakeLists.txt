@@ -40,9 +40,6 @@ target_link_libraries(gretchen liquid fec m)
 add_executable(testopt
         src/modem/tests/testoptions.c
         src/modem/src/options.c)
-add_executable(testoptfile
-		src/modem/tests/testoptionsfile.c
-		src/modem/src/options.c)
 add_executable(testmodem 
         src/modem/tests/testmodem.c
         src/modem/src/modulatortx.c
@@ -82,7 +79,6 @@ add_executable(testmodrx
         src/helper/src/hashmap.c)
 
 target_link_libraries(testopt gretchen)
-target_link_libraries(testoptfile gretchen)
 target_link_libraries(testmodem gretchen) 
 target_link_libraries(testrxenv gretchen) 
 target_link_libraries(testrxtransm gretchen) 
