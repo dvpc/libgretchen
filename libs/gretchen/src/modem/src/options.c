@@ -84,15 +84,15 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
 
 void grtModemOpt_destroy(grtModemOpt_t* opt)
 {
-    if (opt) {
-        if (opt->frameopt)
-            free(opt->frameopt);
-        if (opt->modopt)
-            free(opt->modopt);
-        if (opt->ofdmopt)
-            free(opt->ofdmopt);
-        free(opt);
-    }
+    if (!opt)
+        return;
+    if (opt->frameopt)
+        free(opt->frameopt);
+    if (opt->modopt)
+        free(opt->modopt);
+    if (opt->ofdmopt)
+        free(opt->ofdmopt);
+    free(opt);
 }
 
 #define TOKENLIST_CREATE() \
