@@ -73,6 +73,8 @@ gretchenRX_t* gretchenRX_create(grtModemOpt_t* opt, size_t internal_bufsize)
 
 void gretchenRX_destroy(gretchenRX_t* rx)
 {
+    if (!rx)
+        return;
     grtModemRX_destroy(rx->modem_rx);
     rxhandler_destroy(rx->rxhandler);
     free(rx);

@@ -83,6 +83,8 @@ gretchenTX_t* gretchenTX_create(grtModemOpt_t* opt, size_t internalbufsize)
 
 void gretchenTX_destroy(gretchenTX_t* tx)
 {
+    if (!tx)
+        return;
     if (tx->packed_env)
         free(tx->packed_env);
     if (tx->samples)
