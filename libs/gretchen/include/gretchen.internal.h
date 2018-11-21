@@ -372,7 +372,11 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate);
 /*
  * Creates a modem option object from a file.
  */
-grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate); 
+grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, uint32_t samplerate);
+/*
+ * Creates a modem option object from a string.
+ */
+grtModemOpt_t* grtModemOpt_parse_args_from_string(uint8_t* optchar, bool is_tx, uint32_t samplerate);
 /*
  * Creates a modem option object from command line arguments.
  */

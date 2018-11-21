@@ -123,11 +123,58 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
         printf("cannot read opt file.\n");
         return NULL;
     }
+    return grtModemOpt_parse_args_from_string(optchar, is_tx, samplerate);
+//    // 2 split the lines of the file
+//    TOKENLIST_CREATE();
+//    // at 0 add the program name (here i just put none into it)
+//    TOKENLIST_ADD("\0", 1);
+//    // FIXME
+//    // i have to add these two in order to work with parse_args... oO why??
+//    TOKENLIST_ADD("\0",1);
+//    TOKENLIST_ADD("\0",1);
+//    TOKENLIST_ADD("\0",1);
+//    TOKENLIST_ADD("\0",1);
+//    // walk all tokens (lines of the options data)
+//    for (char* p=strtok((char*)optchar,"\n"); p!=NULL; p=strtok(NULL,"\n")) {
+//        // copy the token first
+//        char* dup = strdup(p);
+//        // find the pointer to the ' ' char of the token
+//        const char* pidx = strchr(dup, ' ');
+//        if (pidx) {
+//            // get the actual index of the pointer
+//            size_t index = pidx - dup;
+//            // substring arg
+//            size_t lenA = index;
+//            char arg[lenA+1];
+//            memmove(arg, &dup[0], lenA);
+//            arg[lenA] = '\0';
+//            // substring val
+//            size_t lenB = strlen(dup)-index-1;
+//            char val[lenB];
+//            memmove(val, &dup[lenA+1], lenB);
+//            val[lenB] = '\0';
+//            /*printf("%s %s\n",arg, val);*/
+//            // add first token
+//            TOKENLIST_ADD(arg, strlen(arg));
+//            // add second token
+//            TOKENLIST_ADD(val, strlen(val));
+//        }
+//        free(dup);
+//    }
+//    // 3 feed the char** tokenlist into grtModemOpt
+//    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx, samplerate);
+//    TOKENLIST_DESTROY();
+//    free(optchar);
+//    return opt;
+}
+
+grtModemOpt_t* grtModemOpt_parse_args_from_string(uint8_t* optchar, bool is_tx, uint32_t samplerate)
+{
     // 2 split the lines of the file
     TOKENLIST_CREATE();
     // at 0 add the program name (here i just put none into it)
     TOKENLIST_ADD("\0", 1);
-    // FIXME 
+    // FIXME
     // i have to add these two in order to work with parse_args... oO why??
     TOKENLIST_ADD("\0",1);
     TOKENLIST_ADD("\0",1);
@@ -161,7 +208,7 @@ grtModemOpt_t* grtModemOpt_parse_args_from_file(uint8_t* filename, bool is_tx, u
         free(dup);
     }
     // 3 feed the char** tokenlist into grtModemOpt
-    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx, samplerate);    
+    grtModemOpt_t* opt = grtModemOpt_parse_args(num_token, res_tokens, is_tx, samplerate);
     TOKENLIST_DESTROY();
     free(optchar);
     return opt;

@@ -5,7 +5,8 @@
 ### 2 on all platforms
         some paramter combinations result in crash of the modem
         TODO list them
-    
+### malloc error return path!!!!
+        i did not look at this yet but...
 ```
   ____          _       _                
  / ___|_ __ ___| |_ ___| |__   ___ _ __  
