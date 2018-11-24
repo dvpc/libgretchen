@@ -23,6 +23,12 @@ static void _estimate_transmission(gretchenTX_t* tx, size_t filesize, gretchenTX
 
 static void _prepare_for_transmission(gretchenTX_t* tx, uint8_t* filename, uint8_t* source)
 {
+    // clear samples if there are any
+    if (tx->samples_len > 0) {
+        free(tx->samples);
+        tx->samples = NULL;
+        tx->samples_len = 0;
+    }
     // create and pack envelope
     envelope_t* env = envelope_create(filename, source);
     uint8_t *envstr;
