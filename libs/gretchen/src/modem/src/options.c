@@ -209,6 +209,16 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_
     };
 
     int ch;
+    // Wow i have to (re)set this external variable `optind`
+    // to be able to scan multiple times some argv!
+    // Its all here: http://man7.org/linux/man-pages/man3/getopt.3.html
+    // in Notes:
+    // `A program that scans multiple argument vectors, or rescans the same 
+    // vector more than once ... must reinitialize getopt() by 
+    // resetting optind to 0 ...`
+    // I stumbled across this since in C i never bothered to reuse getopt.
+    // But by using this lib in IOS ran into it. Wow just wow. <3 u C.
+    optind = 0;
     while ((ch = getopt_long(argc, argv, 
                              "0:1:2:3:4:5:b:c:d:e:f:g:h:i:j:k:l:m:n:6:7:8:9:a:", 
                              long_options, NULL)) != -1) {
