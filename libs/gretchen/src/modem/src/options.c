@@ -73,7 +73,7 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
     opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
     opt->frameopt->mod_scheme = liquid_getopt_str2mod("qpsk");
     opt->frameopt->_bits_per_symbol = modulation_types[opt->frameopt->mod_scheme].bps;
-    opt->modopt->shape = liquid_getopt_str2firfilt("pm");
+    opt->modopt->shape = liquid_getopt_str2firfilt("kaiser");
     opt->modopt->samples_per_symbol = 9;
     opt->modopt->symbol_delay = 5;
     opt->modopt->excess_bw = 0.75;
