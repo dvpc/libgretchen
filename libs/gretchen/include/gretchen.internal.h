@@ -180,8 +180,14 @@ void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error);
  *
  *
  */
-#define ENVELOPE_FORMAT "%s\07%s" // delimiter is \07 ascii beep :D
-#define ENVELOPE_FORMAT_DELIMITER "\07"
+// FIXME
+// having issues with that "\07" delimiter on osx.
+// i want it to be as short as possible 
+// but also in no danger of being also used by the data it has to delimit
+// i try a magic instead...
+#define ENVELOPE_FORMAT "%s;;%s" 
+#define ENVELOPE_FORMAT_DELIMITER ";;"
+#define ENVELOPE_FORMAT_DELIMITER_LEN 2
 
 typedef struct {
     uint8_t *name;

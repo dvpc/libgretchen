@@ -107,6 +107,22 @@ envelope_t* envelope_create(uint8_t* name, uint8_t* source)
     // see https://stackoverflow.com/questions/7180293/how-to-extract-filename-from-path
     // a hint for a self implemented version of basename could be
     // see: https://stackoverflow.com/a/41949246 
+    // FIXME 
+    // one would check here if the filename ends with delimiter chars!!
+    // and remove / replace them (doing this to a filename seems ok)
+    // to mitigate bad unpacking 
+    
+    char *del = strstr(name, ENVELOPE_FORMAT_DELIMITER);
+    if (del != NULL) {
+        int pos = del-(char*)name; 
+        /*printf("delim found at %i (%d)\n", pos, (char*)name-del);*/
+        /*printf("old name %s\n", name);*/
+        for (int k=0; k < ENVELOPE_FORMAT_DELIMITER_LEN; k++) {
+            name[pos+k*sizeof(char)] = (char)'_';
+        }
+        /*printf("new name %s\n", name);*/
+    }
+
     char *base = basename((char*)name);
     envelope_t *env = malloc(sizeof(envelope_t));
     char* name2 = malloc(sizeof(char)*strlen(base)+1);
@@ -130,7 +146,7 @@ void envelope_destroy(envelope_t* env)
 void envelope_pack(envelope_t* envelope, uint8_t** arg)
 {
     size_t env_pack_size = strlen((char*)envelope->name) + 
-            strlen((char*)envelope->source) + 2;
+            strlen((char*)envelope->source) + ENVELOPE_FORMAT_DELIMITER_LEN + 1;
     *arg = malloc(sizeof(uint8_t)*env_pack_size);
     strcpy((char*) *arg, "\0");
     snprintf((char*) *arg, 
@@ -143,7 +159,7 @@ void envelope_pack(envelope_t* envelope, uint8_t** arg)
 // https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
 void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
-    const char delim[1] = ENVELOPE_FORMAT_DELIMITER;
+    const char delim[ENVELOPE_FORMAT_DELIMITER_LEN] = ENVELOPE_FORMAT_DELIMITER;
     *arg = malloc(sizeof(envelope_t));
     char* n = strtok((char*)envelope, delim);
     char* s = strtok(NULL, delim);
