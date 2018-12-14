@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
                     source);
 
 
-    envelope_t *env = envelope_create((uint8_t*)name, source);
+//    envelope_t *env = envelope_create((uint8_t*)name, source);
+    envelope_t *env = envelope_create(NULL, source);
     
     uint64_t hash = hash_djb2(env->source);
     printf("hash: %llu\n", hash);

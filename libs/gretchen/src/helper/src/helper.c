@@ -100,35 +100,36 @@ void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error)
 
 envelope_t* envelope_create(uint8_t* name, uint8_t* source)
 {
+    // check if name is NULL
+    char* _name;
+    if (name == NULL) {
+        _name = malloc(sizeof(char)*6);
+        strcpy(_name, "none\0");
+    } else {
+        _name = (char*)name;
+        // check if the (file)name contains the delimiter chars
+        // if so replace them with '_'
+        char* del = strstr(_name, ENVELOPE_FORMAT_DELIMITER);
+        if (del != NULL) {
+            size_t pos = del-_name;
+            for (int k=0; k < ENVELOPE_FORMAT_DELIMITER_LEN; k++) {
+                _name[pos+k*sizeof(char)] = '_';
+            }
+        }
+    }
     // FIXME
     // using linux/posix method `basename` for now here.
     // That wont work on windows and other platforms i guess...
     // So we have to use sth better
     // see https://stackoverflow.com/questions/7180293/how-to-extract-filename-from-path
     // a hint for a self implemented version of basename could be
-    // see: https://stackoverflow.com/a/41949246 
-    // FIXME 
-    // one would check here if the filename ends with delimiter chars!!
-    // and remove / replace them (doing this to a filename seems ok)
-    // to mitigate bad unpacking 
-    
-    char *del = strstr(name, ENVELOPE_FORMAT_DELIMITER);
-    if (del != NULL) {
-        int pos = del-(char*)name; 
-        /*printf("delim found at %i (%d)\n", pos, (char*)name-del);*/
-        /*printf("old name %s\n", name);*/
-        for (int k=0; k < ENVELOPE_FORMAT_DELIMITER_LEN; k++) {
-            name[pos+k*sizeof(char)] = (char)'_';
-        }
-        /*printf("new name %s\n", name);*/
-    }
-
-    char *base = basename((char*)name);
-    envelope_t *env = malloc(sizeof(envelope_t));
+    // see: https://stackoverflow.com/a/41949246
+    char* base = basename((char*)_name);
     char* name2 = malloc(sizeof(char)*strlen(base)+1);
     char* source2 = malloc(sizeof(char)*strlen((char*)source)+1);
     strcpy(name2, base);
     strcpy(source2, (char*)source);
+    envelope_t *env = malloc(sizeof(envelope_t));
     env->name = (uint8_t*)name2;
     env->source = (uint8_t*)source2;
     return env;
@@ -156,28 +157,56 @@ void envelope_pack(envelope_t* envelope, uint8_t** arg)
              envelope->source);
 }
 
-// https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
 void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
-    const char delim[ENVELOPE_FORMAT_DELIMITER_LEN] = ENVELOPE_FORMAT_DELIMITER;
-    *arg = malloc(sizeof(envelope_t));
-    char* n = strtok((char*)envelope, delim);
-    char* s = strtok(NULL, delim);
-    char* name;
-    char* source;
-    if (s==NULL) {
-        name = malloc(sizeof(char)*6);
-        source = malloc(sizeof(char)*strlen(n)+1);
-        strcpy(name, "none\0");
-        strcpy(source, n);
-    } else {
-        name = malloc(sizeof(char)*strlen(n)+1);
-        source = malloc(sizeof(char)*strlen(s)+1);
-        strcpy(name, n);
-        strcpy(source, s);
+    char* delim = strstr((char*)envelope, ENVELOPE_FORMAT_DELIMITER);
+    if (delim != NULL) {
+        // estimate delimiter start and end position
+        size_t del_pos = delim-(char*)envelope;
+        size_t del_start = del_pos;
+        for (int k=0; k < ENVELOPE_FORMAT_DELIMITER_LEN; k++)
+            del_pos += k;
+        size_t del_end = del_pos;
+        size_t source_len = strlen((char*)envelope)-del_end;
+        // FIXME what if name is NULL
+        // ????
+        // check this
+        // FIXME have to valgrind this... OMG
+        //
+        // tokenizing per hand (only 2 tokens so grrr strtok or strsep or...)
+        char *name = malloc(sizeof(char)*(del_start+1));
+        memmove(name, envelope, del_start);
+        name[del_start+1] = '\0';
+        char *source = malloc(sizeof(char)*(source_len+1));
+        char *source_start = (char*)envelope + sizeof(char)*(del_end+1);
+        memmove(source, source_start, source_len);
+        source[source_len+1] = '\0';
+        
+        *arg = malloc(sizeof(envelope_t));
+        (*arg)->name = (uint8_t*) name;
+        (*arg)->source = (uint8_t*) source;
     }
-    (*arg)->name = (uint8_t*) name;
-    (*arg)->source = (uint8_t*) source;
+
+//    const char delim[ENVELOPE_FORMAT_DELIMITER_LEN] = ENVELOPE_FORMAT_DELIMITER;
+//    char* n = strtok((char*)envelope, delim);
+//    char* s = strtok(NULL, delim);
+//    char* name;
+//    char* source;
+//    if (s==NULL) {
+//        name = malloc(sizeof(char)*6);
+//        source = malloc(sizeof(char)*strlen(n)+1);
+//        strcpy(name, "none\0");
+//        strcpy(source, n);
+//    } else {
+//        name = malloc(sizeof(char)*strlen(n)+1);
+//        source = malloc(sizeof(char)*strlen(s)+1);
+//        strcpy(name, n);
+//        strcpy(source, s);
+//    }
+//
+//    *arg = malloc(sizeof(envelope_t));
+//    (*arg)->name = (uint8_t*) name;
+//    (*arg)->source = (uint8_t*) source;
 }
 
 void envelope_print(envelope_t*env) 
