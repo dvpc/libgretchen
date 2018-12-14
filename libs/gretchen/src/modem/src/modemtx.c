@@ -95,6 +95,7 @@ void grtModemTX_setheaderinfo(
                 size_t filesize) 
 {
     mtx->hash = filehash;
+    mtx->frame_num = 0;
     mtx->frame_nummax = (int)(filesize/mtx->framelen+1);
 } 
 
