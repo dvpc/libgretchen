@@ -1,12 +1,12 @@
 --frmtype modem
---frmlen 800
+--frmlen 500
 --frmcrc crc32
 --frmifec secded7264
 --frmofec h84
 --frmmod qam8
 --modshape pm
---modsampsym 17
+--modsampsym 11
 --modsymdelay 7
 --modexcbandw 0.95
 --modfreq 16625
---modgain 0.45
+--modgain 0.25
