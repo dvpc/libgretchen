@@ -125,13 +125,18 @@ envelope_t* envelope_create(uint8_t* name, uint8_t* source)
     // a hint for a self implemented version of basename could be
     // see: https://stackoverflow.com/a/41949246
     char* base = basename((char*)_name);
+    // allocate space for the actual envelope chars 
     char* name2 = malloc(sizeof(char)*strlen(base)+1);
     char* source2 = malloc(sizeof(char)*strlen((char*)source)+1);
     strcpy(name2, base);
     strcpy(source2, (char*)source);
+    // create the actual envelope_t struct
     envelope_t *env = malloc(sizeof(envelope_t));
     env->name = (uint8_t*)name2;
     env->source = (uint8_t*)source2;
+    // if name was null we need to free the substitude string
+    if (name == NULL)
+        free(_name);
     return env;
 }
 
@@ -159,6 +164,8 @@ void envelope_pack(envelope_t* envelope, uint8_t** arg)
 
 void envelope_unpack(uint8_t* envelope, envelope_t** arg)
 {
+    // check if envelope string contains the delimiter chars
+    // if not don't do anything; leaving `arg` as it is
     char* delim = strstr((char*)envelope, ENVELOPE_FORMAT_DELIMITER);
     if (delim != NULL) {
         // estimate delimiter start and end position
@@ -168,45 +175,19 @@ void envelope_unpack(uint8_t* envelope, envelope_t** arg)
             del_pos += k;
         size_t del_end = del_pos;
         size_t source_len = strlen((char*)envelope)-del_end;
-        // FIXME what if name is NULL
-        // ????
-        // check this
-        // FIXME have to valgrind this... OMG
-        //
-        // tokenizing per hand (only 2 tokens so grrr strtok or strsep or...)
+        // i am tokenizing per hand (only 2 tokens so grrr strtok or strsep...)
         char *name = malloc(sizeof(char)*(del_start+1));
         memmove(name, envelope, del_start);
-        name[del_start+1] = '\0';
+        name[del_start] = '\0';
         char *source = malloc(sizeof(char)*(source_len+1));
         char *source_start = (char*)envelope + sizeof(char)*(del_end+1);
         memmove(source, source_start, source_len);
-        source[source_len+1] = '\0';
-        
+        source[source_len] = '\0';
+        // create the envelope 
         *arg = malloc(sizeof(envelope_t));
         (*arg)->name = (uint8_t*) name;
         (*arg)->source = (uint8_t*) source;
     }
-
-//    const char delim[ENVELOPE_FORMAT_DELIMITER_LEN] = ENVELOPE_FORMAT_DELIMITER;
-//    char* n = strtok((char*)envelope, delim);
-//    char* s = strtok(NULL, delim);
-//    char* name;
-//    char* source;
-//    if (s==NULL) {
-//        name = malloc(sizeof(char)*6);
-//        source = malloc(sizeof(char)*strlen(n)+1);
-//        strcpy(name, "none\0");
-//        strcpy(source, n);
-//    } else {
-//        name = malloc(sizeof(char)*strlen(n)+1);
-//        source = malloc(sizeof(char)*strlen(s)+1);
-//        strcpy(name, n);
-//        strcpy(source, s);
-//    }
-//
-//    *arg = malloc(sizeof(envelope_t));
-//    (*arg)->name = (uint8_t*) name;
-//    (*arg)->source = (uint8_t*) source;
 }
 
 void envelope_print(envelope_t*env) 
