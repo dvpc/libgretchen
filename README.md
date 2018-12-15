@@ -1,10 +1,9 @@
 ## open bugs
-### 1  on osx: using 
-        `$ sh sandbash/selftest_gapped2.sh runcmake_debug.sh` 
-        the filenames of the received files are truncated
-### 2 on all platforms
+### on all platforms
         some paramter combinations result in crash of the modem
         TODO list them
+### newly arriving frames with a hash from a file which is already processed
+(all frames sucessf. received) should be rejected (helper.c i guess)
 ### malloc error return path!!!!
         i did not look at this yet but...
 ```
