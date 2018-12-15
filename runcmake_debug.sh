@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# FIXME
-# this makes osx unuseable. 
-
 if [[ "$OSTYPE" != darwin* && "$BASH_SOURCE" == "" ]]; then
 	BASH_SOURCE="$0"
 fi
