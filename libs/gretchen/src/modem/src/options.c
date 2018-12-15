@@ -25,6 +25,7 @@ static grtModemOpt_t* _create_empty(uint32_t samplerate)
     // other defaults
     mod->flushlen_mod = 4;
     frame->_bits_per_symbol = 1;
+    // FIXME might go
     // filter defaults
     mod->txflt_order = 6;
     mod->txflt_cutoff_frq = .25f;
@@ -67,7 +68,7 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
 {
     grtModemOpt_t* opt = _create_empty(samplerate);
     opt->frametype = frametype_modem;
-    opt->frameopt->payload_len = 800;
+    opt->frameopt->payload_len = 600;
     opt->frameopt->checksum_scheme = liquid_getopt_str2crc("crc32");
     opt->frameopt->inner_fec_scheme = liquid_getopt_str2fec("secded7264");
     opt->frameopt->outer_fec_scheme = liquid_getopt_str2fec("h84");
@@ -78,7 +79,7 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
     opt->modopt->symbol_delay = 5;
     opt->modopt->excess_bw = 0.75;
     opt->modopt->center_rads = _convert_freq2rad(16200, samplerate);
-    opt->modopt->gain = 0.45;
+    opt->modopt->gain = 0.25;
     return opt;
 }
 
