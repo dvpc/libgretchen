@@ -232,20 +232,20 @@ void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error);
  *
  */
 typedef struct {
-    uint32_t num;
+    uint16_t num;
     uint8_t* data;
     size_t len;
 } chunk_t;
 
 typedef struct {
-    uint64_t hash;
-    uint32_t max;
+    uint16_t hash;
+    uint16_t max;
     chunk_t* chunks;
 } transmit_t;
 /*
  * Creates a transmit. A transmit object holds all recieved frames together.
  */
-transmit_t* transmit_create(uint64_t hash, uint32_t max);
+transmit_t* transmit_create(uint16_t hash, uint16_t max);
 /*
  * Destroys the transmit.
  */
@@ -253,7 +253,7 @@ void transmit_destroy(transmit_t* transm);
 /*
  * Add the payload of a frame (the `buffer`) to the transmit.
  */
-void transmit_add(transmit_t* transm, uint32_t num, uint8_t* buffer, size_t buffer_len);
+void transmit_add(transmit_t* transm, uint16_t num, uint8_t* buffer, size_t buffer_len);
 /*
  * Returns true if all chunks have been added to the transmit. False otherwise.
  */
@@ -265,7 +265,7 @@ void transmit_print(transmit_t* transm);
 /*
  * Creates an envelope object from the chunks in the location of `arg`.
  */
-void transmit_get_envelope(transmit_t* transm, envelope_t** arg);
+void transmit_create_envelope(transmit_t* transm, envelope_t** arg);
 
 
 /*
@@ -294,15 +294,15 @@ void rxhandler_destroy(rxhandler_t* rxm);
  * Note, if no transmit exists for given hash a new transmit object is 
  * created. 
  */
-void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, uint8_t* buffer, size_t buffer_len);
+void rxhandler_add(rxhandler_t* rxm, uint16_t hash, uint16_t num, uint16_t max, uint8_t* buffer, size_t buffer_len);
 /*
  * Removes transmit with given `hash` from handlers internal hashmap.
  */
-void rxhandler_remove(rxhandler_t* rxm, uint64_t hash);
+void rxhandler_remove(rxhandler_t* rxm, uint16_t hash);
 /*
  * Gives access to transmit object of given `hash` at location `arg`.
  */
-void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg);
+void rxhandler_get(rxhandler_t* rxm, uint16_t hash, transmit_t** arg);
 /*
  * Gives access to first complete transmit of the handler located in `ripe`.
  * `ripe` is NULL if there is no complete transmit or any at all.

@@ -214,7 +214,7 @@ void envelope_writeout(envelope_t* env, uint8_t* path, int8_t* error)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // rx frame handling methods, chunks, transmits
 
-transmit_t* transmit_create(uint64_t hash, uint32_t max)
+transmit_t* transmit_create(uint16_t hash, uint16_t max)
 {
     transmit_t* transm = malloc(sizeof(transmit_t));
     transm->hash = hash;
@@ -240,7 +240,7 @@ void transmit_destroy(transmit_t* transm)
     }
 }
 
-void transmit_add(transmit_t* transm, uint32_t num, uint8_t* buffer, size_t buffer_len)
+void transmit_add(transmit_t* transm, uint16_t num, uint8_t* buffer, size_t buffer_len)
 {
     if (num >= transm->max)
         return;
@@ -280,7 +280,9 @@ static void transmit_concatenate(transmit_t* transm, uint8_t** arg)
 
 void transmit_print(transmit_t* transm)
 {
-    printf("hash %llu ", transm->hash);
+    if (transm == NULL)
+        return;
+    printf("hash %u ", transm->hash);
     printf("max %u \n", transm->max);
     printf(" is complete %i\n", transmit_is_complete(transm));
     for (uint32_t k=0; k<transm->max; k++) {
@@ -289,7 +291,7 @@ void transmit_print(transmit_t* transm)
 }
 // FIXME
 // no checking the envelope is complete...
-void transmit_get_envelope(transmit_t* transm, envelope_t** arg)
+void transmit_create_envelope(transmit_t* transm, envelope_t** arg)
 {
     uint8_t* envstr;
     transmit_concatenate(transm, &envstr);
@@ -372,7 +374,7 @@ void rxhandler_destroy(rxhandler_t* rxm)
                     RXMAP_KEY_FORMAT,\
                     hash);
 
-void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, uint8_t* buffer, size_t buffer_len)
+void rxhandler_add(rxhandler_t* rxm, uint16_t hash, uint16_t num, uint16_t max, uint8_t* buffer, size_t buffer_len)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
@@ -384,7 +386,7 @@ void rxhandler_add(rxhandler_t* rxm, uint64_t hash, uint32_t num, uint32_t max, 
     transmit_add(transm, num, buffer, buffer_len);
 }
 
-void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg)
+void rxhandler_get(rxhandler_t* rxm, uint16_t hash, transmit_t** arg)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);
@@ -395,7 +397,7 @@ void rxhandler_get(rxhandler_t* rxm, uint64_t hash, transmit_t** arg)
         *arg = NULL;
 }
 
-void rxhandler_remove(rxhandler_t* rxm, uint64_t hash)
+void rxhandler_remove(rxhandler_t* rxm, uint16_t hash)
 {
     transmit_t *transm = NULL;
     KEY_FROM_HASH(hash);

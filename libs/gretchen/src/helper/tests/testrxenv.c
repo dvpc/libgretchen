@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     envelope_t *env = envelope_create((uint8_t*)name, source);
     /*envelope_t *env = envelope_create(NULL, source);*/
     
-    uint64_t hash = hash_djb2(env->source);
+    uint16_t hash = hash_djb2(env->source);
     printf("hash: %llu\n", hash);
     
     printf("\npacking envelope...\n");
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     printf("\nunpacking envelope yields....\n");
     envelope_print(uenv);
 
-    uint64_t hash2 = hash_djb2(uenv->source);
+    uint16_t hash2 = hash_djb2(uenv->source);
     printf("uhash: %llu\n", hash2);
 
     printf("\nis source and envelope sourece equal?: %d\n", 

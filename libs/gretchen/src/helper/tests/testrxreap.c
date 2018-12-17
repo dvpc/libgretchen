@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     (void) argc;
 
     // dummy data
-    uint64_t hash;
+    uint16_t hash;
     size_t buflen = 50;
     char buffer[buflen];
     memset(buffer, '\0', 50);

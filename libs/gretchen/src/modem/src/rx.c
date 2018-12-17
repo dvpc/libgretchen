@@ -25,7 +25,7 @@ static void _modemrx_callback(
         return ;
     // get the envelope of the transmit and call outside
     envelope_t* env;
-    transmit_get_envelope(ripe, &env); 
+    transmit_create_envelope(ripe, &env); 
     // FIXME 
     // what if env fails???
     if (rx->callback)
