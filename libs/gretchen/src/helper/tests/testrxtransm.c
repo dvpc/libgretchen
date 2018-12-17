@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
     transmit_t* t1 = NULL;
     rxhandler_get(rxm, hash, &t1);
-    printf("\n>   the 1st hash is %llu", t1->hash);
+    printf("\n>   the 1st hash is %hu", t1->hash);
     printf("\n>   getting the envelope of %p\n", t1);
     envelope_t* env;
     transmit_create_envelope(t1, &env);

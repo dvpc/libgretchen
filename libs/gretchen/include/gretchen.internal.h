@@ -273,8 +273,9 @@ void transmit_create_envelope(transmit_t* transm, envelope_t** arg);
  *
  *
  */
+// FIXME len can be reduced to 16???
 #define RXMAP_KEY_LEN 64
-#define RXMAP_KEY_FORMAT "%llu"
+#define RXMAP_KEY_FORMAT "%u"
 
 typedef struct {
     map_t* transmits;
@@ -399,7 +400,7 @@ void grtModemOpt_print(grtModemOpt_t* opt);
  *
  */
 #define MODEM_HEADER_LEN 20 
-#define MODEM_HEADER_FORMAT "%u,%u,%u"
+#define MODEM_HEADER_FORMAT "%hu,%hu,%hu"
 
 typedef struct {
     nco_crcf nco;

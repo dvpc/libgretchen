@@ -6,8 +6,8 @@
 --frmmod qpsk
 --modshape arkaiser
 --modsampsym 7
---modsymdelay 5
+--modsymdelay 4
 --modexcbandw 0.75
---modfreq 19200
+--modfreq 18200
 --modgain 0.25
---flushlen 7
+--flushlen 10

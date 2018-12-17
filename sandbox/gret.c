@@ -224,7 +224,7 @@ static void print_banner() {
 static void print_transm(transmit_t* t, void* user) {
 
     (void) user;
-    printf("[hash %llu chnks ", t->hash);
+    printf("[hash %hu chnks ", t->hash);
     for (uint32_t k=0; k<t->max; k++) {
         printf("%s", t->chunks[k].data==NULL?".":"O"); 
     }

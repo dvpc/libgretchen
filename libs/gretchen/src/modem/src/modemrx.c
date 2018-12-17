@@ -171,8 +171,8 @@ static int mrx_framesync_callback(
                         _stats);
     if (!header_valid)
         return 1;
-    uint64_t hash; 
-    uint32_t frame_num, frame_nummax;
+    uint16_t hash;
+    uint16_t frame_num, frame_nummax;
     sscanf((char*)header,
            MODEM_HEADER_FORMAT, 
            &hash, 

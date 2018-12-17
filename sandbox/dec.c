@@ -7,7 +7,7 @@
 void emit_callback(uint16_t hash, uint16_t header_num, uint16_t header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
 {
     (void) userdata;
-    fprintf(stderr,"_dec_emit header-id: %llu frame-num %u max %u\n", hash, header_num, header_nummax);
+    fprintf(stderr,"_dec_emit header-id: %hu frame-num %hu max %hu\n", hash, header_num, header_nummax);
     if (buffer_len > 0) {
         fwrite(buffer, sizeof(uint8_t), buffer_len, stdout);
     }
