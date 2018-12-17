@@ -398,8 +398,8 @@ void grtModemOpt_print(grtModemOpt_t* opt);
  *
  *
  */
-#define MODEM_HEADER_LEN 2+sizeof(uint64_t)*3 
-#define MODEM_HEADER_FORMAT "%llu,%d,%d"
+#define MODEM_HEADER_LEN 20 
+#define MODEM_HEADER_FORMAT "%u,%u,%u"
 
 typedef struct {
     nco_crcf nco;
@@ -434,12 +434,12 @@ size_t grtModulatorRX_recv(grtModulatorRX_t *dem, float *samples, size_t samples
  * decoded this callback is called with the data of the frame and additional
  * header info. 
  */
-typedef void grtModemRX_emit_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
+typedef void grtModemRX_emit_callback(uint16_t hash, uint16_t frame_num, uint16_t frame_nummax, size_t buffer_len, uint8_t *buffer, void *user);
 /*
  * Progress callback is called when a frame is decoded (at least the header has 
  * to be successful decoded), no matter if the payload is valid or not.
  */
-typedef void grtModemRX_emit_progress_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, int payload_valid, void *user);
+typedef void grtModemRX_emit_progress_callback(uint16_t hash, uint16_t frame_num, uint16_t frame_nummax, int payload_valid, void *user);
 /*
  * Debug callback fires always and gives additional detailed statistics 
  * from liquid sdr.
@@ -598,9 +598,9 @@ typedef struct {
     grtModemTX_emit_callback *emit_callback;
     void *emit_callback_userdata;
 
-    uint64_t hash;
-    uint32_t frame_num;
-    uint32_t frame_nummax;
+    uint16_t hash;
+    uint16_t frame_num;
+    uint16_t frame_nummax;
 } grtModemTX_t;
 
 /*
@@ -615,7 +615,7 @@ void grtModemTX_destroy(grtModemTX_t *mtx);
  * Sets the header information: `hash` and the `filesize`.
  * These will be written as additional header information.
  */
-void grtModemTX_setheaderinfo(grtModemTX_t *mtx, uint64_t filehash, size_t filesize); 
+void grtModemTX_setheaderinfo(grtModemTX_t *mtx, uint16_t filehash, size_t filesize); 
 /*
  * Sets the modem in `flush` mode, which causes the modem to create a new 
  * frame each time new data is consumed. Normal behavior is to wait until 

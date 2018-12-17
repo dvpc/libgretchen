@@ -95,7 +95,7 @@ typedef void gretchenRX_filecomplete_callback(uint8_t* filename, uint8_t* source
  * The progress callback is called each time a frame is decoded with at 
  * least its header intact.
  */
-typedef void gretchenRX_progress_callback(uint64_t hash, uint32_t frame_num, uint32_t frame_nummax, int payload_valid, void* user);
+typedef void gretchenRX_progress_callback(uint16_t hash, uint16_t frame_num, uint16_t frame_nummax, int payload_valid, void* user);
 
 typedef struct {
     grtModemRX_t* modem_rx;

@@ -91,12 +91,12 @@ void grtModemTX_destroy(grtModemTX_t *mtx)
 
 void grtModemTX_setheaderinfo(
                 grtModemTX_t *mtx,
-                uint64_t filehash, 
+                uint16_t filehash, 
                 size_t filesize) 
 {
     mtx->hash = filehash;
     mtx->frame_num = 0;
-    mtx->frame_nummax = (int)(filesize/mtx->framelen+1);
+    mtx->frame_nummax = (uint16_t)(filesize/mtx->framelen+1);
 } 
 
 void grtModemTX_enable_flush(grtModemTX_t *mtx)

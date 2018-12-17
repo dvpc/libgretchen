@@ -1,9 +1,9 @@
 #include "gretchen.h"
 
 static void _modemrx_callback(
-                uint64_t hash,
-                uint32_t frame_num,
-                uint32_t frame_nummax,
+                uint16_t hash,
+                uint16_t frame_num,
+                uint16_t frame_nummax,
                 size_t buffer_len,
                 uint8_t *buffer,
                 void *user)
@@ -40,9 +40,9 @@ static void _modemrx_callback(
 }
 
 static void _modemrx_progress_callback(
-                uint64_t hash, 
-                uint32_t frame_num, 
-                uint32_t frame_nummax, 
+                uint16_t hash, 
+                uint16_t frame_num, 
+                uint16_t frame_nummax, 
                 int payload_valid,
                 void *user)
 {

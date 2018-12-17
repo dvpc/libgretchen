@@ -11,7 +11,12 @@
 static void print_usage();
 static void print_banner();
 static void txprogress_callback();
-static void rxprogress_callback();
+static void rxprogress_callback(
+                uint16_t hash,
+                uint16_t frame_num,
+                uint16_t frame_nummax,
+                int payload_valid, 
+                void* user); 
 static void rxfilecomplete_callback();
 
 
@@ -229,9 +234,9 @@ static void print_transm(transmit_t* t, void* user) {
 
 static uint32_t print_count = 0;
 static void rxprogress_callback(
-                uint64_t hash,
-                uint32_t frame_num,
-                uint32_t frame_nummax,
+                uint16_t hash,
+                uint16_t frame_num,
+                uint16_t frame_nummax,
                 int payload_valid, 
                 void* user) {
     (void) hash;

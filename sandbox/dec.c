@@ -4,7 +4,7 @@
 
 #include "gretchen.internal.h"
 
-void emit_callback(uint64_t hash, uint32_t header_num, uint32_t header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
+void emit_callback(uint16_t hash, uint16_t header_num, uint16_t header_nummax, size_t buffer_len, uint8_t *buffer, void *userdata)
 {
     (void) userdata;
     fprintf(stderr,"_dec_emit header-id: %llu frame-num %u max %u\n", hash, header_num, header_nummax);

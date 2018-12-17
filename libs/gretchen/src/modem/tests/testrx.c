@@ -4,9 +4,9 @@
 #include "gretchen.h"
 
 void progress_callback(
-                uint64_t hash,
-                uint32_t frame_num,
-                uint32_t frame_nummax,
+                uint16_t hash,
+                uint16_t frame_num,
+                uint16_t frame_nummax,
                 int payload_valid, 
                 void* user) {
     (void) user;
