@@ -5,9 +5,9 @@
 --frmofec h84
 --frmmod qpsk
 --modshape arkaiser
---modsampsym 7
+--modsampsym 9
 --modsymdelay 5
 --modexcbandw 0.75
 --modfreq 18200
 --modgain 0.25
---flushlen 10
+--flushlen 9
