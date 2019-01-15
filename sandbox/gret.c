@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 
     } else {
         printf(".. RX (receive) mode\n");
-        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<14);//16384
+        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<16);//16384
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
         ((gretchenRX_t*) modem)->callbackuser = modem;
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
             goto cleanup_modem;
         }
         grtSigcatcher_Init();
-        size_t asklen = 1<<14;//8192
+        size_t asklen = 1<<15;//8192
         float* buffer = NULL;
         size_t nread;
         uint32_t num_channels = back->strParams.channelCount;
