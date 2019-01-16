@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
         }
     }
 
-    size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, true, 48000);
+    size_t internbuflen = 1 << 15;
+    grtBackend_t* back = grtBackend_create(internbuflen, true, 96000);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (play).\n");
         return 1;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
         return 1;
     }
     
-    size_t buflen = 8192;
+    size_t buflen = 1 << 14;
     float* buffer = malloc(buflen * sizeof(float));
     size_t avail, nread, len, pushed;
     bool done = false;

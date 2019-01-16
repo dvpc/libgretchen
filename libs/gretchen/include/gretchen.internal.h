@@ -180,11 +180,6 @@ void write_rawfile(uint8_t* filename, float* source, size_t len, int8_t* error);
  *
  *
  */
-// FIXME
-// having issues with that "\07" delimiter on osx.
-// i want it to be as short as possible 
-// but also in no danger of being also used by the data it has to delimit
-// i try a magic instead...
 #define ENVELOPE_FORMAT "%s;;%s" 
 #define ENVELOPE_FORMAT_DELIMITER ";;"
 #define ENVELOPE_FORMAT_DELIMITER_LEN 2
@@ -273,7 +268,6 @@ void transmit_create_envelope(transmit_t* transm, envelope_t** arg);
  *
  *
  */
-// FIXME len can be reduced to 16???
 #define RXMAP_KEY_LEN 64
 #define RXMAP_KEY_FORMAT "%u"
 

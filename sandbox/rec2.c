@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
         }
     }
 
-    size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, false, 48000);
+    size_t internbuflen = 1 << 15;
+    grtBackend_t* back = grtBackend_create(internbuflen, false, 96000);
     if (back == NULL) {
         fprintf(stderr, "cannot init backend (rec).\n");
         return 1;
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     fprintf(stderr, "using %u imput channels...\n", num_channels);
 
     grtSigcatcher_Init();
-    size_t asklen = 1<<15;//8192 * 4;
+    size_t asklen = 1<<16;//8192 * 4;
     float* buffer = NULL;
     float* monobuf = malloc(sizeof(float)*asklen);
     size_t nread;
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
             fwrite(monobuf, sizeof(float), idx, fhandle); 
             /*fwrite(buffer, sizeof(float), nread, fhandle);*/
         }
-        Pa_Sleep(200); 
+        Pa_Sleep(150); 
     }
 
     free(monobuf);

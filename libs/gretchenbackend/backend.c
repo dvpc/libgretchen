@@ -242,8 +242,8 @@ static int _record_callback(
     grtBackend_t* back = (grtBackend_t*)user;
     const float *inp = (const float*)inbuf;
     size_t avail = _buffer_available(back);
-
     uint32_t channels = back->strParams.channelCount;
+    /*fprintf(stderr, "a:%zu -> f:%zu     ", avail, frmsPerBuf*channels);*/
     if (avail < frmsPerBuf*channels) {
         back->err = paInputOverflowed;
         return paComplete;

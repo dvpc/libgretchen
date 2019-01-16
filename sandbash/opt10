@@ -1,0 +1,13 @@
+--frmtype modem
+--frmlen 300
+--frmcrc crc32
+--frmifec secded7264
+--frmofec h84
+--frmmod qpsk
+--modshape rfsech
+--modsampsym 6
+--modsymdelay 11
+--modexcbandw 0.75
+--modfreq 14200
+--modgain 0.025
+--flushlen 5

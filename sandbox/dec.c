@@ -35,11 +35,11 @@ int main(int argc, char **argv) {
     FILE *input = stdin;
     FILE *output = stdout;
 
-    grtModemOpt_t* opt = grtModemOpt_parse_args(argc, argv, false, 48000); 
+    grtModemOpt_t* opt = grtModemOpt_parse_args(argc, argv, false, 96000); 
     if (!opt)
         return -1;
 
-    grtModemRX_t *dec = grtModemRX_create(opt, 1 << 14);
+    grtModemRX_t *dec = grtModemRX_create(opt, 1 << 16);
     dec->emit_callback = emit_callback;
     dec->emit_callback_userdata = NULL;
     dec->emit_debug_callback = debug_callback;

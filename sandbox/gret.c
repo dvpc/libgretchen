@@ -68,16 +68,16 @@ int main(int argc, char **argv) {
     // setup options
     grtModemOpt_t* opt = NULL; 
     if (use_defaultoption) {
-        opt = grtModemOpt_create_default(48000);
+        opt = grtModemOpt_create_default(96000);
     } else {
-        opt = grtModemOpt_parse_args_from_file((uint8_t*)optionfilepath, is_tx, 48000);
+        opt = grtModemOpt_parse_args_from_file((uint8_t*)optionfilepath, is_tx, 96000);
     }
     if (!opt)
         goto cleanup_opt;
 
     // setup audio backend
-    size_t internbuflen = 1 << 14;
-    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 48000);
+    size_t internbuflen = 1 << 15;
+    grtBackend_t* back = grtBackend_create(internbuflen, is_tx, 96000);
     if (back==NULL) {
         fprintf(stderr, ".. Error cannot initialize audio backend.\n");
         goto cleanup_backend;
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
             fprintf(stderr, ".. Error backend cannot start stream.\n");
             goto cleanup_modem;
         }
-        size_t buflen = 1<<13;//8192
+        size_t buflen = 1<<14;
         size_t avail, len, pushed;
         size_t k = 0;
         bool done = false;
@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 
     } else {
         printf(".. RX (receive) mode\n");
-        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<16);//16384
+        modem = (gretchenRX_t*) gretchenRX_create(opt, 1<<16);
         ((gretchenRX_t*) modem)->callback = rxfilecomplete_callback;
         ((gretchenRX_t*) modem)->prog_callback = rxprogress_callback; 
         ((gretchenRX_t*) modem)->callbackuser = modem;
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
             goto cleanup_modem;
         }
         grtSigcatcher_Init();
-        size_t asklen = 1<<15;//8192
+        size_t asklen = 1<<16;
         float* buffer = NULL;
         size_t nread;
         uint32_t num_channels = back->strParams.channelCount;
