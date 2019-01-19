@@ -1,3 +1,27 @@
+/*
+ * Gretchen modulator tx
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "gretchen.internal.h"
 
 grtModulatorTX_t *grtModulatorTX_create(
@@ -5,7 +29,7 @@ grtModulatorTX_t *grtModulatorTX_create(
                 uint32_t samples_per_symbol,
                 uint32_t symbol_delay,
                 float excess_bw,
-                float center_rads,
+                float freq_in_rad,
                 float gain,
                 uint32_t flt_order,
                 float flt_cutoff_frq,
@@ -18,7 +42,7 @@ grtModulatorTX_t *grtModulatorTX_create(
 
     mod->nco = nco_crcf_create(LIQUID_VCO);
     nco_crcf_set_frequency(mod->nco,
-                           center_rads);
+                           freq_in_rad);
     nco_crcf_set_phase(mod->nco, 0.0f);
     mod->interp = firinterp_crcf_create_prototype(
                     shape,

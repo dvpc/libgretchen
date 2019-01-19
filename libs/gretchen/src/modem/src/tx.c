@@ -1,3 +1,27 @@
+/*
+ * Gretchen tx
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "gretchen.h"
 
 static void _estimate_transmission(gretchenTX_t* tx, size_t filesize, gretchenTX_inspect_t** info)
@@ -140,14 +164,6 @@ void gretchenTX_get(gretchenTX_t* tx, float** samplebuffer, size_t* len)
     *samplebuffer = NULL;
     if (!tx->samples)
         return ;
-    // TODO
-    // think of amplifying the sample better to
-    // do here istead of chunkwise in the modem?
-    // idk
-    // NOTE
-    // append and prepend .25 seconds of silence
-    // to avoid clicks when playing the sample back
-    // agc with lookahead??
     size_t samples_quarter_sec = tx->modem_tx->opt.samplerate/4;
     *len = tx->samples_len+22050;
     *samplebuffer = calloc(sizeof(float), tx->samples_len+2*samples_quarter_sec);

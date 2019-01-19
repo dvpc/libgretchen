@@ -22,34 +22,21 @@ endif()
 # use local header files
 include_directories(libs/external/)
 
-
 add_subdirectory(libs/gretchen)
 include_directories(libs/gretchen/include)
-
 add_subdirectory(libs/gretchenbackend)
 include_directories(libs/gretchenbackend/include)
 
-
-
-add_executable(gret sandbox/gret.c)
+add_executable(gret shell/gret.c)
 target_link_libraries(gret gretchenbackend gretchen)
-
-
-
-
-add_executable(enc sandbox/enc.c)
+add_executable(enc shell/enc.c)
 target_link_libraries(enc gretchen)
-add_executable(dec sandbox/dec.c)
+add_executable(dec shell/dec.c)
 target_link_libraries(dec gretchen)
-
-add_executable(noise sandbox/noise.c) 
-target_link_libraries(noise gretchenbackend gretchen m) 
-
-add_executable(rec sandbox/rec2.c) 
+add_executable(rec shell/rec.c) 
 target_link_libraries(rec gretchenbackend gretchen)
-add_executable(play sandbox/play2.c) 
+add_executable(play shell/play.c) 
 target_link_libraries(play gretchenbackend gretchen) 
-
 
 add_executable(testrecdev libs/gretchenbackend/testestrecdevice.c)
 target_link_libraries(testrecdev gretchenbackend gretchen)

@@ -1,3 +1,27 @@
+/*
+ * Gretchen test modulator
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <complex.h>
@@ -68,12 +92,12 @@ int main(int argc, char** argv) {
     uint32_t samples_per_symbol = 5;
     uint32_t symbol_delay = 17;
     float excess_bw = 0.15;
-    float center_rads = (18500.0f/44110.0f) * 2*M_PI;
-    /*float center_rads = 0.4f * 2*M_PI;//18200;*/
+    float freq_in_rad = (18500.0f/44110.0f) * 2*M_PI;
+    /*float freq_in_rad = 0.4f * 2*M_PI;//18200;*/
     float gain = 0.15;
     uint32_t flushlen_mod = 5;
-    grtModulatorTX_t *mod = grtModulatorTX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, gain, 6, .25f, .45f, 1.0f, 60.0f, flushlen_mod);
-    grtModulatorRX_t *dem = grtModulatorRX_create(shape, samples_per_symbol, symbol_delay, excess_bw, center_rads, 7, .3f, .36f, 1.0f, 60.0f);
+    grtModulatorTX_t *mod = grtModulatorTX_create(shape, samples_per_symbol, symbol_delay, excess_bw, freq_in_rad, gain, 6, .25f, .45f, 1.0f, 60.0f, flushlen_mod);
+    grtModulatorRX_t *dem = grtModulatorRX_create(shape, samples_per_symbol, symbol_delay, excess_bw, freq_in_rad, 7, .3f, .36f, 1.0f, 60.0f);
 
 
 

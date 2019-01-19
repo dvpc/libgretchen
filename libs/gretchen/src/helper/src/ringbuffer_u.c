@@ -1,3 +1,27 @@
+/*
+ * Gretchen internal ringbuffer
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "gretchen.internal.h"
 
 rbufu_t* rbufuCreate(size_t len) {
@@ -11,8 +35,7 @@ rbufu_t* rbufuCreate(size_t len) {
     cb->head = cb->buffer;
     cb->tail = cb->buffer;
     cb->count = 0;
-    cb->haslockpop = 0;
-    cb->haslockpush = 0;
+    cb->haslock = 0;
     return cb;
 	err:
 		if (cb)
@@ -55,7 +78,7 @@ size_t rbufuAvailable(const rbufu_t* cb) {
 }
 
 int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len) {
-    if (cb->haslockpush==1)
+    if (cb->haslock==1)
         return RBUF_BUSY;
     size_t avail = rbufuAvailable(cb);
     if (avail==0) {
@@ -64,7 +87,7 @@ int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len) {
     if (len > avail) {
         return RBUF_TOOLARGE;
     }
-    cb->haslockpush = 1;
+    cb->haslock = 1;
     if (cb->head <= cb->tail) { 
         memmove(cb->head, ibuf, len*sizeof(RBUF_TYPE));    
     } 
@@ -81,12 +104,12 @@ int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len) {
     }
     cb->head = rbufuNext(cb, cb->head, len); 
     cb->count += len;
-    cb->haslockpush = 0;
+    cb->haslock = 0;
     return RBUF_OK;
 }
 
 int8_t rbufuPop(rbufu_t* cb, RBUF_TYPE* obuf, size_t len) {
-    if (cb->haslockpop==1)
+    if (cb->haslock==1)
         return RBUF_BUSY;
     if (cb->count==0) {
         return RBUF_EMPTY;
@@ -94,7 +117,7 @@ int8_t rbufuPop(rbufu_t* cb, RBUF_TYPE* obuf, size_t len) {
     if (len > cb->count) {
         return RBUF_TOOLARGE;
     }
-    cb->haslockpop = 1;
+    cb->haslock = 1;
     if (cb->head > cb->tail) {
         memmove(obuf, cb->tail, len*sizeof(RBUF_TYPE)); 
     }
@@ -112,7 +135,7 @@ int8_t rbufuPop(rbufu_t* cb, RBUF_TYPE* obuf, size_t len) {
     }
     cb->tail = rbufuNext(cb, cb->tail, len);
     cb->count -= len;
-    cb->haslockpop = 0;
+    cb->haslock = 0;
     return RBUF_OK;
 }
 
@@ -129,6 +152,5 @@ void rbufuReset(rbufu_t* cb) {
     cb->head = cb->buffer;
     cb->tail = cb->buffer;
     cb->count = 0;
-    cb->haslockpop = 0;
-    cb->haslockpush = 0;
+    cb->haslock = 0;
 }

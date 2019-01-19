@@ -1,5 +1,25 @@
 /*
  * Gretchen internal
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #pragma once
@@ -17,14 +37,13 @@
 
 /* 
  * Ringbuffer -----------------------------------------------------------------
- * Very simple ring buffer.
- *
+ * Very very simple ring buffer.
  */
-#define RBUF_OK 0
-#define RBUF_EMPTY -1
-#define RBUF_FULL -2
-#define RBUF_TOOLARGE -3
-#define RBUF_BUSY -4
+#define RBUF_OK 0           /* Ok */
+#define RBUF_EMPTY -1       /* Ringbuffer is empty */
+#define RBUF_FULL -2        /* Ringbuffer is full */
+#define RBUF_TOOLARGE -3    /* not enough space in Ringbuffer */
+#define RBUF_BUSY -4        /* Ringbuffer is already in a push or pop operation */ 
 
 typedef uint8_t RBUF_TYPE;
 
@@ -34,8 +53,7 @@ typedef struct {
     RBUF_TYPE *tail;
     size_t maxlen;
     size_t count;
-    uint8_t haslockpop;
-    uint8_t haslockpush;
+    uint8_t haslock;
 } rbufu_t;
 /*
  * Returns a pointer to created ringbuffer of size len. 
@@ -56,6 +74,7 @@ size_t rbufuAvailable(const rbufu_t* cb);
  * Returns `RBUF_TOOLARGE` error if buffer is greater 
  * than the internal available space.
  * If the buffer is full it returns a `RBUF_FULL` error. 
+ * If the buffer is already processing a push or pop operation `RBUF_BUSY` is returned.
  * If all went well a `RBUF_OK` is returned.
  */
 int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len);
@@ -64,6 +83,7 @@ int8_t rbufuPush(rbufu_t* cb, const RBUF_TYPE* ibuf, size_t len);
  * If more data is reuqested than available it returns 
  * a `RBUF_TOOLARGE` error. 
  * If the buffer is empty a `RBUF_EMPTY` error is returned.
+ * If the buffer is already processing a push or pop operation `RBUF_BUSY` is returned.
  * If all went well a `RBUF_OK` is returned.
  */
 int8_t rbufuPop(rbufu_t* cb, RBUF_TYPE* obuf, size_t len);
@@ -338,7 +358,7 @@ typedef struct {
     uint32_t samples_per_symbol;
     uint32_t symbol_delay;
     float excess_bw;
-    float center_rads;
+    float freq_in_rad;
     float gain;
     uint32_t flushlen_mod;
     uint32_t txflt_order;
@@ -407,7 +427,7 @@ typedef struct {
  * Creates the demodulator object, which is demodulating real valued streams 
  * to complex ones.
  */
-grtModulatorRX_t *grtModulatorRX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
+grtModulatorRX_t *grtModulatorRX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float freq_in_rad, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple);
 /*
  * Destroys the demodulator.
  */
@@ -523,7 +543,7 @@ typedef struct {
  * Creates a modulator object which is modulating complex symbols into real 
  * valued samples. 
  */
-grtModulatorTX_t *grtModulatorTX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float center_rads, float gain, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, uint32_t flushlen_mod);
+grtModulatorTX_t *grtModulatorTX_create(uint32_t shape, uint32_t samples_per_symbol, uint32_t symbol_delay, float excess_bw, float freq_in_rad, float gain, uint32_t flt_order, float flt_cutoff_frq, float flt_center_frq, float flt_passband_ripple, float flt_stopband_ripple, uint32_t flushlen_mod);
 /*
  * Destroys the modulator object.
  */

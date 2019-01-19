@@ -1,3 +1,27 @@
+/*
+ * Gretchen modem options
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "gretchen.internal.h"
 
 // since i get a clang warning: `Variable 'opt' may be uninitialized when
@@ -57,7 +81,7 @@ static bool _are_all_values_set(grtModemOpt_t* opt)
         opt->modopt->samples_per_symbol == 0 ||
         opt->modopt->symbol_delay == 0 ||
         opt->modopt->excess_bw == 0 ||
-        opt->modopt->center_rads == 0 ||
+        opt->modopt->freq_in_rad == 0 ||
         opt->modopt->gain == 0)
         return false;
     // expelling values with defaults to be checked. see above.
@@ -78,7 +102,7 @@ grtModemOpt_t* grtModemOpt_create_default(uint32_t samplerate)
     opt->modopt->samples_per_symbol = 9;
     opt->modopt->symbol_delay = 5;
     opt->modopt->excess_bw = 0.75;
-    opt->modopt->center_rads = _convert_freq2rad(16200, samplerate);
+    opt->modopt->freq_in_rad = _convert_freq2rad(16200, samplerate);
     opt->modopt->gain = 0.25;
     return opt;
 }
@@ -312,12 +336,12 @@ grtModemOpt_t* grtModemOpt_parse_args(int argc, char** argv, bool is_tx, uint32_
                 }
                 break;
             case 'f':
-                opt->modopt->center_rads = atof(optarg);
-                if (opt->modopt->center_rads == 0) {
-                    printf("arg: error modulation center frequency == 0!\n");
+                opt->modopt->freq_in_rad = atof(optarg);
+                if (opt->modopt->freq_in_rad == 0) {
+                    printf("arg: error modulation frequency in radians == 0!\n");
                     inputvalid = false;
                 } else {
-                    opt->modopt->center_rads = _convert_freq2rad(atoi(optarg), samplerate);
+                    opt->modopt->freq_in_rad = _convert_freq2rad(atoi(optarg), samplerate);
                 }
                 break;
             case 'g':
@@ -420,7 +444,7 @@ void grtModemOpt_print(grtModemOpt_t* opt)
     printf("modsampsym %u \n", opt->modopt->samples_per_symbol);
     printf("modsymdelay %u \n", opt->modopt->symbol_delay);
     printf("modexcbandw %f \n", opt->modopt->excess_bw);
-    printf("modfreq %f \n", opt->modopt->center_rads);
+    printf("modfreq %f \n", opt->modopt->freq_in_rad);
     printf("modgain %f \n", opt->modopt->gain);
     printf("ofdmnsub %u \n", opt->ofdmopt->num_subcarriers);
     printf("ofdmprefix %u \n", opt->ofdmopt->cyclic_prefix_len);

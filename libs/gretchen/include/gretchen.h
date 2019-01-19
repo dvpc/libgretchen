@@ -1,5 +1,25 @@
 /*
  * Gretchen
+ *
+ * Copyright (c) 2018 - 2019 Daniel von Poschinger
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #pragma once
@@ -13,10 +33,9 @@
 // TX
 
 /*
- * The progress callback is called each time a frame is encoded. 
- * The number of encoded samples so far is reportet.
- * Its role is only to notify a usier interface. 
- * So its ok to leave the field `prog_callback` NULL.
+ * This optional callback is called each time a frame is encoded. 
+ * The number of encoded samples so far is reported.
+ * Its role is to notify a possible user interface. 
  */
 typedef void gretchenTX_progress_callback(size_t currentbuflen, void* user);
 
@@ -94,6 +113,7 @@ typedef void gretchenRX_filecomplete_callback(uint8_t* filename, uint8_t* source
 /*
  * The progress callback is called each time a frame is decoded with at 
  * least its header intact.
+ * The paramteter `payload_valid` indicates if the payload has been decoded sucessfully or not.
  */
 typedef void gretchenRX_progress_callback(uint16_t hash, uint16_t frame_num, uint16_t frame_nummax, int payload_valid, void* user);
 
@@ -132,7 +152,7 @@ void gretchenRX_set_progress_cb(gretchenRX_t* rx, gretchenRX_progress_callback* 
  */
 void gretchenRX_set_callback_userdata(gretchenRX_t* rx, void* user);
 /*
- * Sets the modemRX debug callback function pointer.
+ * Sets the optional modemRX debug callback function pointer.
  * See gretchen.internal.h
  */
 void gretchenRX_set_debug_cb(gretchenRX_t* rx, grtModemRX_emit_debug_callback* cb);

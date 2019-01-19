@@ -29,14 +29,6 @@ set_target_properties(gretchen PROPERTIES PUBLIC_HEADER "gretchen.h")
 target_link_libraries(gretchen liquid fec m)
 
 
-# from cmake tutorial install headers and .a
-#install (TARGETS MathFunctions DESTINATION bin)
-#install (FILES MathFunctions.h DESTINATION include)
-
-
-
-
-
 add_executable(testopt
         src/modem/tests/testoptions.c
         src/modem/src/options.c)

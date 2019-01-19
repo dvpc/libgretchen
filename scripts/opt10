@@ -4,10 +4,10 @@
 --frmifec secded7264
 --frmofec h84
 --frmmod qpsk
---modshape rfsech
+--modshape arkaiser
 --modsampsym 6
---modsymdelay 11
---modexcbandw 0.75
+--modsymdelay 4
+--modexcbandw 0.25
 --modfreq 14200
---modgain 0.025
+--modgain 0.25
 --flushlen 5

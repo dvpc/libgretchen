@@ -1,6 +1,12 @@
 /*
- * Generic map implementation.
+ * Gretchen internal generic hash map 
+ * 
+ * Originally by Elliot C Back - http://elliottback.com/wp/hashmap-implementation-in-c/
+ *
+ * Modified by Pete Warden to fix a serious performance problem, support strings as keys
+ * and removed thread synchronization - http://petewarden.typepad.com
  */
+
 #include "gretchen.internal.h"
 
 #include <stdlib.h>
