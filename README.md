@@ -11,9 +11,10 @@ It utilizes the excellent liquid SDR library (https://github.com/jgaeddert/liqui
 Libgretchen intended to be the foundation for implementing one way **ad-hoc low bandwidth data channels** 
 between arbitrary devices using the available audio hardware (speakers and microphones).
 
-![Gif shows the intended use case: a transmission from an iphone to a linux thinkpad. 
+![transmission](./demo.gif)
+Gif shows the intended use case: a transmission from an iphone to a linux thinkpad. 
 When the thinkpad is shown the message is replayed again by the iphone. 
-The IOS shell code is not part of this repo, but instructions on how to build the lib for IOS (see below).](./demo.gif)
+The IOS shell code is not part of this repo, but instructions on how to build the lib for IOS (see below). 
 
 ### Note
 The transmission of information over the air, in the audible spectrum, has its own set of challenges. 
